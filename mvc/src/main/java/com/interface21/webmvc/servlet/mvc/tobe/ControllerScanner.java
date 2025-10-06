@@ -17,23 +17,23 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Map<HandlerKey, HandlerExecution>> getController() {
+    public Map<Class<?>, Map<HandlerKey, MethodHandler>> getController() {
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         return instantiateControllers(classes);
     }
 
-    private Map<Class<?>, Map<HandlerKey, HandlerExecution>> instantiateControllers(Set<Class<?>> controllers) {
-        Map<Class<?>, Map<HandlerKey, HandlerExecution>> controllerMappings = new HashMap<>();
+    private Map<Class<?>, Map<HandlerKey, MethodHandler>> instantiateControllers(Set<Class<?>> controllers) {
+        Map<Class<?>, Map<HandlerKey, MethodHandler>> controllerMappings = new HashMap<>();
         for (Class<?> controller : controllers) {
             controllerMappings.put(controller, extractHandlerExecutions(controller));
         }
         return controllerMappings;
     }
 
-    private Map<HandlerKey, HandlerExecution> extractHandlerExecutions(Class<?> controllerClass) {
+    private Map<HandlerKey, MethodHandler> extractHandlerExecutions(Class<?> controllerClass) {
         Object instance = instantiateController(controllerClass);
 
-        Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
+        Map<HandlerKey, MethodHandler> executions = new HashMap<>();
         for (Method method : controllerClass.getMethods()) {
             registerHandlerMethodIfAnnotated(method, instance, executions);
         }
@@ -49,14 +49,14 @@ public class ControllerScanner {
     }
 
     private void registerHandlerMethodIfAnnotated(Method method, Object instance,
-                                                  Map<HandlerKey, HandlerExecution> map) {
+                                                  Map<HandlerKey, MethodHandler> map) {
         if (!method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
         RequestMapping mapping = method.getAnnotation(RequestMapping.class);
         for (RequestMethod httpMethod : mapping.method()) {
             map.put(new HandlerKey(mapping.value(), httpMethod),
-                    new HandlerExecution(instance, method));
+                    new MethodHandler(instance, method));
         }
     }
 }

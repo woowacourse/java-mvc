@@ -5,16 +5,16 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
+public class MethodHandlerAdapter implements HandlerAdapter {
     
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof HandlerExecution;
+        return handler instanceof MethodHandler;
     }
     
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.handle(request, response);
+        MethodHandler methodHandler = (MethodHandler) handler;
+        return methodHandler.handle(request, response);
     }
 }

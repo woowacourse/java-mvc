@@ -5,12 +5,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-public class HandlerExecution {
+public class MethodHandler {
 
     private final Object controller;
     private final Method method;
 
-    public HandlerExecution(Object controller, Method method) {
+    public MethodHandler(Object controller, Method method) {
         this.controller = controller;
         this.method = method;
     }

@@ -5,7 +5,7 @@ import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.MethodHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,12 +15,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private final HandlerExecutor handlerExecutor;
+    private final HandlerDispatcher handlerDispatcher;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
+        handlerDispatcher = new HandlerDispatcher(handlerAdapterRegistry);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         addHandlerAdapter(new ControllerHandlerAdapter());
-        addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        addHandlerAdapter(new MethodHandlerAdapter());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -50,7 +50,7 @@ public class DispatcherServlet extends HttpServlet {
                     .orElseThrow(() -> new IllegalArgumentException(
                             "No handler found for " + request.getMethod() + " " + request.getRequestURI()
                     ));
-            ModelAndView mav = handlerExecutor.handle(request, response, handler);
+            ModelAndView mav = handlerDispatcher.dispatch(request, response, handler);
             render(mav, request, response);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
