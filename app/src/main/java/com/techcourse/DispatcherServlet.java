@@ -37,14 +37,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappingRegistry() {
         handlerMappingRegistry = new HandlerMappingRegistry(List.of(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE)
         ));
     }
 
     private void initHandlerAdapterRegistry() {
         handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(
-                new ManualHandlerAdapter(),
                 new AnnotationHandlerAdapter()
         ));
     }
