@@ -5,6 +5,7 @@ import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -19,9 +20,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         ControllerScanner scanner = new ControllerScanner(basePackage);
-        Map<Class<?>, Map<HandlerKey, MethodHandler>> extractedHandlers = scanner.extractControllerHandlers();
+        Set<Class<?>> controllerClasses = scanner.findControllerClasses();
 
-        extractedHandlers.values().forEach(methodHandlers::putAll);
+        HandlerMappingFactory factory = new HandlerMappingFactory();
+        methodHandlers.putAll(factory.createHandlerMappings(controllerClasses));
     }
 
     @Override
