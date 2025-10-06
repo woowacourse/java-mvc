@@ -1,13 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.InitializableHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping implements HandlerMapping {
+public class AnnotationHandlerMapping implements InitializableHandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, MethodHandler> methodHandlers;

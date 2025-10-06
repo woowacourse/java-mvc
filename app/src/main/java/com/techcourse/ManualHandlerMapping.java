@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.InitializableHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.techcourse.controller.LoginController;
@@ -14,7 +14,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class ManualHandlerMapping implements InitializableHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
