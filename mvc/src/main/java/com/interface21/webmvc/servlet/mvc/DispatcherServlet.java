@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.exception.BadRequestException;
-import com.interface21.webmvc.servlet.mvc.exception.InternalServerError;
+import com.interface21.webmvc.servlet.mvc.exception.InternalServerErrorException;
 import com.interface21.webmvc.servlet.mvc.exception.NotFoundException;
 import com.interface21.webmvc.servlet.mvc.exception.UnauthorizedException;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
@@ -56,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (NotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (InternalServerError e) {
+        } catch (InternalServerErrorException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -80,10 +80,10 @@ public class DispatcherServlet extends HttpServlet {
         return handler.get();
     }
 
-    private HandlerAdapter getHandlerAdapter(final Object handler) throws InternalServerError {
+    private HandlerAdapter getHandlerAdapter(final Object handler) throws InternalServerErrorException {
         final Optional<HandlerAdapter> handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         if (handlerAdapter.isEmpty()) {
-            throw new InternalServerError("핸들러 어댑터를 찾지 못했습니다.");
+            throw new InternalServerErrorException("핸들러 어댑터를 찾지 못했습니다.");
         }
         return handlerAdapter.get();
     }
