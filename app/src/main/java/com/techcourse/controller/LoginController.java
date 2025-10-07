@@ -15,15 +15,15 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(final HttpServletRequest req) {
-        if (UserSession.isLoggedIn(req.getSession())) {
+    public String login(final HttpServletRequest request) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return authenticate(req, user);
+                    return authenticate(request, user);
                 })
                 .orElse("redirect:/401.jsp");
     }
