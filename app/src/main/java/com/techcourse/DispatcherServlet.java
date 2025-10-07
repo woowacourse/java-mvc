@@ -37,6 +37,10 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             render(request, response, mav);
+        } catch (BadRequestException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (UnauthorizedException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (NotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (InternalServerError e) {
