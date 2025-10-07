@@ -16,18 +16,18 @@ public class TestController {
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
-    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView findUserId(HttpServletRequest req, HttpServletResponse response) {
         log.info("test controller get method");
         final ModelAndView modelAndView = new ModelAndView(new JspView("/get-test.jsp"));
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addObject("id", req.getAttribute("id"));
         return modelAndView;
     }
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView save(HttpServletRequest req, HttpServletResponse response) {
         log.info("test controller post method");
         final ModelAndView modelAndView = new ModelAndView(new JspView("/post-test.jsp"));
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addObject("id", req.getAttribute("id"));
         return modelAndView;
     }
 }
