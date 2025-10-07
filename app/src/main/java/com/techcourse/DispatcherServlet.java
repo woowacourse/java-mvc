@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(request);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             render(request, response, mav);
         } catch (NotFoundException e) {
