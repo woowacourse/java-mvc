@@ -1,8 +1,13 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.exception.BadRequestException;
+import com.interface21.webmvc.servlet.mvc.exception.InternalServerError;
+import com.interface21.webmvc.servlet.mvc.exception.NotFoundException;
+import com.interface21.webmvc.servlet.mvc.exception.UnauthorizedException;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +23,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final Object[] basePackage;
+
+    public DispatcherServlet(final Object... basePackage) {
+        this.basePackage = basePackage;
+    }
 
     @Override
     public void init() {
-        handlerMappingRegistry.initialize();
-        handlerAdapterRegistry.initialize();
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        annotationHandlerMapping.initialize();
+        addHandlerMapping(annotationHandlerMapping);
+
+        addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -49,6 +62,14 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     private Object getHandler(final HttpServletRequest request) throws NotFoundException {
