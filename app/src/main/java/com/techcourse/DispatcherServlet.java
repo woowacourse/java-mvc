@@ -3,9 +3,11 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.InitializableHandlerMapping;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.view.JsonView;
 import com.techcourse.handler.HandlerAdapterRegistry;
 import com.techcourse.handler.HandlerDispatcher;
 import com.techcourse.handler.HandlerMappingRegistry;
@@ -34,6 +36,8 @@ public class DispatcherServlet extends HttpServlet {
 
         addHandlerAdapter(new SimpleControllerAdapter());
         addHandlerAdapter(new AnnotationHandlerAdapter());
+
+        addHandlerView("json", new JsonView());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -45,6 +49,10 @@ public class DispatcherServlet extends HttpServlet {
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
+    public void addHandlerView(final String viewName, final View view) {
+        handlerDispatcher.addView(viewName, view);
     }
 
     @Override
