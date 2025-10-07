@@ -3,8 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
@@ -22,7 +20,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
