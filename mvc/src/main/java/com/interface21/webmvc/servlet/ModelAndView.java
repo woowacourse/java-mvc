@@ -16,7 +16,7 @@ public class ModelAndView {
 
     public ModelAndView(String viewName, Map<String, Object> model) {
         this.view = viewName;
-        this.model = model;
+        this.model = new HashMap<>(model);
     }
 
     public ModelAndView(View view) {
