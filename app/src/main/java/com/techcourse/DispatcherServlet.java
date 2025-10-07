@@ -3,7 +3,7 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.InitializableHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.MethodHandlerAdapter;
 import com.techcourse.handler.HandlerAdapterRegistry;
@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
         addHandlerMapping(new ManualHandlerMapping());
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
-        addHandlerAdapter(new ControllerHandlerAdapter());
+        addHandlerAdapter(new SimpleControllerAdapter());
         addHandlerAdapter(new MethodHandlerAdapter());
     }
 
