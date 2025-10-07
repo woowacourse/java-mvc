@@ -32,7 +32,7 @@ public class LoginController {
     }
 
     private ModelAndView redirectToIndex() {
-        final String viewName = "redirect:/index.jsp";
+        final String viewName = "redirect:/";
         final JspView jspView = new JspView(viewName);
         return new ModelAndView(jspView);
     }
