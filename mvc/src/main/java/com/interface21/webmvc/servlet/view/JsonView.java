@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class JsonView implements View {
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
 
     public JsonView() {
