@@ -12,15 +12,15 @@ public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
 
-    public ControllerScanner(final Object... basePackage) {
+    public ControllerScanner(final String... basePackage) {
         this.basePackage = basePackage;
     }
 
     public Map<Class<?>, Object> scan() {
         final Map<Class<?>, Object> controllers = new HashMap<>();
-        final var reflections = new Reflections(basePackage);
+        final var reflections = new Reflections((Object) basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (final Class<?> controllerClass : controllerClasses) {
