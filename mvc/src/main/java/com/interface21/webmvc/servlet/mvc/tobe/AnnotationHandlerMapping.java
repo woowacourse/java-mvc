@@ -14,7 +14,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -80,6 +80,7 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(methods);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var requestUri = request.getRequestURI();
         final var requestMethod = RequestMethod.valueOf(request.getMethod());
