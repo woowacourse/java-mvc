@@ -1,8 +1,8 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HandlerAdapterRegistry {
 
@@ -12,12 +12,12 @@ public class HandlerAdapterRegistry {
         this.handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(final Object handler) {
+    public Optional<HandlerAdapter> getHandlerAdapter(final Object handler) {
         for (final HandlerAdapter handlerAdapter : handlerAdapters) {
             if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
+                return Optional.of(handlerAdapter);
             }
         }
-        throw new IllegalArgumentException("핸들러 어답터를 찾을 수 없습니다. handler: " + handler);
+        return Optional.empty();
     }
 }

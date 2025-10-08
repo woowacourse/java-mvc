@@ -1,37 +1,67 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.exception.BadRequestException;
+import com.interface21.webmvc.servlet.mvc.exception.UnauthorizedException;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import jakarta.servlet.http.HttpSession;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+@Controller
+public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res)
+            throws BadRequestException, UnauthorizedException {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+            return redirectToIndex();
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+        return processLogin(req);
     }
 
-    private String login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
-            final var session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+    private ModelAndView redirectToIndex() {
+        final String viewName = "redirect:/";
+        final JspView jspView = new JspView(viewName);
+        return new ModelAndView(jspView);
+    }
+
+    private ModelAndView processLogin(final HttpServletRequest req) throws BadRequestException, UnauthorizedException {
+        final String account = req.getParameter("account");
+        final String password = req.getParameter("password");
+        final User user = authenticate(account, password);
+
+        final HttpSession session = req.getSession();
+        session.setAttribute(UserSession.SESSION_KEY, user);
+        return redirectToIndex();
+    }
+
+    private User authenticate(final String account, final String password)
+            throws BadRequestException, UnauthorizedException {
+        if (account == null || password == null) {
+            throw new BadRequestException("account 또는 password가 입력되지 않았습니다.");
         }
-        return "redirect:/401.jsp";
+
+        final Optional<User> userOptional = InMemoryUserRepository.findByAccount(account);
+        if (userOptional.isEmpty()) {
+            throw new UnauthorizedException("user를 찾을 수 없습니다.");
+        }
+
+        final User user = userOptional.get();
+        if (!user.checkPassword(password)) {
+            throw new UnauthorizedException("account 또는 password가 잘못 되었습니다.");
+        }
+        return user;
     }
 }

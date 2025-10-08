@@ -2,21 +2,22 @@ package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
-public class LogoutController {
+public class IndexViewController {
 
-    @RequestMapping(value = "/logout")
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res)  {
-        final HttpSession session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
+    private static final Logger log = LoggerFactory.getLogger(IndexViewController.class);
 
-        final String viewName = "redirect:/";
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView indexView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        final String viewName = "index.jsp";
         final JspView jspView = new JspView(viewName);
         return new ModelAndView(jspView);
     }
