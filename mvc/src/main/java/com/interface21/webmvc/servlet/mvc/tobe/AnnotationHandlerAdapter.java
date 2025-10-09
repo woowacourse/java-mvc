@@ -30,21 +30,37 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
             return null;
         }
 
-        if (result instanceof ModelAndView) {
+        if (isModelAndView(result)) {
             return (ModelAndView) result;
         }
 
-        if (hasResponseBody(methodHandler)) {
-            final Map<String, Object> model = new HashMap<>();
-            model.put("data", result);
-            return new ModelAndView(new JsonView(), model);
+        if (requiresResponseBody(methodHandler)) {
+            return createResponseBodyModelAndView(result);
         }
 
         if (result instanceof View) {
-            return new ModelAndView((View) result);
+            return wrapView((View) result);
         }
 
         throw new IllegalStateException("지원하지 않는 반환 타입입니다: " + result.getClass());
+    }
+
+    private boolean isModelAndView(final Object result) {
+        return result instanceof ModelAndView;
+    }
+
+    private boolean requiresResponseBody(final MethodHandler methodHandler) {
+        return hasResponseBody(methodHandler);
+    }
+
+    private ModelAndView createResponseBodyModelAndView(final Object result) {
+        final Map<String, Object> model = new HashMap<>();
+        model.put("data", result);
+        return new ModelAndView(new JsonView(), model);
+    }
+
+    private ModelAndView wrapView(final View view) {
+        return new ModelAndView(view);
     }
 
     private boolean hasResponseBody(final MethodHandler methodHandler) {
