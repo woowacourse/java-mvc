@@ -6,13 +6,12 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class LogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView logout(final HttpServletRequest req) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return new ModelAndView(new JspView("redirect:/"));
