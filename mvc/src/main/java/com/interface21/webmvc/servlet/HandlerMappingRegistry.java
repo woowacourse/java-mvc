@@ -1,6 +1,5 @@
-package com.techcourse.handler;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,3 +26,4 @@ public class HandlerMappingRegistry {
         return Optional.empty();
     }
 }
+

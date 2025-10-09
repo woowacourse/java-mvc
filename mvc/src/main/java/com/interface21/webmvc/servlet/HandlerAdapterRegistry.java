@@ -1,6 +1,5 @@
-package com.techcourse.handler;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,3 +24,4 @@ public class HandlerAdapterRegistry {
         throw new IllegalArgumentException("Not Found Adapter : " + handler);
     }
 }
+

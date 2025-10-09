@@ -9,25 +9,35 @@ public class ModelAndView {
     private final View view;
     private final Map<String, Object> model;
 
-    public ModelAndView(final View view) {
+    public ModelAndView(View view) {
+        if (view == null) {
+            throw new IllegalArgumentException("뷰 객체는 null일 수 없습니다.");
+        }
         this.view = view;
         this.model = new HashMap<>();
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
-        model.put(attributeName, attributeValue);
-        return this;
-    }
-
-    public Object getObject(final String attributeName) {
-        return model.get(attributeName);
-    }
-
-    public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
+    public ModelAndView(View view, Map<String, Object> model) {
+        if (view == null) {
+            throw new IllegalArgumentException("뷰 객체는 null일 수 없습니다.");
+        }
+        this.view = view;
+        this.model = new HashMap<>(model);
     }
 
     public View getView() {
-        return view;
+        return this.view;
+    }
+
+    public Map<String, Object> getModel() {
+        return Collections.unmodifiableMap(this.model);
+    }
+
+    public void addObject(String attributeName, Object attributeValue) {
+        this.model.put(attributeName, attributeValue);
+    }
+
+    public Object getObject(String key) {
+        return this.model.get(key);
     }
 }

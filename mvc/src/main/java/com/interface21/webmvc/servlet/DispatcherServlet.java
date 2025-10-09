@@ -1,15 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.InitializableHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.MethodHandlerAdapter;
-import com.techcourse.handler.HandlerAdapterRegistry;
-import com.techcourse.handler.HandlerDispatcher;
-import com.techcourse.handler.HandlerMappingRegistry;
-import com.techcourse.handler.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,11 +21,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        addHandlerMapping(new ManualHandlerMapping());
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
-        addHandlerAdapter(new ControllerHandlerAdapter());
-        addHandlerAdapter(new MethodHandlerAdapter());
+        addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
