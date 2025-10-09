@@ -28,11 +28,22 @@ public class AnnotationHandlerMapping implements InitializableHandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        return methodHandlers.get(
-                new HandlerKey(
-                        request.getRequestURI(),
-                        RequestMethod.valueOf(request.getMethod())
-                )
-        );
+        final String lookupPath = extractLookupPath(request);
+        return methodHandlers.get(new HandlerKey(lookupPath, RequestMethod.valueOf(request.getMethod())));
+    }
+
+    private String extractLookupPath(final HttpServletRequest request) {
+        final String requestUri = request.getRequestURI();
+        final String contextPath = request.getContextPath();
+
+        if (contextPath == null || contextPath.isEmpty()) {
+            return requestUri;
+        }
+
+        if (!requestUri.startsWith(contextPath)) {
+            return requestUri;
+        }
+
+        return requestUri.substring(contextPath.length());
     }
 }

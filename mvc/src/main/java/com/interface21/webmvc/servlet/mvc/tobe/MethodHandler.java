@@ -15,10 +15,34 @@ public class MethodHandler {
     }
 
     public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return method.invoke(controller, request, response);
+        final Object[] arguments = resolveArguments(request, response);
+        return method.invoke(controller, arguments);
     }
 
     public Method getMethod() {
         return method;
+    }
+
+    private Object[] resolveArguments(final HttpServletRequest request, final HttpServletResponse response) {
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        final Object[] args = new Object[parameterTypes.length];
+
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class<?> parameterType = parameterTypes[i];
+
+            if (HttpServletRequest.class.isAssignableFrom(parameterType)) {
+                args[i] = request;
+                continue;
+            }
+
+            if (HttpServletResponse.class.isAssignableFrom(parameterType)) {
+                args[i] = response;
+                continue;
+            }
+
+            throw new IllegalArgumentException("지원하지 않는 파라미터 타입입니다: " + parameterType);
+        }
+
+        return args;
     }
 }
