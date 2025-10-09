@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,42 +7,33 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        final var reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
-        try {
-            for (final Class<?> controllerClass : controllerClasses) {
-                final Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-                registerControllerMethods(controllerInstance, controllerClass.getDeclaredMethods());
-            }
-        } catch (Exception e) {
-            log.error("Error creating controller instance", e);
-            throw new RuntimeException(e);
-        }
+        final ControllerScanner scanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = scanner.scan();
+        controllers.forEach((controllerClass, controllerInstance) -> {
+            registerControllerMethods(controllerInstance, controllerClass.getDeclaredMethods());
+        });
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerControllerMethods(final Object controllerInstance, final java.lang.reflect.Method[] methods) {
-        for (final java.lang.reflect.Method method : methods) {
+    private void registerControllerMethods(final Object controllerInstance, final Method[] methods) {
+        for (final Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
@@ -80,6 +70,7 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(methods);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var requestUri = request.getRequestURI();
         final var requestMethod = RequestMethod.valueOf(request.getMethod());
