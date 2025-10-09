@@ -6,34 +6,27 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final Object view;
+    private final View view;
     private final Map<String, Object> model;
 
-    public ModelAndView(String viewName) {
-        this.view = viewName;
-        this.model = new HashMap<>();
-    }
-
-    public ModelAndView(String viewName, Map<String, Object> model) {
-        this.view = viewName;
-        this.model = new HashMap<>(model);
-    }
-
     public ModelAndView(View view) {
+        if (view == null) {
+            throw new IllegalArgumentException("뷰 객체는 null일 수 없습니다.");
+        }
         this.view = view;
         this.model = new HashMap<>();
     }
 
-    public boolean isReference() {
-        return (this.view instanceof String);
-    }
-
-    public String getViewName() {
-        return (this.view instanceof String ? (String) this.view : null);
+    public ModelAndView(View view, Map<String, Object> model) {
+        if (view == null) {
+            throw new IllegalArgumentException("뷰 객체는 null일 수 없습니다.");
+        }
+        this.view = view;
+        this.model = new HashMap<>(model);
     }
 
     public View getView() {
-        return (this.view instanceof View ? (View) this.view : null);
+        return this.view;
     }
 
     public Map<String, Object> getModel() {

@@ -3,6 +3,8 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.ResponseBody;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.view.JsonView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -35,14 +37,14 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         if (hasResponseBody(methodHandler)) {
             final Map<String, Object> model = new HashMap<>();
             model.put("data", result);
-            return new ModelAndView("json", model);
+            return new ModelAndView(new JsonView(), model);
         }
 
-        if (result instanceof String) {
-            return new ModelAndView((String) result);
+        if (result instanceof View) {
+            return new ModelAndView((View) result);
         }
 
-        return new ModelAndView(result.toString());
+        throw new IllegalStateException("지원하지 않는 반환 타입입니다: " + result.getClass());
     }
 
     private boolean hasResponseBody(final MethodHandler methodHandler) {

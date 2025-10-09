@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.view.JsonView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +24,6 @@ public class DispatcherServlet extends HttpServlet {
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         addHandlerAdapter(new AnnotationHandlerAdapter());
-
-        addHandlerView("json", new JsonView());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -38,10 +35,6 @@ public class DispatcherServlet extends HttpServlet {
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
-    }
-
-    public void addHandlerView(final String viewName, final View view) {
-        handlerDispatcher.addView(viewName, view);
     }
 
     @Override

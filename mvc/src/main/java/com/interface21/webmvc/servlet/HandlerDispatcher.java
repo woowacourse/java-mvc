@@ -4,23 +4,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HandlerDispatcher {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private final Map<String, View> views = new HashMap<>();
 
     public HandlerDispatcher(HandlerMappingRegistry handlerMappingRegistry,
                              HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdapterRegistry = handlerAdapterRegistry;
-    }
-
-    public void addView(final String viewName, final View view) {
-        views.put(viewName, view);
     }
 
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException {
@@ -52,16 +45,11 @@ public class HandlerDispatcher {
             return;
         }
 
-        if (mav.isReference()) {
-            final var viewName = mav.getViewName();
-            if (views.containsKey(viewName)) {
-                views.get(viewName).render(mav.getModel(), request, response);
-                return;
-            }
-            request.getRequestDispatcher(viewName).forward(request, response);
-            return;
+        final var view = mav.getView();
+        if (view == null) {
+            throw new IllegalStateException("렌더링할 뷰가 ModelAndView에 설정되어 있지 않습니다.");
         }
-        mav.getView().render(mav.getModel(), request, response);
+        view.render(mav.getModel(), request, response);
     }
 
     private void handleNotFound(HttpServletResponse response, IllegalArgumentException e) throws ServletException {
@@ -76,4 +64,3 @@ public class HandlerDispatcher {
         throw new ServletException(e.getMessage());
     }
 }
-
