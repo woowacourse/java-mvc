@@ -1,16 +1,13 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerNotFoundException;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.exception.HandlerNotFoundException;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,18 +31,14 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        addHandlerAdapter(new ControllerHandlerAdapter());
         addHandlerAdapter(new HandlerExecutionHandlerAdapter());
 
         handlerMappingRegistry = new HandlerMappingRegistry();
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        addHandlerMapping(manualHandlerMapping);
         addHandlerMapping(annotationHandlerMapping);
-        manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
-        handlerExecutor = new HandlerExecutor();
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
@@ -57,8 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(() -> new HandlerNotFoundException("handler를 찾을 수 없습니다."));
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerExecutor.execute(handlerAdapter, handler, request, response);
+            ModelAndView modelAndView = handlerExecutor.handle(handler, request, response);
             render(modelAndView, request, response);
         } catch (HandlerNotFoundException e) {
             log.warn("Not found handler. message={}", e.getMessage());
