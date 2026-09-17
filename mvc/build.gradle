@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'com.interface21'
-version '1.0-SNAPSHOT'
+group = 'com.interface21'
+version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21

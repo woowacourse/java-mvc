@@ -3,8 +3,8 @@ plugins {
     id 'idea'
 }
 
-group 'com.techcourse'
-version '1.0-SNAPSHOT'
+group = 'com.techcourse'
+version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -33,14 +33,14 @@ dependencies {
 }
 
 test {
-    maxParallelForks 3
+    maxParallelForks = 3
     useJUnitPlatform()
 }
 
 idea {
     module {
         inheritOutputDirs = false
-        outputDir file('src/main/webapp/WEB-INF/classes')
+        outputDir = file('src/main/webapp/WEB-INF/classes')
     }
 }
 
