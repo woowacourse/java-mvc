@@ -115,15 +115,17 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = null;
-        final Field field = null;
+        Student student = new Student();
+        Field field = null;
 
         // todo field에 접근 할 수 있도록 만든다.
+        field = studentClass.getDeclaredField("age");
+        field.setAccessible(true);
 
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
 
-        field.set(null, null);
+        field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
