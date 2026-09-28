@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,25 +20,25 @@ class ReflectionTest {
     void givenObject_whenGetsClassName_thenCorrect() {
         final Class<Question> clazz = Question.class;
 
-        assertThat(clazz.getSimpleName()).isEqualTo("");
-        assertThat(clazz.getName()).isEqualTo("");
-        assertThat(clazz.getCanonicalName()).isEqualTo("");
+        assertThat(clazz.getSimpleName()).isEqualTo("Question");
+        assertThat(clazz.getName()).isEqualTo("reflection.Question");
+        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
     }
 
     @Test
     void givenClassName_whenCreatesObject_thenCorrect() throws ClassNotFoundException {
         final Class<?> clazz = Class.forName("reflection.Question");
 
-        assertThat(clazz.getSimpleName()).isEqualTo("");
-        assertThat(clazz.getName()).isEqualTo("");
-        assertThat(clazz.getCanonicalName()).isEqualTo("");
+        assertThat(clazz.getSimpleName()).isEqualTo("Question");
+        assertThat(clazz.getName()).isEqualTo("reflection.Question");
+        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
     }
 
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
         final Object student = new Student();
-        final Field[] fields = null;
-        final List<String> actualFieldNames = null;
+        final Field[] fields = student.getClass().getDeclaredFields();
+        final List<String> actualFieldNames = Arrays.stream(fields).map(Field::getName).toList();
 
         assertThat(actualFieldNames).contains("name", "age");
     }
