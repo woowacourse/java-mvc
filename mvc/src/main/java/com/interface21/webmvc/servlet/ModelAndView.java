@@ -16,6 +16,7 @@ public class ModelAndView {
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
+        // ?? 왜 this를 굳이 반환할까? put하면 되는 거 아닌가?
         return this;
     }
 
