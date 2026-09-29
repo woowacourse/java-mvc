@@ -5,17 +5,17 @@ import java.util.Objects;
 
 public class Question {
 
-    private long questionId;
+    private final long questionId;
 
-    private String writer;
+    private final String writer;
 
     private String title;
 
     private String contents;
 
-    private Date createdDate;
+    private final Date createdDate;
 
-    private int countOfComment;
+    private final int countOfComment;
 
     public Question(String writer, String title, String contents) {
         this(0, writer, title, contents, new Date(), 0);
@@ -65,6 +65,18 @@ public class Question {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(questionId, writer, title, contents, createdDate, countOfComment);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Question question)) return false;
+        return questionId == question.questionId && countOfComment == question.countOfComment && Objects.equals(writer, question.writer) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(createdDate, question.createdDate);
+    }
+
+    @Override
     public String toString() {
         return "Question{" +
                 "questionId=" + questionId +
@@ -74,18 +86,5 @@ public class Question {
                 ", createdDate=" + createdDate +
                 ", countOfComment=" + countOfComment +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Question)) return false;
-        Question question = (Question) o;
-        return questionId == question.questionId && countOfComment == question.countOfComment && Objects.equals(writer, question.writer) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(createdDate, question.createdDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(questionId, writer, title, contents, createdDate, countOfComment);
     }
 }

@@ -8,7 +8,6 @@ import reflection.annotation.Controller;
 import reflection.annotation.Repository;
 import reflection.annotation.Service;
 
-import java.lang.reflect.Constructor;
 import java.util.Set;
 
 class ReflectionsTest {
