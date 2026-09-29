@@ -69,9 +69,16 @@ public class AnnotationHandlerMapping {
             requestMethods = RequestMethod.values();
         }
 
+        registerHandlerExecutions(method, controllerInstance, requestMethods, url);
+    }
+
+    private void registerHandlerExecutions(Method method, Object controllerInstance, RequestMethod[] requestMethods, String url) {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(url, requestMethod);
-            handlerExecutions.putIfAbsent(key, new HandlerExecution(controllerInstance, method));
+            if (handlerExecutions.containsKey(key)) {
+                throw new IllegalStateException(String.format("이미 존재하는 URL과 HTTP Method 매핑입니다: %s", key));
+            }
+            handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
         }
     }
 }
