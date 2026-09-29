@@ -3,12 +3,14 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,32 +28,45 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllers) {
+            Object controller = createController(controllerClass);
 
+            Arrays.stream(controllerClass.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> {
+                        registerHandler(controller, method);
+                    });
+        }
 
-            Object controllerInstance;
-            try {
-                controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controllerClass.getName(), e);
-            }
+        log.info("Initialized AnnotationHandlerMapping!");
+    }
 
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                if (annotation == null) {
-                    continue;
-                }
-                RequestMethod[] requestMethods = annotation.method();
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                    handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
-                }
-            }
+    private void registerHandler(Object controller, Method method) {
+        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+
+        Arrays.stream(mapping.method())
+                .forEach(requestMethod -> {
+                    HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+                    HandlerExecution handler = new HandlerExecution(controller, method);
+
+                    if (handlerExecutions.putIfAbsent(key, handler) != null) {
+                        throw new IllegalStateException(
+                                "중복된 핸들러 매핑입니다: "
+                                        + requestMethod + " " + mapping.value()
+                        );
+                    }
+                });
+    }
+
+    @Nonnull
+    private static Object createController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controllerClass.getName(), e);
         }
     }
 
