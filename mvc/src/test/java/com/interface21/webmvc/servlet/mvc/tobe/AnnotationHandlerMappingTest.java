@@ -56,6 +56,16 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 지원하지_않는_HTTP_메서드는_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CONNECT");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
     void 같은_URL과_메서드가_중복_매핑되면_초기화에_실패한다() {
         final var duplicateMapping = new AnnotationHandlerMapping(DuplicateController.class.getPackageName());
 

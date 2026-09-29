@@ -9,6 +9,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,19 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        RequestMethod requestMethod = findRequestMethod(request.getMethod());
+        if (requestMethod == null) {
+            return null;
+        }
+
+        HandlerKey key = new HandlerKey(request.getRequestURI(), requestMethod);
         return handlerExecutions.get(key);
+    }
+
+    private RequestMethod findRequestMethod(final String method) {
+        return Arrays.stream(RequestMethod.values())
+                .filter(requestMethod -> requestMethod.name().equals(method))
+                .findFirst()
+                .orElse(null);
     }
 }
