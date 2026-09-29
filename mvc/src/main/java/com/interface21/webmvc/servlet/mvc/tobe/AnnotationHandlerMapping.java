@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping {
 
                     for (RequestMethod requestMethod : mapping.method()) {
                         HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
-                        handlerExecutions.put(key, new HandlerExecution(controller, method));
+                        register(key, new HandlerExecution(controller, method), method);
                     }
                 }
             } catch (ReflectiveOperationException e) {
@@ -46,6 +46,12 @@ public class AnnotationHandlerMapping {
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void register(final HandlerKey key, final HandlerExecution handlerExecution, final Method method) {
+        if (handlerExecutions.putIfAbsent(key, handlerExecution) != null) {
+            throw new IllegalStateException("중복된 매핑입니다: " + key + " -> " + method);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {

@@ -1,11 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +53,28 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 같은_URL과_메서드가_중복_매핑되면_초기화에_실패한다() {
+        final var duplicateMapping = new AnnotationHandlerMapping(DuplicateController.class.getPackageName());
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("중복된 매핑");
+    }
+
+    @Controller
+    static class DuplicateController {
+
+        @RequestMapping(value = "/duplicate", method = RequestMethod.GET)
+        public ModelAndView first(final HttpServletRequest request, final HttpServletResponse response) {
+            return new ModelAndView(new JspView(""));
+        }
+
+        @RequestMapping(value = "/duplicate", method = RequestMethod.GET)
+        public ModelAndView second(final HttpServletRequest request, final HttpServletResponse response) {
+            return new ModelAndView(new JspView(""));
+        }
     }
 }
