@@ -16,10 +16,10 @@ public class HandlerExecution {
         this.handleMethod = handleMethod;
     }
 
-    public static HandlerExecution from(final Object handler, final Method handleMethod) {
+    public static HandlerExecution from(final Object controller, final Method handleMethod) {
         return new HandlerExecution(((request, response) -> {
             try {
-                return (ModelAndView) handleMethod.invoke(handler, request, response);
+                return (ModelAndView) handleMethod.invoke(controller, request, response);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
