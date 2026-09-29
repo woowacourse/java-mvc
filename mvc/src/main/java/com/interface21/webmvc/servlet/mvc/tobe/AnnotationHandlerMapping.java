@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -33,6 +32,14 @@ public class AnnotationHandlerMapping {
         for (Class<?> controller : controllers) {
             registerController(controller);
         }
+    }
+
+    public Object getHandler(final HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String method = request.getMethod();
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
+        HandlerKey key = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.get(key);
     }
 
     private void registerController(Class<?> controller) {
@@ -67,13 +74,5 @@ public class AnnotationHandlerMapping {
             HandlerKey key = new HandlerKey(url, requestMethod);
             handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        RequestMethod requestMethod = RequestMethod.valueOf(method);
-        HandlerKey key = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(key);
     }
 }
