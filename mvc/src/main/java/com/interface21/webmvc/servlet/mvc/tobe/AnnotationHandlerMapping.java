@@ -35,11 +35,10 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        RequestMethod requestMethod = RequestMethod.valueOf(method);
-        HandlerKey key = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(key);
+        return RequestMethod.from(request.getMethod())
+                .map(requestMethod -> new HandlerKey(request.getRequestURI(), requestMethod))
+                .map(handlerExecutions::get)
+                .orElse(null);
     }
 
     private void registerController(Class<?> controller) {
