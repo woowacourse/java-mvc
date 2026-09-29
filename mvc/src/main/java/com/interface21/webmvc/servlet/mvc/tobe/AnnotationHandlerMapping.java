@@ -72,7 +72,7 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
+            handlerExecutions.putIfAbsent(key, new HandlerExecution(controllerInstance, method));
         }
     }
 }
