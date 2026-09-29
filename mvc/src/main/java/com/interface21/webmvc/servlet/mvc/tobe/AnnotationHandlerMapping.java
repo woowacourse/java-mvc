@@ -60,6 +60,9 @@ public class AnnotationHandlerMapping {
     private void enrollHandler(RequestMapping requestMapping, Method method, Object controller) {
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             HandlerExecution handlerExecution = (request, response) ->
