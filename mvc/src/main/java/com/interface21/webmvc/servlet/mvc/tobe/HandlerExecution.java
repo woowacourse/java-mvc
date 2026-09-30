@@ -10,15 +10,13 @@ public class HandlerExecution {
 
     private final Object instance;
     private final Method method;
-    private final ArgumentController argumentController;
 
     public HandlerExecution(Object instance, Method method) {
         this.instance = instance;
         this.method = method;
-        this.argumentController = new ArgumentController();
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) argumentController.execute(instance, request, response, method);
+        return (ModelAndView) method.invoke(instance, request, response);
     }
 }
