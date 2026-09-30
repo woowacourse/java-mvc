@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class JspView implements View {
 
@@ -17,7 +18,7 @@ public class JspView implements View {
     private final String viewName;
 
     public JspView(final String viewName) {
-        this.viewName = viewName;
+        this.viewName = Objects.requireNonNull(viewName);
     }
 
     @Override
