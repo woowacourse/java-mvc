@@ -11,6 +11,10 @@ public class HandlerExecution {
     private final Method method;
 
     public HandlerExecution(Object handler, Method method) {
+        if (!ModelAndView.class.isAssignableFrom(method.getReturnType())) {
+            throw new IllegalStateException(
+                    "@RequestMapping 메서드는 ModelAndView를 반환해야 합니다: " + method);
+        }
         this.handler = handler;
         this.method = method;
     }
