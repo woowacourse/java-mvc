@@ -30,4 +30,13 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/non-request-method-test")
+    public ModelAndView nonRequestMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller post method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
 }

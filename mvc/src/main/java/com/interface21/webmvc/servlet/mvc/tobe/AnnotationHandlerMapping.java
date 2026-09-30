@@ -57,12 +57,13 @@ public class AnnotationHandlerMapping {
                 }
 
                 String url = requestMapping.value();
-                for(RequestMethod requestMethod : requestMapping.method()) {
-                    if (requestMethod == null) {
-                        supportAllRequestMethod(url, controller, method);
-                        continue;
-                    }
+                RequestMethod[] httpMethods = requestMapping.method();
+                if (httpMethods.length == 0) {
+                    supportAllRequestMethod(url, controller, method);
+                    continue;
+                }
 
+                for(RequestMethod requestMethod : httpMethods) {
                     HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                     HandlerExecution handlerExecution = new HandlerExecution(controller, method);
                     handlerExecutions.put(handlerKey, handlerExecution);
