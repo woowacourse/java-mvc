@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,22 +18,19 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() throws Exception {
-        Reflections reflections = new Reflections(basePackage);
+        Set<Object> controllerInstances = controllerScanner.scan();
 
-        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            Constructor<?> constructor = controllerClass.getDeclaredConstructor();
-            Object controllerInstance = constructor.newInstance();
-
-            for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
+        for (Object controllerInstance : controllerInstances) {
+            for (Method controllerMethod : controllerInstance.getClass().getDeclaredMethods()) {
                 RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
                 if (requestMapping == null) {
                     continue;
