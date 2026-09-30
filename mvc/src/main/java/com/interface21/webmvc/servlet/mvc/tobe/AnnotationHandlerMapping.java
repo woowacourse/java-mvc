@@ -66,7 +66,10 @@ public class AnnotationHandlerMapping {
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+            if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                throw new IllegalStateException(
+                        "중복된 요청 매핑: " + handlerKey + ", 추가하려는 메서드: " + method);
+            }
         }
     }
 }
