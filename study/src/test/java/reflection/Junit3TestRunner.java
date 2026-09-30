@@ -9,7 +9,7 @@ class Junit3TestRunner {
     void run() throws Exception {
         Class<Junit3Test> clazz = Junit3Test.class;
         for (Method method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Test.class)) {
+            if (method.getName().startsWith("test")) {
                 System.out.println("Running " + method.getName());
                 method.invoke(clazz.getDeclaredConstructor().newInstance());
             }
