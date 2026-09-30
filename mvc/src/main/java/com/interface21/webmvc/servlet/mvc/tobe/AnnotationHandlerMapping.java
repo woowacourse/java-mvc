@@ -67,6 +67,14 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final RequestMethod requestMethod;
+        try {
+            requestMethod = RequestMethod.valueOf(request.getMethod());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 }
