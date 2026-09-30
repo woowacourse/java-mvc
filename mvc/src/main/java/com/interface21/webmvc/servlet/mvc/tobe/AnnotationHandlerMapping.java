@@ -1,9 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +27,8 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    public void initialize()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         // 여기서 HandlerKey, HandlerExecution을 넣어줘야 한다.
 
         // TODO: 아직 base가 어떤 기준으로 선정되는지 모름.
@@ -55,8 +59,10 @@ public class AnnotationHandlerMapping {
                         log.info("HandlerKey 생성 완료, url = {}, requestMethod = {}", url, requestMethod);
 
                         log.info("HandlerExecution 생성 시작");
-                        HandlerExecution handlerExecution = new HandlerExecution(aClass, method);
-                        log.info("HandlerExecution 생성 완료, aClassName = {}, methodName = {}", aClass.getName(),
+                        Constructor<?> constructor = ReflectionUtils.accessibleConstructor(aClass);
+                        Object controller = constructor.newInstance();
+                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                        log.info("HandlerExecution 생성 완료, className = {}, methodName = {}", aClass.getName(),
                                 method.getName());
 
                         log.info("handlerExecutions에 저장 시작");
