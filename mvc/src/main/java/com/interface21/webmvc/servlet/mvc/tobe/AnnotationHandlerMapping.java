@@ -1,18 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -30,15 +27,16 @@ public class AnnotationHandlerMapping {
         Set<Object> controllerInstances = controllerScanner.scan();
 
         for (Object controllerInstance : controllerInstances) {
-            for (Method controllerMethod : controllerInstance.getClass().getDeclaredMethods()) {
-                RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
+            Set<Method> requestMethods = ReflectionUtils.getAllMethods(
+                    controllerInstance.getClass(),
+                    ReflectionUtils.withAnnotation(RequestMapping.class)
+            );
+            for (Method requestMethod : requestMethods) {
+                RequestMapping requestMapping = requestMethod.getAnnotation(RequestMapping.class);
 
                 registerHandler(
                         controllerInstance,
-                        controllerMethod,
+                        requestMethod,
                         requestMapping.value(),
                         requestMapping.method()
                 );
