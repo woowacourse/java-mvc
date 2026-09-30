@@ -9,6 +9,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 
 import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.MethodNotAllowedException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +53,14 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        Optional<Object> handler;
+        try {
+            handler = handlerMappingRegistry.getHandler(request);
+        } catch (MethodNotAllowedException e) {
+            response.setHeader("Allow", e.getAllowHeader());
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return;
+        }
         if (handler.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             log.error("No handler found for request URI : {}", requestURI);

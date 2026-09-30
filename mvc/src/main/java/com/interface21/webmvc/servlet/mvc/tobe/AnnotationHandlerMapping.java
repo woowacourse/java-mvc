@@ -9,11 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -46,9 +48,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String contextPath = request.getContextPath();
         String requestURI = request.getRequestURI();
         String path = requestURI.substring(contextPath == null ? 0 : contextPath.length());
-        HandlerKey handlerKey = new HandlerKey(path, RequestMethod.valueOf(request.getMethod()));
+        Set<RequestMethod> allowedMethods = handlerExecutions.keySet().stream()
+                .filter(key -> key.getUrl().equals(path))
+                .map(HandlerKey::getRequestMethod)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(RequestMethod.class)));
+        if (allowedMethods.isEmpty()) {
+            return null;
+        }
 
-        return handlerExecutions.get(handlerKey);
+        RequestMethod requestMethod;
+        try {
+            requestMethod = RequestMethod.valueOf(request.getMethod());
+        } catch (IllegalArgumentException e) {
+            throw new MethodNotAllowedException(path, request.getMethod(), allowedMethods);
+        }
+
+        HandlerExecution handler = handlerExecutions.get(new HandlerKey(path, requestMethod));
+        if (handler == null) {
+            throw new MethodNotAllowedException(path, request.getMethod(), allowedMethods);
+        }
+        return handler;
     }
 
     private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
