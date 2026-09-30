@@ -69,18 +69,51 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(key, new HandlerExecution(controller, method));
+            registerHandlerByCriteria(controller, method, key);
         }
+    }
+
+    private void registerHandlerByCriteria(Object controller, Method method, HandlerKey key) {
+        if (!handlerExecutions.containsKey(key)) {
+            handlerExecutions.put(key, new HandlerExecution(controller, method));
+            return;
+        }
+
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        HandlerExecution handlerExecution = handlerExecutions.get(key);
+        if (requestMapping.method().length > 0 && !handlerExecution.containsExplicitMethod()) {
+            // http method가 생략되어 있으면 명시된 것 우선
+            handlerExecutions.put(key, new HandlerExecution(controller, method));
+            return;
+        }
+        if (requestMapping.method().length == 0 && handlerExecution.containsExplicitMethod()) {
+            return;
+        }
+
+        throw new IllegalStateException("이미 등록된 핸들러입니다.");
     }
 
     private void checkIfControllerMethodHasValidSignature(Method method) {
         List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
-        if (!parameterTypes.contains(HttpServletRequest.class) || !parameterTypes.contains(HttpServletResponse.class)) {
+        if (!hasValidParametersForRequestMapping(parameterTypes)) {
             throw new IllegalStateException("HttpServletRequest와 HttpServletResponse 타입의 파라미터가 필요합니다.");
         }
         if (!ModelAndView.class.equals(method.getReturnType())) {
             throw new IllegalStateException("반환 타입이 ModelAndView가 아닙니다.");
         }
+    }
+
+    private static boolean hasValidParametersForRequestMapping(List<Class<?>> parameterTypes) {
+        if (parameterTypes.size() != 2) {
+            return false;
+        }
+
+        boolean hasCorrectOrder = parameterTypes.get(0).equals(HttpServletRequest.class)
+                && parameterTypes.get(1).equals(HttpServletResponse.class);
+
+        return hasCorrectOrder
+                && parameterTypes.contains(HttpServletRequest.class)
+                && parameterTypes.contains(HttpServletResponse.class);
     }
 
     public Object getHandler(final HttpServletRequest request) {

@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,12 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
         return (ModelAndView) method.invoke(controller, request, response);
+    }
+
+    public boolean containsExplicitMethod() {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        return requestMapping.method().length > 0;
     }
 }
