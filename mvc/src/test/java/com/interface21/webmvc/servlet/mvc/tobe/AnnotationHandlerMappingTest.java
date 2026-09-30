@@ -15,8 +15,9 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
+        ControllerScanner controllerScanner = new ControllerScanner("samples");
+        handlerMapping = new AnnotationHandlerMapping();
+        handlerMapping.initialize(controllerScanner.scan());
     }
 
     @Test
