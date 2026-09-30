@@ -53,7 +53,10 @@ public class AnnotationHandlerMapping {
         final var annotation = method.getAnnotation(RequestMapping.class);
         final var handlerExecution = new HandlerExecution(instance, method);
         for (final RequestMethod requestMethod : getRequestMethods(annotation)) {
-            handlerExecutions.put(new HandlerKey(annotation.value(), requestMethod), handlerExecution);
+            final HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
+            }
         }
     }
 
