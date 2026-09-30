@@ -25,11 +25,11 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
         for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             registerController(controller);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void registerController(final Class<?> controller) {
@@ -44,7 +44,7 @@ public class AnnotationHandlerMapping {
     private Object getInstance(final Class<?> controller) {
         try {
             return controller.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controller.getName(), e);
         }
     }
@@ -65,7 +65,9 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(
-                request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        return RequestMethod.findByName(request.getMethod())
+                .map(requestMethod ->
+                        handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod)))
+                .orElse(null);
     }
 }
