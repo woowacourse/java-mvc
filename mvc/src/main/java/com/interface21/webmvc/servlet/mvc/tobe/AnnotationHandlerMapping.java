@@ -1,6 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +25,60 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+    public void initialize() throws Exception {
+        Reflections reflections = new Reflections(basePackage);
+
+        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+            Constructor<?> constructor = controllerClass.getDeclaredConstructor();
+            Object controllerInstance = constructor.newInstance();
+
+            for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
+                RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+                if (requestMapping == null) {
+                    continue;
+                }
+
+                registerHandler(
+                        controllerInstance,
+                        controllerMethod,
+                        requestMapping.value(),
+                        requestMapping.method()
+                );
+            }
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        String requestMethod = request.getMethod();
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
+
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private void registerHandler(
+            Object handlerInstance,
+            Method handlerMethod,
+            String requestPath,
+            RequestMethod[] requestMethods
+    ) {
+        // method가 생략되었다면 모든 HTTP Method를 대상으로 등록한다
+        if (requestMethods.length == 0) {
+            registerHandler(
+                    handlerInstance,
+                    handlerMethod,
+                    requestPath,
+                    RequestMethod.values()
+            );
+            return;
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
+            handlerExecutions.put(
+                    handlerKey,
+                    new HandlerExecution(handlerInstance, handlerMethod)
+            );
+        }
     }
 }
