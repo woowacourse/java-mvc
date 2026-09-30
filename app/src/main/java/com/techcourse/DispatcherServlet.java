@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
@@ -15,9 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
-
-import java.util.Map;
+import java.io.IOException;
 import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
@@ -50,23 +47,26 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        try {
-            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            if (!handler.isPresent()) {
-                throw new ServletException("No handler found for request URI : " + requestURI);
-            }
+        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        if (handler.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            log.error("No handler found for request URI : {}", requestURI);
+            return;
+        }
 
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-            ModelAndView modelAndView = handlerAdapter.handle(handler.get(), request, response);
+        Object foundHandler = handler.get();
+        try {
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(foundHandler);
+            ModelAndView modelAndView = handlerAdapter.handle(foundHandler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
     }
 }
