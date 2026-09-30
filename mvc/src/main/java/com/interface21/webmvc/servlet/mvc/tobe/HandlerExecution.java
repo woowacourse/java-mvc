@@ -10,16 +10,20 @@ import org.slf4j.LoggerFactory;
 public class HandlerExecution {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
-    private Object instance;
-    private Method method;
+    private final Object instance;
+    private final Method method;
 
     public HandlerExecution(Object instance, Method method) {
         this.instance = instance;
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        log.info("className = {}, method = {}", instance.getClass().getName(), method.getName());
-        return (ModelAndView) method.invoke(instance, request, response);
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            log.debug("className = {}, method = {}", instance.getClass().getName(), method.getName());
+            return (ModelAndView) method.invoke(instance, request, response);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 실행 실패: " + instance.getClass().getName() + " " + method.getName());
+        }
     }
 }
