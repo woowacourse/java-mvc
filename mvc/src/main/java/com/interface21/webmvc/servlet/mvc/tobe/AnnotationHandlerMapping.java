@@ -1,11 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +24,36 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        final Reflections reflections = new Reflections(basePackage);
+        reflections.getTypesAnnotatedWith(Controller.class).forEach(this::registerHandlers);
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void registerHandlers(final Class<?> controllerClass) {
+        final Object controller = createInstance(controllerClass);
+
+        Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> {
+                    final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                    Arrays.stream(mapping.method())
+                            .forEach(requestMethod -> handlerExecutions.put(
+                                    new HandlerKey(mapping.value(), requestMethod),
+                                    new HandlerExecution(controller, method)));
+                });
+    }
+
+    private Object createInstance(final Class<?> controllerClass) {
+        try {
+            return controllerClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 객체를 생성할 수 없습니다: " + controllerClass.getName(), e);
+        }
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod())));
     }
 }
