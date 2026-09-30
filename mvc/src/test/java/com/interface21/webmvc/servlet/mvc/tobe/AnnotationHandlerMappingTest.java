@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -77,5 +78,21 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("FOO");
 
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 핸들러_메서드의_반환_타입이_ModelAndView가_아니면_초기화할_때_예외가_발생한다() {
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.returntype");
+
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void 핸들러_메서드의_파라미터가_요청과_응답이_아니면_초기화할_때_예외가_발생한다() {
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.parameter");
+
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class);
     }
 }

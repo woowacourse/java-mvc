@@ -3,13 +3,17 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +40,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+
     private void registerController(Class<?> controllerClass) {
         try {
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
@@ -56,6 +61,7 @@ public class AnnotationHandlerMapping {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
 
+        checkIfControllerMethodHasValidSignature(method);
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
@@ -64,6 +70,16 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(url, requestMethod);
             handlerExecutions.put(key, new HandlerExecution(controller, method));
+        }
+    }
+
+    private void checkIfControllerMethodHasValidSignature(Method method) {
+        List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
+        if (!parameterTypes.contains(HttpServletRequest.class) || !parameterTypes.contains(HttpServletResponse.class)) {
+            throw new IllegalStateException("HttpServletRequest와 HttpServletResponse 타입의 파라미터가 필요합니다.");
+        }
+        if (!ModelAndView.class.equals(method.getReturnType())) {
+            throw new IllegalStateException("반환 타입이 ModelAndView가 아닙니다.");
         }
     }
 
