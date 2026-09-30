@@ -19,7 +19,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet("com.techcourse");
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        dispatcherServlet.addHandlerMapping(manualHandlerMapping);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

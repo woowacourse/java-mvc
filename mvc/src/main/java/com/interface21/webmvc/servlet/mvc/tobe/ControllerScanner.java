@@ -11,7 +11,7 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-    public ControllerScanner(Object[] basePackage) {
+    public ControllerScanner(Object... basePackage) {
         this.reflections = new Reflections(basePackage);
     }
 
