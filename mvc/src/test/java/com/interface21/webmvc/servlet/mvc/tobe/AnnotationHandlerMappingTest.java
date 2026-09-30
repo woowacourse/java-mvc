@@ -1,13 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.tobe.exception.MethodNotAllowedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +50,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void 등록되지_않은_URL이면_다른_매핑이_처리할_수_있도록_null을_반환한다() {
+    void 등록되지_않은_URL이면_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/not-registered");
@@ -62,32 +60,20 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void 등록된_URL이지만_지원하지_않는_HTTP_메서드면_예외가_발생한다() {
+    void 등록된_URL이지만_지원하지_않는_HTTP_메서드면_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("DELETE");
 
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(MethodNotAllowedException.class);
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 
     @Test
-    void 등록된_URL이지만_존재하지_않는_HTTP_메서드면_예외가_발생한다() {
+    void 존재하지_않는_HTTP_메서드면_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("FOO");
-
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(MethodNotAllowedException.class);
-    }
-
-    @Test
-    void 등록되지_않은_URL이면_존재하지_않는_HTTP_메서드여도_null을_반환한다() {
-        final var request = mock(HttpServletRequest.class);
-
-        when(request.getRequestURI()).thenReturn("/not-registered");
         when(request.getMethod()).thenReturn("FOO");
 
         assertThat(handlerMapping.getHandler(request)).isNull();
