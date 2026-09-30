@@ -26,7 +26,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
+        // @Controller가 직접 붙은 클래스만 스캔한다 (하위 클래스 제외)
+        for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class, true)) {
             registerController(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
