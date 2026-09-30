@@ -40,13 +40,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         ControllerScanner scanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = scanner.getControllers();
-
-        Set<Method> methods = getRequestMappingMethods(controllers.keySet());
-        for (Method method : methods) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            addHandlerExecutions(controllers, method, requestMapping);
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Map<Class<?>, Object> singleController = Map.of(entry.getKey(), entry.getValue());
+            Set<Method> methods = getRequestMappingMethods(singleController.keySet());
+            registerHandlerExecutions(methods, singleController);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerHandlerExecutions(Set<Method> methods, Map<Class<?>, Object> singleController) {
+        for (Method method : methods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(singleController, method, requestMapping);
+        }
     }
 
     private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllerClasses) {
@@ -60,8 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void addHandlerExecutions(final Map<Class<?>, Object> controllers, final Method method, final RequestMapping requestMapping) {
-        Class<?> declaringClass = method.getDeclaringClass();
-        Object controller = controllers.get(declaringClass);
+        Object controller = findController(controllers, method);
         String url = requestMapping.value();
 
         RequestMethod[] requestMethods = requestMapping.method();
@@ -73,6 +78,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             }
             handlerExecutions.put(key, new HandlerExecution(controller, method));
         }
+    }
+
+    private Object findController(Map<Class<?>, Object> controllers, Method method) {
+        return controllers.entrySet().stream()
+                .filter(entry -> method.getDeclaringClass().isAssignableFrom(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("컨트롤러 인스턴스를 찾을 수 없습니다: " + method));
     }
 
     private List<HandlerKey> mapHandlerKeys(final String url, final RequestMethod[] requestMethods) {
