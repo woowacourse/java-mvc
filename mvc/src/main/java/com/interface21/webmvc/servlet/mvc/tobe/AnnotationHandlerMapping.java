@@ -30,6 +30,8 @@ public class AnnotationHandlerMapping {
             registerController(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.forEach((handlerKey, handlerExecution) ->
+                log.info("{} -> {}", handlerKey, handlerExecution));
     }
 
     private void registerController(final Class<?> controller) {

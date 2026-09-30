@@ -27,4 +27,9 @@ public class HandlerExecution {
             throw e;
         }
     }
+
+    @Override
+    public String toString() {
+        return handler.getClass().getSimpleName() + "." + method.getName() + "()";
+    }
 }
