@@ -26,43 +26,45 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
         log.info("핸들러 매핑 초기화 시작: 탐색 패키지={}", Arrays.toString(basePackage));
+        Reflections reflections = new Reflections(basePackage);
 
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : typesAnnotatedWith) {
-            Object controller;
-            try {
-                controller = clazz.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
-            }
+        Set<Class<?>> annotatedController = reflections.getTypesAnnotatedWith(Controller.class);
 
-            Method[] declaredMethods = clazz.getDeclaredMethods();
-            log.info("컨트롤러 탐색: 클래스={}, 선언된 메서드 {}개", clazz.getName(), declaredMethods.length);
+        for (Class<?> clazz : annotatedController) {
+            Object controller = createController(clazz);
 
-            for (Method declaredMethod : declaredMethods) {
-                log.info("메서드 확인: 메서드={}, @RequestMapping 존재 여부={}", declaredMethod,
-                        declaredMethod.isAnnotationPresent(RequestMapping.class));
-
+            for (Method declaredMethod : clazz.getDeclaredMethods()) {
                 if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
-                    String value = annotation.value();
-                    RequestMethod[] method = annotation.method();
-
-                    if (method.length == 0) {
-                        method = RequestMethod.values();
-                    }
-
-                    for (RequestMethod requestMethod : method) {
-                        HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                        HandlerExecution execution = new HandlerExecution(controller, declaredMethod);
-                        handlerExecutions.put(handlerKey, execution);
-                        log.info("핸들러 등록: {} {} -> {}#{}", requestMethod, value,
-                                clazz.getName(), declaredMethod.getName());
-                    }
+                    registerHandler(controller, declaredMethod);
                 }
             }
+        }
+        log.info("핸들러 매핑 초기화 완료: 컨트롤러 {}개, 매핑 {}개",
+                annotatedController.size(), handlerExecutions.size());
+    }
+
+    private void registerHandler(Object controller, Method declaredMethod) {
+        RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
+        String value = annotation.value();
+        RequestMethod[] method = annotation.method();
+
+        if (method.length == 0) {
+            method = RequestMethod.values();
+        }
+        HandlerExecution execution = new HandlerExecution(controller, declaredMethod);
+
+        for (RequestMethod requestMethod : method) {
+            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+            handlerExecutions.put(handlerKey, execution);
+        }
+    }
+
+    private Object createController(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
         }
     }
 
