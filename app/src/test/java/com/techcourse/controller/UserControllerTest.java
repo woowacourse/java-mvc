@@ -25,7 +25,7 @@ class UserControllerTest {
 
         String body = render(request, response);
 
-        assertThat(body).isEqualTo("{\"user\":{\"account\":\"gugu\"}}");
+        assertThat(body).isEqualTo("{\"account\":\"gugu\"}");
         verify(response, never()).setStatus(anyInt());
     }
 
@@ -39,7 +39,7 @@ class UserControllerTest {
             String body = render(request, response);
 
             verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            assertThat(body).isEqualTo("{\"error\":\"account is required\"}");
+            assertThat(body).isEqualTo("\"account is required\"");
         }
     }
 
@@ -52,7 +52,7 @@ class UserControllerTest {
         String body = render(request, response);
 
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        assertThat(body).isEqualTo("{\"error\":\"User not found\"}");
+        assertThat(body).isEqualTo("\"User not found\"");
     }
 
     private String render(HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -10,6 +10,7 @@ import org.mockito.InOrder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +40,30 @@ class JsonViewTest {
         order.verify(response).getWriter();
         ObjectMapper mapper = new ObjectMapper();
         assertThat(mapper.readTree(body.toString())).isEqualTo(mapper.valueToTree(model));
+    }
+
+    @Test
+    void rendersSingleValueWithoutModelKey() throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        new JsonView().render(Map.of("user", Map.of("account", "gugu")),
+                mock(HttpServletRequest.class), response);
+
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+    }
+
+    @Test
+    void rendersSingleNullValueAsJsonNull() throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        new JsonView().render(Collections.singletonMap("user", null),
+                mock(HttpServletRequest.class), response);
+
+        assertThat(body.toString()).isEqualTo("null");
     }
 
     @Test
