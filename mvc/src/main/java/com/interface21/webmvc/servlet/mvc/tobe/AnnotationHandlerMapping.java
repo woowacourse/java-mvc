@@ -6,13 +6,12 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
@@ -32,34 +31,38 @@ public class AnnotationHandlerMapping {
 
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : typesAnnotatedWith) {
-                Object controller;
-                try {
-                    controller = clazz.getDeclaredConstructor().newInstance();
-                } catch (ReflectiveOperationException e) {
-                    throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
-                }
+            Object controller;
+            try {
+                controller = clazz.getDeclaredConstructor().newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
+            }
 
-                Method[] declaredMethods = clazz.getDeclaredMethods();
-                log.info("컨트롤러 탐색: 클래스={}, 선언된 메서드 {}개", clazz.getName(), declaredMethods.length);
+            Method[] declaredMethods = clazz.getDeclaredMethods();
+            log.info("컨트롤러 탐색: 클래스={}, 선언된 메서드 {}개", clazz.getName(), declaredMethods.length);
 
-                for (Method declaredMethod : declaredMethods) {
-                    log.info("메서드 확인: 메서드={}, @RequestMapping 존재 여부={}", declaredMethod,
-                            declaredMethod.isAnnotationPresent(RequestMapping.class));
+            for (Method declaredMethod : declaredMethods) {
+                log.info("메서드 확인: 메서드={}, @RequestMapping 존재 여부={}", declaredMethod,
+                        declaredMethod.isAnnotationPresent(RequestMapping.class));
 
-                    if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
-                        String value = annotation.value();
-                        RequestMethod[] method = annotation.method();
+                if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+                    RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
+                    String value = annotation.value();
+                    RequestMethod[] method = annotation.method();
 
-                        for (RequestMethod requestMethod : method) {
-                            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                            HandlerExecution execution = new HandlerExecution(controller, declaredMethod);
-                            handlerExecutions.put(handlerKey, execution);
-                            log.info("핸들러 등록: {} {} -> {}#{}", requestMethod, value,
-                                    clazz.getName(), declaredMethod.getName());
-                        }
+                    if (method.length == 0) {
+                        method = RequestMethod.values();
+                    }
+
+                    for (RequestMethod requestMethod : method) {
+                        HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+                        HandlerExecution execution = new HandlerExecution(controller, declaredMethod);
+                        handlerExecutions.put(handlerKey, execution);
+                        log.info("핸들러 등록: {} {} -> {}#{}", requestMethod, value,
+                                clazz.getName(), declaredMethod.getName());
                     }
                 }
+            }
         }
     }
 
