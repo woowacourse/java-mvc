@@ -12,7 +12,7 @@ public class Application {
 
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) {
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);
         log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);
