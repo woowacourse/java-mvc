@@ -22,14 +22,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    private void render(final ModelAndView modelAndView,
-                        final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
-        request.setAttribute("modelAndView", modelAndView);
-        Map<String, Object> model = modelAndView.getModel();
-        modelAndView.getView().render(model, request, response);
-    }
-
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Optional<Object> foundHandler = handlerMappingRegistry.getHandler(request);
@@ -46,5 +38,13 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e);
         }
+    }
+
+    private void render(final ModelAndView modelAndView,
+                        final HttpServletRequest request,
+                        final HttpServletResponse response) throws Exception {
+        request.setAttribute("modelAndView", modelAndView);
+        Map<String, Object> model = modelAndView.getModel();
+        modelAndView.getView().render(model, request, response);
     }
 }

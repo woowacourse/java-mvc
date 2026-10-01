@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -139,6 +140,13 @@ class AnnotationHandlerMappingTest {
         final ModelAndView modelAndView = handle(overlapHandlerMapping, "/users", "POST");
 
         assertThat(modelAndView.getObject("handler")).isEqualTo("anyMethod");
+    }
+
+    @Test
+    void RequestMapping이_없는_메서드는_핸들러로_등록하지_않는다() {
+        final AnnotationHandlerMapping helperHandlerMapping = new AnnotationHandlerMapping("helpersamples");
+
+        assertThatCode(helperHandlerMapping::initialize).doesNotThrowAnyException();
     }
 
     private ModelAndView handle(final AnnotationHandlerMapping mapping, final String uri, final String method) throws Exception {
