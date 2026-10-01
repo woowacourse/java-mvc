@@ -9,7 +9,7 @@ import com.interface21.webmvc.servlet.mvc.asis.Controller;
 public class RegisterController implements Controller {
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),

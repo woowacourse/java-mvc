@@ -32,7 +32,7 @@ public class ResourceFilter implements Filter {
     private RequestDispatcher requestDispatcher;
 
     @Override
-    public void init(final FilterConfig filterConfig) {
+    public void init(final FilterConfig filterConfig) throws ServletException {
         this.requestDispatcher = filterConfig.getServletContext().getNamedDispatcher("default");
     }
 
