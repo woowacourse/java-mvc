@@ -73,6 +73,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("이미 등록된 핸들러입니다: " + handlerKey);
+            }
             handlerExecutions.put(
                     handlerKey,
                     new HandlerExecution(handlerInstance, handlerMethod)
