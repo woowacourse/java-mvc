@@ -7,25 +7,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class JspView implements View {
 
-    private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     public static final String REDIRECT_PREFIX = "redirect:";
+    private static final Logger log = LoggerFactory.getLogger(JspView.class);
+    private final String viewName;
 
     public JspView(final String viewName) {
+        this.viewName = Objects.requireNonNull(viewName, "view 경로는 null일 수 없습니다.");
     }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
+        }
 
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
+        model.forEach((key, value) -> {
+            log.debug("attribute name : {}, value : {}", key, value);
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
+        request.getRequestDispatcher(viewName).forward(request, response);
     }
 }

@@ -15,11 +15,8 @@ public class HandlerKey {
     }
 
     @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
+    public int hashCode() {
+        return Objects.hash(url, requestMethod);
     }
 
     @Override
@@ -32,7 +29,10 @@ public class HandlerKey {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(url, requestMethod);
+    public String toString() {
+        return "HandlerKey{" +
+                "url='" + url + '\'' +
+                ", requestMethod=" + requestMethod +
+                '}';
     }
 }
