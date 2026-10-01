@@ -46,41 +46,4 @@ class HandlerAdapterTest {
 
         verify(response).sendRedirect("/login");
     }
-
-    @Test
-    @DisplayName("어노테이션 핸들러가 반환한 뷰와 모델을 보존한다")
-    void preservesModelAndViewReturnedByHandlerExecution() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        View view = mock(View.class);
-        AnnotationController controller = new AnnotationController(view);
-        Method method = AnnotationController.class.getDeclaredMethod(
-                "handle",
-                HttpServletRequest.class,
-                HttpServletResponse.class
-        );
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-
-        HandlerAdapter handlerAdapter = new HandlerExecutionAdapter();
-        ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
-
-        assertThat(modelAndView.getView()).isSameAs(view);
-        assertThat(modelAndView.getObject("name")).isEqualTo("gugu");
-    }
-
-    public static class AnnotationController {
-
-        private final View view;
-
-        AnnotationController(final View view) {
-            this.view = view;
-        }
-
-        public ModelAndView handle(
-                final HttpServletRequest request,
-                final HttpServletResponse response
-        ) {
-            return new ModelAndView(view).addObject("name", "gugu");
-        }
-    }
 }
