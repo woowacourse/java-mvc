@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,45 +24,51 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        final var reflections = new Reflections(basePackage);
+
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .forEach(this::registerController);
+
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
+    }
 
-        Set<Class<?>> controllerClasses =
-                reflections.getTypesAnnotatedWith(Controller.class);
+    private void registerController(final Class<?> controllerClass) {
+        final var controller = createController(controllerClass);
 
-        for (Class<?> controllerClass : controllerClasses) {
-            try {
-                Object controller = controllerClass.getDeclaredConstructor().newInstance();
-
-                for (Method method : controllerClass.getDeclaredMethods()) {
-                    if (!method.isAnnotationPresent(RequestMapping.class)) {
-                        continue;
-                    }
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-                    RequestMethod[] requestMethods = requestMapping.method();
-
-                    if (requestMethods.length == 0) {
-                        requestMethods = RequestMethod.values();
-                    }
-
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
-
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                registerHandler(controller, method);
             }
         }
+    }
 
+    private Object createController(final Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to create controller: " + controllerClass.getName(), e);
+        }
+    }
+
+    private void registerHandler(final Object controller, final Method method) {
+        final var requestMapping = method.getAnnotation(RequestMapping.class);
+
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            final var handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final var requestURI = request.getRequestURI();
+        final var requestMethod = RequestMethod.valueOf(request.getMethod());
 
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
