@@ -1,21 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
-import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
-
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -26,10 +23,9 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-
-        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            scanController(controllerClass);
+        final var controllers = new ControllerScanner(basePackage).getControllers();
+        for (Method method : getRequestMappingMethods(controllers.keySet())) {
+            addHandlerExecutions(controllers, method, method.getAnnotation(RequestMapping.class));
         }
     }
 
@@ -37,39 +33,37 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 
-    private void scanController(final Class<?> controllerClass) {
-        Object controller = createController(controllerClass);
-
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            if (requestMapping != null) {
-                addHandlerExecutions(controller, method, requestMapping);
-            }
-        }
-    }
-
-    private Object createController(final Class<?> controllerClass) {
-        try {
-            return ReflectionUtils.accessibleConstructor(controllerClass).newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void addHandlerExecutions(final Object controller, final Method method,
-                                      final RequestMapping requestMapping) {
-        RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
-            requestMethods = RequestMethod.values();
-        }
-
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers, final Method method,
+                                     final RequestMapping requestMapping) {
+        final var handlerExecution = new HandlerExecution(controllers.get(method.getDeclaringClass()), method);
+        for (HandlerKey handlerKey : mapHandlerKeys(requestMapping.value(), requestMapping.method())) {
             if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
                 throw new IllegalStateException(
                         "중복된 요청 매핑: " + handlerKey + ", 추가하려는 메서드: " + method);
             }
         }
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllerClasses) {
+        final Set<Method> methods = new HashSet<>();
+        for (Class<?> controllerClass : controllerClasses) {
+            for (Method method : controllerClass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(RequestMapping.class)) {
+                    methods.add(method);
+                }
+            }
+        }
+        return methods;
+    }
+
+    private List<HandlerKey> mapHandlerKeys(final String url, final RequestMethod[] requestMethods) {
+        var methods = requestMethods;
+        if (methods.length == 0) {
+            methods = RequestMethod.values();
+        }
+
+        return Arrays.stream(methods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
     }
 }
