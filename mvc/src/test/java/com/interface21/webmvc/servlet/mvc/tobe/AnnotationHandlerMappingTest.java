@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,6 +68,15 @@ class AnnotationHandlerMappingTest {
         assertThat(handlerExecution).isNotNull();
         final var modelAndView = handlerExecution.handle(request, response);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 같은_URL과_HTTP_Method에_중복된_매핑이_있으면_초기화에_실패한다() {
+        final var duplicateMapping = new AnnotationHandlerMapping("duplicate");
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .hasCauseInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("중복되는 핸들러입니다.");
     }
 
 }
