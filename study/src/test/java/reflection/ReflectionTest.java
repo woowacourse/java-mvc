@@ -66,14 +66,15 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
-        final Class<?> clazz = Question.class;
-        Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
+        final Class<Question> clazz = Question.class;
 
-        final Constructor<?> firstConstructor = declaredConstructors[0];
-        final Constructor<?> secondConstructor = declaredConstructors[1];
+        final Constructor<Question> firstConstructor =
+                clazz.getConstructor(String.class, String.class, String.class);
+        final Constructor<Question> secondConstructor =
+                clazz.getConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
 
-        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(
+        final Question firstQuestion = firstConstructor.newInstance("gugu", "제목1", "내용1");
+        final Question secondQuestion = secondConstructor.newInstance(
                 1L, "gugu", "제목2", "내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
