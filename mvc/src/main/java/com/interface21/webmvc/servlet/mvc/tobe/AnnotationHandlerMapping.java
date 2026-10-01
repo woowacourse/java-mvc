@@ -62,8 +62,15 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             final var handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+
+            if (!registerIfAbsent(handlerKey, handlerExecution)) {
+                throw new IllegalStateException("Duplicate handler mapping: " + handlerKey);
+            }
         }
+    }
+
+    private boolean registerIfAbsent(final HandlerKey handlerKey, final HandlerExecution handlerExecution) {
+        return handlerExecutions.putIfAbsent(handlerKey, handlerExecution) == null;
     }
 
     public Object getHandler(final HttpServletRequest request) {
