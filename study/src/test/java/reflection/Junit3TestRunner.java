@@ -2,6 +2,8 @@ package reflection;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+
 class Junit3TestRunner {
 
     @Test
@@ -9,12 +11,10 @@ class Junit3TestRunner {
         Class<Junit3Test> clazz = Junit3Test.class;
         Object instance = clazz.getDeclaredConstructor().newInstance();
 
-        java.lang.reflect.Method method1 = clazz.getMethod("test1");
-        java.lang.reflect.Method method2 = clazz.getMethod("test2");
-        java.lang.reflect.Method method3 = clazz.getMethod("three");
-
-        method1.invoke(instance);
-        method2.invoke(instance);
-        method3.invoke(instance);
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getName().startsWith("test")) {
+                method.invoke(instance);
+            }
+        }
     }
 }
