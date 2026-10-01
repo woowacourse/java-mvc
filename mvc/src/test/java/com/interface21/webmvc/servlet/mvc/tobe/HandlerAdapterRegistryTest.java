@@ -3,14 +3,13 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 
 class HandlerAdapterRegistryTest {
 
@@ -56,32 +55,22 @@ class HandlerAdapterRegistryTest {
     }
 
     private HandlerExecution createHandlerExecution() throws NoSuchMethodException {
-        AdapterTestController controller = new AdapterTestController();
-        Method method = AdapterTestController.class.getDeclaredMethod(
-                "handle",
+        TestController controller = new TestController();
+        Method method = TestController.class.getDeclaredMethod(
+                "findUserId",
                 HttpServletRequest.class,
                 HttpServletResponse.class
         );
         return new HandlerExecution(controller, method);
     }
 
-    public static class AdapterTestController {
-
-        public ModelAndView handle(
-                final HttpServletRequest request,
-                final HttpServletResponse response
-        ) {
-            return new ModelAndView(new JspView("/adapter-test.jsp"));
-        }
-    }
-
     private static class ControllerHandlerExecution extends HandlerExecution implements Controller {
 
         ControllerHandlerExecution() throws NoSuchMethodException {
             super(
-                    new AdapterTestController(),
-                    AdapterTestController.class.getDeclaredMethod(
-                            "handle",
+                    new TestController(),
+                    TestController.class.getDeclaredMethod(
+                            "findUserId",
                             HttpServletRequest.class,
                             HttpServletResponse.class
                     )
