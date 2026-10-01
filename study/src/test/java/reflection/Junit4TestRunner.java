@@ -2,6 +2,7 @@ package reflection;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Comparator;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
@@ -14,13 +15,10 @@ class Junit4TestRunner {
         TargetAnnotation testAnnotation = new TargetAnnotation("MyTest");
 
         Method[] methods = clazz.getDeclaredMethods();
-        Arrays.sort(methods, (left, right) -> left.getName().compareTo(right.getName()));
+        Arrays.sort(methods, Comparator.comparing(Method::getName));
 
         for (Method method : methods) {
-            boolean isIncluded = testAnnotation.included(method)
-                    && method.getParameterCount() == 0
-                    && method.getReturnType() == void.class;
-
+            boolean isIncluded = testAnnotation.included(method);
             if (isIncluded) {
                 method.invoke(junit4TestInstance);
             }
