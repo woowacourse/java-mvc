@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet;
+package com.interface21.webmvc.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
