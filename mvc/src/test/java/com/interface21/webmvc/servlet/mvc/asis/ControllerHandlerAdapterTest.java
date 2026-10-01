@@ -43,7 +43,7 @@ class ControllerHandlerAdapterTest {
             return "/index.jsp";
         };
 
-        final ModelAndView modelAndView = (ModelAndView) adapter.handle(request, response, controller);
+        final ModelAndView modelAndView = adapter.handle(request, response, controller);
 
         assertThat(executed).isTrue();
         assertThat(modelAndView.getView()).isInstanceOf(JspView.class);

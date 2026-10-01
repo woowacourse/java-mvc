@@ -14,14 +14,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class HandlerExecutionHandlerAdapterTest {
+class RequestMappingHandlerAdapterTest {
 
-    private HandlerExecutionHandlerAdapter adapter;
+    private RequestMappingHandlerAdapter adapter;
     private HandlerExecution handlerExecution;
 
     @BeforeEach
     void setUp() throws Exception {
-        adapter = new HandlerExecutionHandlerAdapter();
+        adapter = new RequestMappingHandlerAdapter();
         final Method method = TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         handlerExecution = new HandlerExecution(new TestController(), method);
     }
