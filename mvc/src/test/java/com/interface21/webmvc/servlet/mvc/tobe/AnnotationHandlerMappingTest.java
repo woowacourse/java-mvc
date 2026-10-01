@@ -18,7 +18,6 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     @Test
@@ -98,18 +97,25 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void rejectsDuplicateMappingsDuringInitialization() {
-        final var mapping = new AnnotationHandlerMapping("scannerfixtures.duplicate");
-
-        assertThatThrownBy(mapping::initialize)
+    void rejectsDuplicateMappingsDuringConstruction() {
+        assertThatThrownBy(() -> new AnnotationHandlerMapping("scannerfixtures.duplicate"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("/duplicate")
                 .hasMessageContaining("GET");
     }
 
+    @Test
+    void mapsControllersFromMultiplePackagesImmediatelyAfterConstruction() {
+        final var mapping = new AnnotationHandlerMapping("samples", "scannerfixtures.valid");
+
+        assertThat(mapping.getHandler(request("/get-test", RequestMethod.GET)))
+                .isInstanceOf(HandlerExecution.class);
+        assertThat(mapping.getHandler(request("/shared", RequestMethod.POST)))
+                .isInstanceOf(HandlerExecution.class);
+    }
+
     private void initializeScannerFixtures() {
         handlerMapping = new AnnotationHandlerMapping("scannerfixtures.valid");
-        handlerMapping.initialize();
     }
 
     private HttpServletRequest request(final String uri, final RequestMethod method) {

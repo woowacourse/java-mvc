@@ -15,15 +15,16 @@ import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         final var controllers = new ControllerScanner(basePackage).getControllers();
         for (Method method : getRequestMappingMethods(controllers.keySet())) {
             addHandlerExecutions(controllers, method, method.getAnnotation(RequestMapping.class));
