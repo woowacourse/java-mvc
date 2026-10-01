@@ -51,6 +51,24 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void allMethods() throws Exception {
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(getRequest.getRequestURI()).thenReturn("/all-methods-test");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/all-methods-test");
+        when(postRequest.getMethod()).thenReturn("POST");
+
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+
+        assertThat(getHandler.handle(getRequest, response).getObject("mapping")).isEqualTo("all-methods");
+        assertThat(postHandler.handle(postRequest, response).getObject("mapping")).isEqualTo("all-methods");
+    }
+
+    @Test
     void duplicateHandler() {
         final var duplicateHandlerMapping = new AnnotationHandlerMapping("mappingfixtures.duplicate");
 
