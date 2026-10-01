@@ -39,14 +39,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     }
 
     private HandlerMappingRegistry createHandlerMappingRegistry() {
-        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
         HandlerMappingRegistry registry = new HandlerMappingRegistry();
         registry.addHandlerMapping(annotationHandlerMapping);
-        registry.addHandlerMapping(manualHandlerMapping);
         return registry;
     }
 
