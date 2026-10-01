@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -116,6 +117,7 @@ public class AnnotationHandlerMapping {
                 && parameterTypes.contains(HttpServletResponse.class);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         try {
             HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.resolve(request.getMethod()));
