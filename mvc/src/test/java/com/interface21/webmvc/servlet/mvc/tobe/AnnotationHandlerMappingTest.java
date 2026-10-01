@@ -15,7 +15,9 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
+        // 패키지 스캔
         handlerMapping = new AnnotationHandlerMapping("samples");
+        // 등록
         handlerMapping.initialize();
     }
 
