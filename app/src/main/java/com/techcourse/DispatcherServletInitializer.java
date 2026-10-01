@@ -1,5 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +23,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(
+                createHandlerMappingRegistry(), createHandlerAdapterRegistry());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +36,24 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private HandlerMappingRegistry createHandlerMappingRegistry() {
+        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        manualHandlerMapping.initialize();
+        annotationHandlerMapping.initialize();
+
+        HandlerMappingRegistry registry = new HandlerMappingRegistry();
+        registry.addHandlerMapping(annotationHandlerMapping);
+        registry.addHandlerMapping(manualHandlerMapping);
+        return registry;
+    }
+
+    private HandlerAdapterRegistry createHandlerAdapterRegistry() {
+        HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
+        registry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        registry.addHandlerAdapter(new ManualHandlerAdapter());
+        return registry;
     }
 }
