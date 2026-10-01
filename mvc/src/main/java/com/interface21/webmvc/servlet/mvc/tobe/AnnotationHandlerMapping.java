@@ -64,17 +64,32 @@ public class AnnotationHandlerMapping {
             requestMethods = RequestMethod.values();
         }
         for (RequestMethod requestMethod : requestMethods) {
+            validateReturnType(method);
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             HandlerExecution handlerExecution = (request, response) ->
                     (ModelAndView) method.invoke(controller, request, response);
 
-            handlerExecutions.put(handlerKey, handlerExecution);
+            put(handlerKey,handlerExecution);
+        }
+    }
+
+    private void put(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        if(handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("이미 등록된 HandlerKey입니다. " + handlerKey.toString());
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
+    private static void validateReturnType(Method method) {
+        if (!ModelAndView.class.isAssignableFrom(method.getReturnType())) {
+            throw new IllegalStateException(
+                    "Handler의 반환타입이 ModelAndView가 아닙니다. type: " + method.getReturnType().getName());
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        RequestMethod requestMethod = RequestMethod.getRequestMethod(request.getMethod());
 
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
