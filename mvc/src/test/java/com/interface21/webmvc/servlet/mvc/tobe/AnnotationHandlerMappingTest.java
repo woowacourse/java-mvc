@@ -74,6 +74,21 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 클래스_레벨_경로와_메서드_레벨_경로를_합쳐_핸들러를_찾는다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getContextPath()).thenReturn("");
+        when(request.getRequestURI()).thenReturn("/prefix/test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("controller")).isEqualTo("prefix");
+    }
+
+    @Test
     void 지원하지_않는_HTTP_메서드는_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 

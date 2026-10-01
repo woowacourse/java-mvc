@@ -28,6 +28,7 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+            String prefix = getPrefix(controllerClass);
             try {
                 Object controller = controllerClass.getDeclaredConstructor().newInstance();
                 for (Method method : controllerClass.getDeclaredMethods()) {
@@ -37,7 +38,7 @@ public class AnnotationHandlerMapping {
                     }
 
                     for (RequestMethod requestMethod : mapping.method()) {
-                        HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+                        HandlerKey key = new HandlerKey(prefix + mapping.value(), requestMethod);
                         register(key, new HandlerExecution(controller, method), method);
                     }
                 }
@@ -71,5 +72,15 @@ public class AnnotationHandlerMapping {
                 .filter(requestMethod -> requestMethod.name().equals(method))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private String getPrefix(Class<?> controllerClass) {
+        RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);
+
+        if(requestMapping == null) {
+            return "";
+        }
+
+        return requestMapping.value();
     }
 }
