@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.asis;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,15 +35,15 @@ class ControllerHandlerAdapterTest {
 
     @Test
     void 컨트롤러를_실행하고_반환한_뷰_이름으로_JspView를_담은_ModelAndView를_반환한다() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var executed = new AtomicBoolean(false);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final AtomicBoolean executed = new AtomicBoolean(false);
         final Controller controller = (req, res) -> {
             executed.set(true);
             return "/index.jsp";
         };
 
-        final var modelAndView = adapter.handle(request, response, controller);
+        final ModelAndView modelAndView = (ModelAndView) adapter.handle(request, response, controller);
 
         assertThat(executed).isTrue();
         assertThat(modelAndView.getView()).isInstanceOf(JspView.class);

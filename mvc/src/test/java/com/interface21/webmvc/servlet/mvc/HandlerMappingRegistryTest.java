@@ -20,7 +20,7 @@ class HandlerMappingRegistryTest {
 
     @Test
     void 등록된_매핑이_처리할_수_있으면_그_핸들러를_반환한다() {
-        final var handler = new Object();
+        final Object handler = new Object();
         registry.addHandlerMapping(anyRequest -> handler);
 
         assertThat(registry.getHandler(request)).containsSame(handler);
@@ -28,7 +28,7 @@ class HandlerMappingRegistryTest {
 
     @Test
     void 앞의_매핑이_처리할_수_없으면_다음_매핑의_핸들러를_반환한다() {
-        final var handler = new Object();
+        final Object handler = new Object();
         registry.addHandlerMapping(anyRequest -> null);
         registry.addHandlerMapping(anyRequest -> handler);
 
@@ -37,8 +37,8 @@ class HandlerMappingRegistryTest {
 
     @Test
     void 여러_매핑이_처리할_수_있으면_먼저_등록된_매핑의_핸들러를_반환한다() {
-        final var firstHandler = new Object();
-        final var secondHandler = new Object();
+        final Object firstHandler = new Object();
+        final Object secondHandler = new Object();
         registry.addHandlerMapping(anyRequest -> firstHandler);
         registry.addHandlerMapping(anyRequest -> secondHandler);
 

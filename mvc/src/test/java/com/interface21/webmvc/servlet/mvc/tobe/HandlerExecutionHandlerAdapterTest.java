@@ -1,11 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -19,7 +22,7 @@ class HandlerExecutionHandlerAdapterTest {
     @BeforeEach
     void setUp() throws Exception {
         adapter = new HandlerExecutionHandlerAdapter();
-        final var method = TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        final Method method = TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         handlerExecution = new HandlerExecution(new TestController(), method);
     }
 
@@ -37,11 +40,11 @@ class HandlerExecutionHandlerAdapterTest {
 
     @Test
     void HandlerExecution을_실행하고_그_결과인_ModelAndView를_반환한다() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getAttribute("id")).thenReturn("gugu");
 
-        final var modelAndView = adapter.handle(request, response, handlerExecution);
+        final ModelAndView modelAndView = (ModelAndView) adapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
