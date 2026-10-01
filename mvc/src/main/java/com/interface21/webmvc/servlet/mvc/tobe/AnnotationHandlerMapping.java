@@ -32,7 +32,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         controllers.forEach((controllerClass, controller) -> {
-            for (Method method : controllerClass.getDeclaredMethods()) {
+            for (Method method : controllerClass.getMethods()) {
+                if (!method.isAnnotationPresent(RequestMapping.class)) {   // ← 이거
+                    continue;
+                }
                 registerHandler(controller, method);
             }
         });
