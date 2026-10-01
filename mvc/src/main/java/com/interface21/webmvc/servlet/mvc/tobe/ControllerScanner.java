@@ -13,14 +13,18 @@ public class ControllerScanner {
         this.basePackage = basePackage;
     }
 
-    public Set<Object> scan() throws ReflectiveOperationException {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Object> controllers = new HashSet<>();
+    public Set<Object> scan() {
+        try {
+            Reflections reflections = new Reflections(basePackage);
+            Set<Object> controllers = new HashSet<>();
 
-        for (Class<?> type : reflections.getTypesAnnotatedWith(Controller.class)) {
-            controllers.add(type.getDeclaredConstructor().newInstance());
+            for (Class<?> type : reflections.getTypesAnnotatedWith(Controller.class)) {
+                controllers.add(type.getDeclaredConstructor().newInstance());
+            }
+
+            return controllers;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        return controllers;
     }
 }
