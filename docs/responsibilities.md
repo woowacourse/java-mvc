@@ -31,3 +31,15 @@ Controller의 Handler 메서드를 실행한다.
 ### 계약
 
 - [x] 요청 경로와 HTTP Method가 모두 같으면 같은 Handler를 식별한다.
+ 
+## JspView
+
+### 책임
+
+JSP 기반 View를 렌더링한다.
+
+### 계약
+
+- [x] 리다이렉트 View는 지정된 경로로 리다이렉트한다.
+- [x] Model의 값을 Request attribute로 전달한다.
+- [x] 일반 View는 지정된 JSP로 요청을 전달한다.

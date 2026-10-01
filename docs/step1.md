@@ -8,7 +8,7 @@
 
 ## View
 
-- [ ] `JspView`를 구현한다.
+- [x] `JspView`를 구현한다.
 - [ ] `DispatcherServlet`의 뷰 처리 책임을 `JspView`로 이동한다.
 
 ## 제약
