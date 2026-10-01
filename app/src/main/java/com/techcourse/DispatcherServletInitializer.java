@@ -1,11 +1,12 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private HandlerAdapterRegistry createHandlerAdapterRegistry() {
         HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         registry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        registry.addHandlerAdapter(new ManualHandlerAdapter());
         return registry;
     }
 }
