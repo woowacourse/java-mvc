@@ -7,19 +7,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
-    private final HandlerMappingRegistry handlerMappingRegistry;
-    private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private final HandlerExecutor handlerExecutor;
-
-    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
-                             final HandlerAdapterRegistry handlerAdapterRegistry,
-                             final HandlerExecutor handlerExecutor) {
-        this.handlerMappingRegistry = handlerMappingRegistry;
-        this.handlerAdapterRegistry = handlerAdapterRegistry;
-        this.handlerExecutor = handlerExecutor;
-    }
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
@@ -29,18 +22,29 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    public void init() {
-
-    }
-
     private void render(final ModelAndView modelAndView,
                         final HttpServletRequest request,
-                        final HttpServletResponse response) {
-
+                        final HttpServletResponse response) throws Exception {
+        request.setAttribute("modelAndView", modelAndView);
+        Map<String, Object> model = modelAndView.getModel();
+        modelAndView.getView().render(model, request, response);
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        super.service(request, response);
+        Optional<Object> foundHandler = handlerMappingRegistry.getHandler(request);
+        if (foundHandler.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        Object handler = foundHandler.get();
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        try {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            render(modelAndView, request, response);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 }
