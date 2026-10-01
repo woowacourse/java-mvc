@@ -1,6 +1,9 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
+import com.techcourse.controller.UserSession;
+import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.Servlet;
@@ -13,6 +16,9 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,7 +63,7 @@ class DispatcherServletInitializerTest {
     }
 
     @Test
-    void 레거시_컨트롤러로_로그인_화면을_보여준다() throws Exception {
+    void 로그인하지_않았으면_로그인_화면을_보여준다() throws Exception {
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
 
@@ -100,5 +106,95 @@ class DispatcherServletInitializerTest {
         servlet.service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void 루트로_요청하면_메인_화면을_보여준다() throws Exception {
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("GET");
+
+        servlet.service(request, response);
+
+        verify(request).getRequestDispatcher("/index.jsp");
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 이미_로그인했으면_로그인_화면_대신_메인으로_리다이렉트한다() throws Exception {
+        final HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 올바른_계정과_비밀번호로_로그인하면_세션에_저장하고_메인으로_리다이렉트한다() throws Exception {
+        final HttpSession session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("password");
+
+        servlet.service(request, response);
+
+        verify(session).setAttribute(eq(UserSession.SESSION_KEY), any(User.class));
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 비밀번호가_틀리면_401_화면으로_리다이렉트한다() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void 없는_계정으로_로그인하면_401_화면으로_리다이렉트한다() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("nobody");
+        when(request.getParameter("password")).thenReturn("password");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void 로그아웃하면_세션에서_사용자를_지우고_루트로_리다이렉트한다() throws Exception {
+        final HttpSession session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn("GET");
+
+        servlet.service(request, response);
+
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
+    }
+
+    @Test
+    void 사용자_조회_API는_JSON으로_응답한다() throws Exception {
+        final StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body, true));
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+
+        servlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).contains("\"account\":\"gugu\"");
     }
 }
