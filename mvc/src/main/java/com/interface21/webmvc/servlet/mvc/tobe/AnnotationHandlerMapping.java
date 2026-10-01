@@ -38,9 +38,14 @@ public class AnnotationHandlerMapping {
 
             for (Method method : methods) {
                 String url = method.getAnnotation(RequestMapping.class).value();
-                RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method()[0];
+                RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
+                if (requestMethods.length == 0) {
+                    requestMethods = RequestMethod.values();
+                }
 
-                handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution());
+                for (RequestMethod requestMethod : requestMethods) {
+                    handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution());
+                }
             }
         }
     }
