@@ -1,19 +1,17 @@
 package reflection;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Date;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -82,14 +80,17 @@ class ReflectionTest {
 
         // 생성자 조회 방법은, 주어진 매개변수 클래스에 맞는 생성자를 가져온다.
         //String writer, String title, String contents
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class, String.class);
+        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class,
+                String.class);
         //Long questionId, String writer, String title, String contents, Date createdDate, int countOfComment
-        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
+        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructor(long.class, String.class,
+                String.class, String.class, Date.class, int.class);
 
         // newInstance()는 기본 생성자를 사용하듯 매개변수를 전달하면 된다.
         // 반환되는 값은 형변환을 해주어야 한다.
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(), 1);
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(),
+                1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -141,7 +142,8 @@ class ReflectionTest {
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         // Student를 동적으로 생성하고, setter 없이 값을 바꾼다.
         final Class<?> studentClass = Student.class;
-        final Student student = new Student();
+        Constructor<?> constructor = studentClass.getConstructor();
+        final Student student = (Student) constructor.newInstance();
         final Field field = studentClass.getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
