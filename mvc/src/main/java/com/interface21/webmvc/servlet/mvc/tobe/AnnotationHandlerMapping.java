@@ -28,20 +28,11 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         final var reflections = new Reflections(basePackage);
         for (final Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            final Object controller;
-            try {
-                controller = controllerClass.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("Cannot create controller: " + controllerClass.getName(), e);
-            }
+            final Object controller = createController(controllerClass);
 
-            for (final Method method : ReflectionUtils.getAllMethods(
-                    controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class))) {
+            for (final Method method : ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class))) {
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                final RequestMethod[] methods = requestMapping.method().length == 0
-                        ? RequestMethod.values() : requestMapping.method();
-
-                for (final RequestMethod requestMethod : methods) {
+                for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
                     final var key = new HandlerKey(requestMapping.value(), requestMethod);
                     handlerExecutions.put(key, new HandlerExecution(controller, method));
                     log.info("Mapped {} to {}.{}", key, controllerClass.getSimpleName(), method.getName());
@@ -54,5 +45,22 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         final var requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
+    }
+
+    private Object createController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Cannot create controller: " + controllerClass.getName(), e);
+        }
+    }
+
+    private RequestMethod[] resolveRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] methods = requestMapping.method();
+        if (methods.length == 0) {
+            return RequestMethod.values();
+        }
+
+        return methods;
     }
 }
