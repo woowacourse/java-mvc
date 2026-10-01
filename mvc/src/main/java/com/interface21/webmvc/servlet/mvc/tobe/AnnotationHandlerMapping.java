@@ -61,7 +61,8 @@ public class AnnotationHandlerMapping {
             return null;
         }
 
-        HandlerKey key = new HandlerKey(request.getRequestURI(), requestMethod);
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        HandlerKey key = new HandlerKey(path, requestMethod);
         return handlerExecutions.get(key);
     }
 

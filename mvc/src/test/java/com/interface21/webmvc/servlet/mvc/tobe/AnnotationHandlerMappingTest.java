@@ -31,6 +31,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
@@ -46,8 +47,25 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void context_path를_제외한_경로로_핸들러를_찾는다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("/app");
+        when(request.getRequestURI()).thenReturn("/app/get-test");
+        when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -59,6 +77,7 @@ class AnnotationHandlerMappingTest {
     void 지원하지_않는_HTTP_메서드는_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("CONNECT");
 
