@@ -9,12 +9,12 @@
 ## View
 
 - [x] `JspView`를 구현한다.
-- [ ] `DispatcherServlet`의 뷰 처리 책임을 `JspView`로 이동한다.
+- [x] `DispatcherServlet`의 뷰 처리 책임을 `JspView`로 이동한다.
 
 ## 제약
 
-- [ ] 기존 `Controller` 인터페이스는 변경하지 않는다.
-- [ ] 기존 Controller 방식과의 통합은 2단계에서 진행한다.
+- [x] 기존 `Controller` 인터페이스는 변경하지 않는다.
+- [x] 기존 Controller 방식과의 통합은 2단계에서 진행한다.
 
 ## 참고사항
 
