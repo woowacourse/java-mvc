@@ -102,14 +102,18 @@ class ReflectionTest {
                 String.class, String.class, Date.class, int.class);
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) firstConstructor.newInstance("gugu", "제목2", "내용2");
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(1642243200000L),
+                1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
         assertThat(firstQuestion.getContents()).isEqualTo("내용1");
+        assertThat(secondQuestion.getQuestionId()).isEqualTo(1L);
         assertThat(secondQuestion.getWriter()).isEqualTo("gugu");
         assertThat(secondQuestion.getTitle()).isEqualTo("제목2");
         assertThat(secondQuestion.getContents()).isEqualTo("내용2");
+        assertThat(secondQuestion.getCreatedDate()).isEqualTo(new Date(1642243200000L));
+        assertThat(secondQuestion.getCountOfComment()).isEqualTo(1);
     }
 
     @Test
