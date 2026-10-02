@@ -3,10 +3,9 @@ package com.interface21.webmvc.servlet.view;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class JspView implements View {
 
@@ -14,18 +13,29 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final ViewName viewName;
+
+    public JspView(final ViewName viewName) {
+        this.viewName = viewName;
+    }
+
     public JspView(final String viewName) {
+        this(new ViewName(viewName));
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        if (viewName.redirectable()) {
+            response.sendRedirect(viewName.path());
+            return;
+        }
 
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
+        model.forEach((key, value) -> {
+            log.debug("attribute name : {}, value : {}", key, value);
+            request.setAttribute(key, value);
         });
 
-        // todo
+        request.getRequestDispatcher(viewName.path()).forward(request, response);
     }
 }
