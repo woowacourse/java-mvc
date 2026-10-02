@@ -32,21 +32,40 @@ public class AnnotationHandlerMapping {
 
         for (Object base : basePackage) {
             final Reflections reflections = new Reflections(base);
+
             final Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
             for (Class<?> controllerType : controllerTypes) {
                 final var controller = controllerType.getDeclaredConstructor().newInstance();
+
                 Method[] methods = controllerType.getDeclaredMethods();
                 for (Method method : methods) {
                     if (!method.isAnnotationPresent(RequestMapping.class)) {
                         continue;
                     }
-                    RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-                    final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
                     final var handlerExecution = new HandlerExecution(controller, method);
+                    final var requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+
+                    RequestMethod[] supportedMethods = requestMapping.method();
+                    if (supportedMethods.length == 0) {
+                        supportedMethods = RequestMethod.values();
+                        for (RequestMethod supportedMethod : supportedMethods) {
+                            final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethod);
+
+                            handlerExecutions.put(handlerKey, handlerExecution);
+                            log.info("Request {} {} -> Mapped to {}#{} on instance={}",
+                                    supportedMethod, requestMapping.value(),
+                                    controllerType.getSimpleName(), method.getName(),
+                                    handlerExecution
+                            );
+                        }
+                        continue;
+                    }
+
+                    final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethods[0]);
 
                     handlerExecutions.put(handlerKey, handlerExecution);
                     log.info("Request {} {} -> Mapped to {}#{} on instance={}",
-                            requestMapping.method()[0], requestMapping.value(),
+                            supportedMethods[0], requestMapping.value(),
                             controllerType.getSimpleName(), method.getName(),
                             handlerExecution
                     );
