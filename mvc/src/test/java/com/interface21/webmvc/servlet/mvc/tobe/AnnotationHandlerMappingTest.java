@@ -42,6 +42,35 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @ParameterizedTest
+    @EnumSource(value = RequestMethod.class, names = {"GET", "POST"})
+    @DisplayName("@RequestMapping에 method를 여러 개 지정하면 지정한 HTTP method를 모두 지원한다")
+    void support_all_specified_http_methods(RequestMethod method) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-post-test");
+        when(request.getMethod()).thenReturn(method.name());
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RequestMethod.class, names = {"GET", "POST"}, mode = EnumSource.Mode.EXCLUDE)
+    @DisplayName("@RequestMapping에 지정하지 않은 HTTP method로 요청하면 핸들러를 찾지 못한다")
+    void not_support_unspecified_http_methods(RequestMethod method) {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-post-test");
+        when(request.getMethod()).thenReturn(method.name());
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);

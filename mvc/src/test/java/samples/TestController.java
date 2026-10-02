@@ -23,6 +23,14 @@ public class TestController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/get-post-test", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView handleGetAndPost(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller get and post method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");

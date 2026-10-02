@@ -48,27 +48,18 @@ public class AnnotationHandlerMapping {
                     RequestMethod[] supportedMethods = requestMapping.method();
                     if (supportedMethods.length == 0) {
                         supportedMethods = RequestMethod.values();
-                        for (RequestMethod supportedMethod : supportedMethods) {
-                            final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethod);
-
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                            log.info("Request {} {} -> Mapped to {}#{} on instance={}",
-                                    supportedMethod, requestMapping.value(),
-                                    controllerType.getSimpleName(), method.getName(),
-                                    handlerExecution
-                            );
-                        }
-                        continue;
                     }
 
-                    final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethods[0]);
+                    for (RequestMethod supportedMethod : supportedMethods) {
+                        final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethod);
 
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                    log.info("Request {} {} -> Mapped to {}#{} on instance={}",
-                            supportedMethods[0], requestMapping.value(),
-                            controllerType.getSimpleName(), method.getName(),
-                            handlerExecution
-                    );
+                        handlerExecutions.put(handlerKey, handlerExecution);
+                        log.info("Request {} {} -> Mapped to {}#{} on instance={}",
+                                supportedMethod, requestMapping.value(),
+                                controllerType.getSimpleName(), method.getName(),
+                                handlerExecution
+                        );
+                    }
                 }
             }
         }
