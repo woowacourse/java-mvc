@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -38,8 +39,16 @@ public class AnnotationHandlerMapping {
                     continue;
                 }
 
-                if (!method.trySetAccessible()) {
-                    throw new IllegalStateException("핸들러에 접근할 수 없습니다: " + method);
+                if (!Modifier.isPublic(method.getModifiers())) {
+                    throw new IllegalStateException("@RequestMapping 메서드는 public이어야 합니다: " + method);
+                }
+
+                Object target = controller;
+                if (Modifier.isStatic(method.getModifiers())) {
+                    target = null;
+                }
+                if (!method.canAccess(target)) {
+                    throw new IllegalStateException("요청 핸들러를 호출할 수 없습니다: " + method);
                 }
 
                 RequestMethod[] methods = mapping.method();
