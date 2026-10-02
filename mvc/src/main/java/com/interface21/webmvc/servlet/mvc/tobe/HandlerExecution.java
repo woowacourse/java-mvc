@@ -8,15 +8,15 @@ import java.lang.reflect.Method;
 public class HandlerExecution {
 
     private Object controller;
-    private Method requestMethod;
+    private Method method;
 
-    public HandlerExecution(Object controller, Method requestMethod) {
+    public HandlerExecution(Object controller, Method method) {
         this.controller = controller;
-        this.requestMethod = requestMethod;
+        this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object invoked = requestMethod.invoke(controller, request, response);
+        Object invoked = method.invoke(controller, request, response);
         return (ModelAndView) invoked;
     }
 }
