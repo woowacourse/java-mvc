@@ -38,6 +38,10 @@ public class AnnotationHandlerMapping {
                     continue;
                 }
 
+                if (!method.trySetAccessible()) {
+                    throw new IllegalStateException("핸들러에 접근할 수 없습니다: " + method);
+                }
+
                 RequestMethod[] methods = mapping.method();
                 if (methods.length == 0) {
                     methods = RequestMethod.values();
@@ -45,10 +49,13 @@ public class AnnotationHandlerMapping {
 
                 String uri = mapping.value();
                 for (RequestMethod requestMethod : methods) {
-                    handlerExecutions.put(
+                    HandlerExecution existing = handlerExecutions.putIfAbsent(
                             new HandlerKey(uri, requestMethod),
                             new HandlerExecution(controller, method)
                     );
+                    if (existing != null){
+                        throw new IllegalArgumentException("중복된 키 값 입니다.");
+                    }
                 }
             }
         }
