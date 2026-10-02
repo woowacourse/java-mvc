@@ -82,4 +82,25 @@ class AnnotationHandlerMappingTest {
             assertThat(handler).as(requestMethod.name()).isNotNull();
         }
     }
+
+    @Test
+    @DisplayName("같은 URL이라도 HTTP 메서드에 따라 다른 핸들러를 실행한다")
+    void invokesDifferentHandlersForSameUrl() throws Exception {
+        // given
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(getRequest.getRequestURI()).thenReturn("/same-url");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/same-url");
+        when(postRequest.getMethod()).thenReturn("POST");
+
+        // when
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+
+        // then
+        assertThat(getHandler.handle(getRequest, response).getObject("handler")).isEqualTo("GET");
+        assertThat(postHandler.handle(postRequest, response).getObject("handler")).isEqualTo("POST");
+    }
 }
