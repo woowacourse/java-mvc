@@ -30,4 +30,19 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping("/all-methods")
+    public ModelAndView handleAllMethods(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping(value = "/same-url", method = RequestMethod.GET)
+    public ModelAndView handleGet(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("handler", "GET");
+    }
+
+    @RequestMapping(value = "/same-url", method = RequestMethod.POST)
+    public ModelAndView handlePost(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("handler", "POST");
+    }
 }
