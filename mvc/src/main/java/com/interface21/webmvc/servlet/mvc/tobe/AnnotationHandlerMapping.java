@@ -28,11 +28,7 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         handlerExecutions.clear();
 
-        final String[] packageNames = new String[basePackage.length];
-        for (int index = 0; index < basePackage.length; index++) {
-            packageNames[index] = basePackage[index].toString();
-        }
-        final Reflections reflections = new Reflections(packageNames);
+        final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClasses) {
