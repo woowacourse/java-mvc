@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -73,6 +74,11 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         String requestURI = request.getRequestURI();
         HandlerKey key = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(key);
+        HandlerExecution handlerExecution = handlerExecutions.get(key);
+
+        if (handlerExecution == null) {
+            throw new NoSuchElementException("매핑된 핸들러가 없습니다: HTTP 메서드=" + requestMethod + ", URL=" + requestURI);
+        }
+        return handlerExecution;
     }
 }
