@@ -30,4 +30,12 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/empty-test")
+    public ModelAndView findUser(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller empty method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
 }
