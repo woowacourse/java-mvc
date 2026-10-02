@@ -1,13 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -47,5 +49,31 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void supportsAllHttpMethodsWhenMethodIsNotSpecified() throws Exception {
+        for (RequestMethod method : RequestMethod.values()) {
+            final var request = mock(HttpServletRequest.class);
+            final var response = mock(HttpServletResponse.class);
+            when(request.getRequestURI()).thenReturn("/all-methods-test");
+            when(request.getMethod()).thenReturn(method.name());
+            when(request.getAttribute("id")).thenReturn("gugu");
+
+            final var handler = handlerMapping.getHandler(request);
+            assertThat(handler).as("handler for %s", method).isInstanceOf(HandlerExecution.class);
+
+            final var modelAndView = ((HandlerExecution) handler).handle(request, response);
+            assertThat(modelAndView.getObject("id")).as("result for %s", method).isEqualTo("gugu");
+        }
+    }
+
+    @Test
+    void rejectsDuplicateUrlAndHttpMethod() {
+        final var duplicateMapping = new AnnotationHandlerMapping("mappingfixtures.duplicate");
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate handler mapping", "/duplicate", "GET");
     }
 }
