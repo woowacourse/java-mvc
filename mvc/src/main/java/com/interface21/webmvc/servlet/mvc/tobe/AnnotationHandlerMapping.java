@@ -29,27 +29,31 @@ public class AnnotationHandlerMapping {
         Reflections samples = new Reflections(basePackage);
         Set<Class<?>> typesAnnotatedWith = samples.getTypesAnnotatedWith(Controller.class);
         for (Class<?> aClass : typesAnnotatedWith) {
-            Method[] declaredMethods = aClass.getDeclaredMethods();
-            Object controller = getController(aClass);
-            for (Method declaredMethod : declaredMethods) {
-                RequestMapping mapping = declaredMethod.getAnnotation(RequestMapping.class);
-                if (mapping == null) {
-                    continue;
-                }
-                String url = mapping.value();
-                RequestMethod[] method = mapping.method();
-                if (method.length == 0) {
-                    method = RequestMethod.values();
-                }
-                for (RequestMethod requestMethod : method) {
-                    HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                    handlerExecutions.put(handlerKey, new HandlerExecution(controller, declaredMethod));
-                }
+            registerHandlers(aClass);
+        }
+    }
+
+    private void registerHandlers(Class<?> controllerClass) {
+        Method[] declaredMethods = controllerClass.getDeclaredMethods();
+        Object controller = createController(controllerClass);
+        for (Method declaredMethod : declaredMethods) {
+            RequestMapping mapping = declaredMethod.getAnnotation(RequestMapping.class);
+            if (mapping == null) {
+                continue;
+            }
+            String url = mapping.value();
+            RequestMethod[] method = mapping.method();
+            if (method.length == 0) {
+                method = RequestMethod.values();
+            }
+            for (RequestMethod requestMethod : method) {
+                HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+                handlerExecutions.put(handlerKey, new HandlerExecution(controller, declaredMethod));
             }
         }
     }
 
-    private static Object getController(Class<?> aClass) {
+    private static Object createController(Class<?> aClass) {
         Object controller;
         try {
             controller = aClass.getDeclaredConstructor().newInstance();
