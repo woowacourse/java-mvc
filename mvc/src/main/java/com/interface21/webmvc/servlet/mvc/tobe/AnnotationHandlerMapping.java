@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +63,7 @@ public class AnnotationHandlerMapping {
 
     private Object createController(Class<?> clazz) {
         try {
-            return clazz.getDeclaredConstructor().newInstance();
+            return ReflectionUtils.accessibleConstructor(clazz).newInstance();
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
         }
