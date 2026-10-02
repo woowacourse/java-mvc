@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,5 +66,14 @@ class AnnotationHandlerMappingTest {
             final var modelAndView = ((HandlerExecution) handler).handle(request, response);
             assertThat(modelAndView.getObject("id")).as("result for %s", method).isEqualTo("gugu");
         }
+    }
+
+    @Test
+    void rejectsDuplicateUrlAndHttpMethod() {
+        final var duplicateMapping = new AnnotationHandlerMapping("mappingfixtures.duplicate");
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate handler mapping", "/duplicate", "GET");
     }
 }
