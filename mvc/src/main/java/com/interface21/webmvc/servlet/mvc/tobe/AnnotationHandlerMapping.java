@@ -48,28 +48,37 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandlers(final Class<?> controllerClass) {
+        final Object controller;
         try {
-            final Object controller = controllerClass.getDeclaredConstructor().newInstance();
-
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-
-                final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                final RequestMethod[] requestMethods = requestMapping.method().length == 0
-                        ? RequestMethod.values()
-                        : requestMapping.method();
-
-                for (RequestMethod requestMethod : requestMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                    log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(), method.getName());
-                }
-            }
+            controller = controllerClass.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("Failed to register controller: " + controllerClass.getName(), exception);
         }
+
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            registerHandler(controller, method);
+        }
+    }
+
+    private void registerHandler(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
+
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        for (RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(), method.getName());
+        }
+    }
+
+    private RequestMethod[] resolveRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 }
