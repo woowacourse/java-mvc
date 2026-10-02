@@ -1,34 +1,50 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.HandlerExecutor;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final HandlerExecutor handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
 
     public DispatcherServlet() {
     }
 
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
+        final var manualHandlerMapping = new ManualHandlerMapping();
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+
+        addHandlerMapping(annotationHandlerMapping);
+        addHandlerMapping(manualHandlerMapping);
+        addHandlerAdapter(new HandlerExecutionAdapter());
+        addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     @Override
@@ -37,24 +53,23 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            HandlerExecution handler =
-                    (HandlerExecution) annotationHandlerMapping.getHandler(request);
-
-            if (handler != null) {
-                ModelAndView modelAndView = handler.handle(request, response);
-                modelAndView.getView().render(
-                        modelAndView.getModel(), request, response);
+            final var handler = handlerMappingRegistry.getHandler(request);
+            if (handler.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final var view = new JspView(viewName);
-            view.render(Map.of(), request, response);
-        } catch (Throwable e) {
+            final var modelAndView = handlerExecutor.execute(handler.get(), request, response);
+            render(modelAndView, request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
+    }
+
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+                        final HttpServletResponse response) throws Exception {
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 
 }

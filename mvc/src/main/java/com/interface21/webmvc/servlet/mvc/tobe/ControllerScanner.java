@@ -1,0 +1,33 @@
+package com.interface21.webmvc.servlet.mvc.tobe;
+
+import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
+
+public class ControllerScanner {
+
+    private final Reflections reflections;
+
+    public ControllerScanner(final String... basePackage) {
+        this.reflections = new Reflections((Object[]) basePackage);
+    }
+
+    public Map<Class<?>, Object> getControllers() {
+        return instantiateControllers(reflections.getTypesAnnotatedWith(Controller.class));
+    }
+
+    private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllerClasses) {
+        final Map<Class<?>, Object> controllers = new HashMap<>();
+        for (Class<?> controllerClass : controllerClasses) {
+            try {
+                controllers.put(controllerClass, ReflectionUtils.accessibleConstructor(controllerClass).newInstance());
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controllerClass.getName(), e);
+            }
+        }
+        return controllers;
+    }
+}
