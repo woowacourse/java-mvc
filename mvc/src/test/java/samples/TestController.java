@@ -15,6 +15,11 @@ public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
+    @RequestMapping("/all-methods-test")
+    public ModelAndView allMethods(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("id", request.getAttribute("id"));
+    }
+
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
