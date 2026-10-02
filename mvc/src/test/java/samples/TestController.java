@@ -35,4 +35,12 @@ public class TestController {
     public ModelAndView all(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView(""));
     }
+
+    @RequestMapping(value = "/private-test", method = RequestMethod.GET)
+    private ModelAndView privateHandler(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) {
+        return new ModelAndView(new JspView(""));
+    }
 }

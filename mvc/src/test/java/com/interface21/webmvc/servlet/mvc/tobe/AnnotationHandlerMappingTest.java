@@ -74,4 +74,16 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Duplicate handler mapping");
     }
+
+    @Test
+    void givenPrivateRequestMappingMethod_whenFindsHandler_thenReturnsNull() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/private-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isNull();
+    }
 }
