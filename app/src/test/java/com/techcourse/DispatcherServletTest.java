@@ -48,9 +48,9 @@ class DispatcherServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher(""))
+        when(request.getRequestDispatcher("/register.jsp"))
             .thenReturn(requestDispatcher);
 
         // when
