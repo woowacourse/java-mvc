@@ -21,17 +21,29 @@ class ManualHandlerMappingTest {
 
     @Test
     void 등록된_URI로_요청하면_컨트롤러를_반환한다() {
-        final var request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/login");
+        final var request = createRequest("", "/login");
 
         assertThat(handlerMapping.getHandler(request)).isInstanceOf(LoginController.class);
     }
 
     @Test
     void 등록되지_않은_URI로_요청하면_null을_반환한다() {
-        final var request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/not-found");
+        final var request = createRequest("", "/not-found");
 
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void context_path를_제외한_경로로_컨트롤러를_찾는다() {
+        final var request = createRequest("/app", "/app/login");
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(LoginController.class);
+    }
+
+    private HttpServletRequest createRequest(String contextPath, String requestURI) {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getContextPath()).thenReturn(contextPath);
+        when(request.getRequestURI()).thenReturn(requestURI);
+        return request;
     }
 }
