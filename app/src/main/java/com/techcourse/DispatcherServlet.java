@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +31,9 @@ public class DispatcherServlet extends HttpServlet {
         final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
 
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final var controllerScanner = new ControllerScanner("com.techcourse.controller");
+
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
         annotationHandlerMapping.initialize();
 
         handlerMappings.add(manualHandlerMapping);

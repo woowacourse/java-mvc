@@ -75,3 +75,14 @@ Handler의 종류에 맞는 방식으로 Handler를 실행한다.
 
 - [x] 자신이 실행할 수 있는 Handler인지 판단한다.
 - [x] Handler를 실행한다.
+
+## ControllerScanner
+
+### 책임
+
+@Controller가 선언된 클래스를 찾아 인스턴스를 생성한다.
+
+### 계약
+
+- [x] 지정된 패키지에서 @Controller가 선언된 클래스를 찾는다.
+- [x] 찾은 Controller 클래스의 인스턴스를 생성한다.

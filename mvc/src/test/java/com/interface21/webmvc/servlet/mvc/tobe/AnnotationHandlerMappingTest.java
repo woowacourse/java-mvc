@@ -17,7 +17,9 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping(
+                new ControllerScanner("samples")
+        );
         handlerMapping.initialize();
     }
 
@@ -68,7 +70,9 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void givenDuplicateHandlerMapping_whenInitializes_thenThrowsException() {
-        final var handlerMapping = new AnnotationHandlerMapping("duplicatesamples");
+        final var handlerMapping = new AnnotationHandlerMapping(
+                new ControllerScanner("duplicatesamples")
+        );
 
         assertThatThrownBy(handlerMapping::initialize)
                 .isInstanceOf(IllegalStateException.class)

@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
@@ -9,7 +8,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,25 +15,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
+        this.controllerScanner = controllerScanner;
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
-        final var reflections = new Reflections(basePackage);
 
-        reflections.getTypesAnnotatedWith(Controller.class)
+    public void initialize() {
+        controllerScanner.scan()
                 .forEach(this::registerController);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerController(final Class<?> controllerClass) {
-        final var controller = createController(controllerClass);
+    private void registerController(final Object controller) {
+        final var controllerClass = controller.getClass();
 
         for (Method method : controllerClass.getDeclaredMethods()) {
             if (isHandlerMethod(method)) {
@@ -47,14 +44,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private boolean isHandlerMethod(final Method method) {
         return Modifier.isPublic(method.getModifiers())
                 && method.isAnnotationPresent(RequestMapping.class);
-    }
-
-    private Object createController(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Failed to create controller: " + controllerClass.getName(), e);
-        }
     }
 
     private void registerHandler(final Object controller, final Method method) {
