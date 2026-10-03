@@ -25,8 +25,6 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
 
@@ -62,6 +60,8 @@ public class AnnotationHandlerMapping {
                 }
             }
         }
+        
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
