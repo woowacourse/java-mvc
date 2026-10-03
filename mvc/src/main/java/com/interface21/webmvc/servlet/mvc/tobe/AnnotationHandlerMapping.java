@@ -3,7 +3,9 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class AnnotationHandlerMapping {
             if (mapping == null) {
                 continue;
             }
+            validateHandlerMethod(declaredMethod);
             String url = mapping.value();
             RequestMethod[] method = mapping.method();
             if (method.length == 0) {
@@ -71,5 +74,17 @@ public class AnnotationHandlerMapping {
         String uri = request.getRequestURI();
         HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.valueOf(method));
         return handlerExecutions.get(handlerKey);
+    }
+
+    private void validateHandlerMethod(Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length != 2
+                || parameterTypes[0] != HttpServletRequest.class
+                || parameterTypes[1] != HttpServletResponse.class) {
+            throw new IllegalStateException("잘못된 컨트롤러 매개변수 입니다.: " + method);
+        }
+        if (method.getReturnType() != ModelAndView.class) {
+            throw new IllegalStateException("잘못된 컨트롤러 반환타입 입니다.: " + method);
+        }
     }
 }
