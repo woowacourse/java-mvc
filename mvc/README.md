@@ -51,8 +51,10 @@ mvc 모듈은 프레임워크, app 모듈은 프로덕션 영역이다.
 효과적인 실습을 위해 새로운 MVC 프레임워크의 뼈대가 되는 코드(mvc 모듈의 webmvc.servlet.mvc.tobe 패키지)와 테스트 코드를 제공하고 있다.
 Tomcat 구현하기 미션에서 적용한 Controller 인터페이스는 2단계 미션에서 통합할 예정이다.
 
-- [ ] AnnotationHandlerMappingTest 클래스의 테스트 성공
-    - [ ] Controller 인터페이스는 그대로 두고 미션을 진행한다.
+- [x] AnnotationHandlerMappingTest 클래스의 테스트 성공
+    - [x] Controller 인터페이스는 그대로 두고 미션을 진행한다.
+
+- [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원해야 한다.
 
 ### JspView 클래스를 구현한다.
 
