@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import org.reflections.ReflectionUtils;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -33,6 +34,18 @@ public class AnnotationHandlerMapping {
         controllerScanner.getControllers().forEach(this::registerHandlers);
 
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        RequestMethod requestMethod = findRequestMethod(request.getMethod());
+        if (requestMethod == null) {
+            return null;
+        }
+
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        HandlerKey key = new HandlerKey(path, requestMethod);
+        return handlerExecutions.get(key);
     }
 
     private void registerHandlers(final Class<?> controllerClass, final Object controller) {
@@ -56,17 +69,6 @@ public class AnnotationHandlerMapping {
         if (handlerExecutions.putIfAbsent(key, handlerExecution) != null) {
             throw new IllegalStateException("중복된 매핑입니다: " + key + " -> " + method);
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        RequestMethod requestMethod = findRequestMethod(request.getMethod());
-        if (requestMethod == null) {
-            return null;
-        }
-
-        String path = request.getRequestURI().substring(request.getContextPath().length());
-        HandlerKey key = new HandlerKey(path, requestMethod);
-        return handlerExecutions.get(key);
     }
 
     private RequestMethod findRequestMethod(final String method) {
