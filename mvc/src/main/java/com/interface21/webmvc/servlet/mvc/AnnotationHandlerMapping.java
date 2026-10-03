@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -38,8 +38,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             addHandlerExecutions(controllers, method, mapping);
         }
-        Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
