@@ -33,6 +33,11 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
+            if (controller == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             final var viewName = controller.execute(request, response);
 
             JspView view = new JspView(viewName);
