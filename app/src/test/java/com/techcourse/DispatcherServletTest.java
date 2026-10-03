@@ -37,6 +37,21 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("기존 가입 화면 Controller도 계속 처리한다")
+    void legacyRegistrationViewStillWorks() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
     @DisplayName("GET 요청은 애노테이션 컨트롤러의 GET 메서드를 실행한다")
     void annotatedGetIsDispatched() throws Exception {
         final var request = mock(HttpServletRequest.class);
