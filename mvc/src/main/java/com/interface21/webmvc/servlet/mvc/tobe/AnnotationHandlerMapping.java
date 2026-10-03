@@ -31,8 +31,12 @@ public class AnnotationHandlerMapping {
         for (Class<?> controller : controllers) {
             for (Method method : controller.getMethods()) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
-                    String value = method.getAnnotation(RequestMapping.class).value();
-                    RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method()[0];
+                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                    RequestMethod[] configuredMethods = requestMapping.method();
+                    RequestMethod[] requestMethods = configuredMethods.length == 0
+                            ? RequestMethod.values()
+                            : configuredMethods;
+
                     Object instance;
                     try {
                         instance = controller.getDeclaredConstructor().newInstance();
@@ -40,10 +44,13 @@ public class AnnotationHandlerMapping {
                         throw new IllegalStateException("컨트롤러 생성 실패: " + controller.getName(), e);
                     }
 
-                    handlerExecutions.put(
-                            new HandlerKey(value, requestMethod),
-                            new HandlerExecution(instance, method)
-                    );
+                    HandlerExecution execution = new HandlerExecution(instance, method);
+                    for (RequestMethod requestMethod : requestMethods) {
+                        handlerExecutions.put(
+                                new HandlerKey(requestMapping.value(), requestMethod),
+                                execution
+                        );
+                    }
                 }
             }
         }
