@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,25 +26,21 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        controllerScanner.getControllers().forEach((controllerClass, controller) ->  {
             String prefix = getPrefix(controllerClass);
-            try {
-                Object controller = controllerClass.getDeclaredConstructor().newInstance();
-                for (Method method : controllerClass.getDeclaredMethods()) {
-                    RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-                    if (mapping == null) {
-                        continue;
-                    }
-
-                    for (RequestMethod requestMethod : mapping.method()) {
-                        HandlerKey key = new HandlerKey(prefix + mapping.value(), requestMethod);
-                        register(key, new HandlerExecution(controller, method), method);
-                    }
+            for (Method method : controllerClass.getDeclaredMethods()) {
+                RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                if (mapping == null) {
+                    continue;
                 }
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controllerClass.getName(), e);
+
+                for (RequestMethod requestMethod : mapping.method()) {
+                    HandlerKey key = new HandlerKey(prefix + mapping.value(), requestMethod);
+                    register(key, new HandlerExecution(controller, method), method);
+                }
             }
-        }
+        });
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
