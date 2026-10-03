@@ -20,6 +20,15 @@ public class RegistryTestController {
                 .addObject("name", "gugu");
     }
 
+    @RequestMapping(value = "/registry-test", method = RequestMethod.POST)
+    public ModelAndView registryPostTest(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) {
+        return new ModelAndView(new JspView("/registry-post-test.jsp"))
+                .addObject("name", "post-gugu");
+    }
+
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView loginView(
             final HttpServletRequest request,

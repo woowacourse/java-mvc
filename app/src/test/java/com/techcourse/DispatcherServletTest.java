@@ -28,6 +28,29 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("같은 URL의 GET과 POST 요청을 서로 다른 어노테이션 핸들러로 처리한다")
+    void handlesRequestsByHttpMethod() throws Exception {
+        HttpServletRequest getRequest = getRequest("/registry-test");
+        HttpServletRequest postRequest = mock(HttpServletRequest.class);
+        when(postRequest.getMethod()).thenReturn("POST");
+        when(postRequest.getRequestURI()).thenReturn("/registry-test");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        RequestDispatcher getRequestDispatcher = mock(RequestDispatcher.class);
+        RequestDispatcher postRequestDispatcher = mock(RequestDispatcher.class);
+        when(getRequest.getRequestDispatcher("/registry-test.jsp")).thenReturn(getRequestDispatcher);
+        when(postRequest.getRequestDispatcher("/registry-post-test.jsp")).thenReturn(postRequestDispatcher);
+        DispatcherServlet dispatcherServlet = initializedDispatcherServlet();
+
+        dispatcherServlet.service(getRequest, response);
+        dispatcherServlet.service(postRequest, response);
+
+        verify(getRequest).setAttribute("name", "gugu");
+        verify(getRequestDispatcher).forward(getRequest, response);
+        verify(postRequest).setAttribute("name", "post-gugu");
+        verify(postRequestDispatcher).forward(postRequest, response);
+    }
+
+    @Test
     @DisplayName("수동 핸들러로 등록한 루트 요청을 기존 JSP로 포워드한다")
     void handlesManualRequest() throws Exception {
         HttpServletRequest request = getRequest("/");
