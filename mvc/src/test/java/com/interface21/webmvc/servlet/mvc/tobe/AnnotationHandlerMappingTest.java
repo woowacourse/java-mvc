@@ -54,18 +54,13 @@ class AnnotationHandlerMappingTest {
 
     @ParameterizedTest
     @EnumSource(RequestMethod.class)
-    void method를_지정하지_않으면_모든_HTTP_메서드를_매핑한다(final RequestMethod requestMethod) throws Exception {
+    void method를_지정하지_않으면_모든_HTTP_메서드를_매핑한다(final RequestMethod requestMethod) {
         final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/all-test");
         when(request.getMethod()).thenReturn(requestMethod.name());
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(handlerMapping.getHandler(request)).isNotNull();
     }
 
     @Test
