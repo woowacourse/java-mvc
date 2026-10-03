@@ -5,15 +5,16 @@ import com.interface21.webmvc.servlet.mvc.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.mapping.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import com.techcourse.mapping.ManualHandlerMapping;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,17 +53,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-
-            Object handler = handlerMappings.stream()
-                    .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
-                    .map(handlerMapping -> handlerMapping.getHandler(request))
-                    .findFirst()
-                    .orElseThrow(() -> new ServletException("HandlerMapping이 없습니다. request URI : " + requestURI));
-
-            HandlerAdapter adapter = handlerAdapters.stream()
-                    .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                    .findFirst()
-                    .orElseThrow(() -> new ServletException("HandlerAdapter가 없습니다. request: " + request.toString()));
+            Object handler = getHandler(request, requestURI);
+            HandlerAdapter adapter = getHandlerAdapter(request, handler);
 
             ModelAndView modelAndView = adapter.handle(handler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
@@ -70,6 +62,23 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    @Nonnull
+    private HandlerAdapter getHandlerAdapter(HttpServletRequest request, Object handler) throws ServletException {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new ServletException("HandlerAdapter가 없습니다. request: " + request.toString()));
+    }
+
+    @Nonnull
+    private Object getHandler(HttpServletRequest request, String requestURI) throws ServletException {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new ServletException("HandlerMapping이 없습니다. request URI : " + requestURI));
     }
 }
 
