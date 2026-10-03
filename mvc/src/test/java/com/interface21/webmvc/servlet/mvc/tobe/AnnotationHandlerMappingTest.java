@@ -1,13 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -47,5 +49,41 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void givenRequestMappingWithoutMethod_whenFindsHandler_thenSupportsAllHttpMethods() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/all-test");
+
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            when(request.getMethod()).thenReturn(requestMethod.name());
+
+            final var handler = handlerMapping.getHandler(request);
+
+            assertThat(handler).isNotNull();
+        }
+    }
+
+    @Test
+    void givenDuplicateHandlerMapping_whenInitializes_thenThrowsException() {
+        final var handlerMapping = new AnnotationHandlerMapping("duplicatesamples");
+
+        assertThatThrownBy(handlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Duplicate handler mapping");
+    }
+
+    @Test
+    void givenPrivateRequestMappingMethod_whenFindsHandler_thenReturnsNull() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/private-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isNull();
     }
 }
