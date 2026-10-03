@@ -69,6 +69,16 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void unsupportedMethod() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CUSTOM");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
     void duplicateHandler() {
         final var duplicateHandlerMapping = new AnnotationHandlerMapping("mappingfixtures.duplicate");
 

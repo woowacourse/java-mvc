@@ -49,7 +49,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
+        RequestMethod supportedRequestMethod;
+        try {
+            supportedRequestMethod = RequestMethod.valueOf(requestMethod);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        HandlerKey handlerKey = new HandlerKey(requestURI, supportedRequestMethod);
 
         return handlerExecutions.get(handlerKey);
     }

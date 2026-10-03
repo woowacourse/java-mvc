@@ -56,6 +56,17 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
+    @DisplayName("어노테이션 매핑이 지원하지 않는 HTTP 메서드는 다음 핸들러 매핑에서 처리한다")
+    void delegatesUnsupportedMethodToNextHandlerMapping() {
+        when(request.getMethod()).thenReturn("CUSTOM");
+        when(request.getRequestURI()).thenReturn("/login/view");
+
+        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+
+        assertThat(handler).hasValueSatisfying(value -> assertThat(value).isInstanceOf(Controller.class));
+    }
+
+    @Test
     @DisplayName("아무 핸들러 매핑도 처리할 수 없는 요청이면 빈 Optional을 반환한다")
     void returnsEmptyWhenNoHandlerCanHandle() {
         when(request.getRequestURI()).thenReturn("/unknown-get-uri");
