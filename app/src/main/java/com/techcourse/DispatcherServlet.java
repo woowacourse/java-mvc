@@ -30,8 +30,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
+            // URL을 처리할 컨트롤러를 찾는다.
             final var controller = manualHandlerMapping.getHandler(requestURI);
+            // 컨트롤러를 실행하고 화면 이름을 받는다.
             final var viewName = controller.execute(request, response);
+            // 그 화면으로 이동한다.
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
