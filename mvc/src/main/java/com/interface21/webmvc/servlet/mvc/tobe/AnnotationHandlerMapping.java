@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class AnnotationHandlerMapping {
 
     private void registerController(final Class<?> controller) {
         final Object instance = getInstance(controller);
-        for (final Method method : controller.getMethods()) {
+        for (final Method method : controller.getDeclaredMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 registerHandler(method, instance);
             }
@@ -69,7 +70,8 @@ public class AnnotationHandlerMapping {
     }
 
     private void validateHandlerMethod(final Method method) {
-        if (!Arrays.equals(method.getParameterTypes(), HANDLER_PARAMETER_TYPES)
+        if (!Modifier.isPublic(method.getModifiers())
+                || !Arrays.equals(method.getParameterTypes(), HANDLER_PARAMETER_TYPES)
                 || method.getReturnType() != ModelAndView.class) {
             throw new IllegalStateException("핸들러 메서드가 지원하지 않는 형식입니다: " + method);
         }
