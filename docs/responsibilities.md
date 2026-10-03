@@ -64,3 +64,14 @@ HTTP 요청에 대응하는 Handler를 반환한다.
 ### 계약
 
 - [x] 등록된 HandlerMapping들을 순회해 요청에 대응하는 Handler를 찾는다.
+
+## HandlerAdapter
+
+### 책임
+
+Handler의 종류에 맞는 방식으로 Handler를 실행한다.
+
+### 계약
+
+- [x] 자신이 실행할 수 있는 Handler인지 판단한다.
+- [x] Handler를 실행한다.
