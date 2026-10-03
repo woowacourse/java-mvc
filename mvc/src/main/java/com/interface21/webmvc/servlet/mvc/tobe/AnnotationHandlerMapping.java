@@ -29,8 +29,8 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
 
         // @Controller 클래스를 찾아 객체를 만든다.
-        Set<Class<?>> annotatedController = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : annotatedController) {
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
             Object controller = createController(controllerClass);
 
             // @RequestMapping이 붙은 메서드를 찾는다.
@@ -39,20 +39,30 @@ public class AnnotationHandlerMapping {
                 if (mapping == null) {
                     continue;
                 }
-                HandlerExecution execution = new HandlerExecution(controller, method);
-                RequestMethod[] requestMethods = mapping.method();
-                if (requestMethods.length == 0) {
-                    requestMethods = RequestMethod.values();
-                }
-
-                // URL과 HTTP 메서드를 키로 실행 정보를 등록한다.
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
-                    handlerExecutions.put(key, execution);
-                }
+                registerHandlerExecution(method, controller, mapping);
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerHandlerExecution(Method method, Object controller, RequestMapping mapping) {
+        HandlerExecution execution = new HandlerExecution(controller, method);
+        RequestMethod[] requestMethods = resolveRequestMethods(mapping);
+
+        // URL과 HTTP 메서드를 키로 실행 정보를 등록한다.
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+            handlerExecutions.put(key, execution);
+        }
+    }
+
+    private RequestMethod[] resolveRequestMethods(RequestMapping mapping) {
+        RequestMethod[] requestMethods = mapping.method();
+        // RequestMapping에 메서드가 지정되어있지 않다면 모든 메서드를 지원한다.
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     private Object createController(Class<?> controllerClass) {
