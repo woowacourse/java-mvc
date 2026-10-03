@@ -52,6 +52,11 @@ public class AnnotationHandlerMapping {
 
                     for (RequestMethod httpMethod : httpMethods) {
                         HandlerKey key = new HandlerKey(url, httpMethod);
+
+                        if (handlerExecutions.containsKey(key)) {
+                            throw new IllegalStateException("중복된 요청 매핑입니다: " + httpMethod + " " + url);
+                        }
+
                         HandlerExecution execution = new HandlerExecution(controller, method);
                         handlerExecutions.put(key, execution);
                         log.info("Handler key: {}", key);
