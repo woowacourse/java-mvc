@@ -1,5 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,10 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -65,5 +66,14 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         assertThat(handlerExecution).isNotNull();
         assertThat(handlerExecution.handle(request, response).getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void throwExceptionWhenDuplicatedMethodAndUrl() {
+        var mapping = new AnnotationHandlerMapping("duplicatesamples");
+
+        assertThatThrownBy(() -> mapping.initialize())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("중복된 요청 매핑입니다.");
     }
 }
