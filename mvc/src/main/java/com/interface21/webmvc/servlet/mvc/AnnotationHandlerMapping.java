@@ -38,8 +38,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             addHandlerExecutions(controllers, method, mapping);
         }
-        Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
