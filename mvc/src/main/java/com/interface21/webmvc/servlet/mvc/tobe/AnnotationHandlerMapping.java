@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.List;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,11 @@ public class AnnotationHandlerMapping {
                 HandlerExecution handlerExecution = new HandlerExecution(instance, method);
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
-                handlerExecutionStorage.add(handlerExecution, annotation);
+                List<HandlerKey> handlerKeys = new RequestMappingInfo(
+                        annotation.value(),
+                        annotation.method()
+                ).handlerKeys();
+                handlerExecutionStorage.add(handlerExecution, handlerKeys);
             }
         }
     }

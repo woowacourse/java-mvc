@@ -18,12 +18,10 @@ class RequestMappingInfoTest {
         //given
         final String testURI = "/test";
 
-        FakeRequestMapping fakeRequestMapping = new FakeRequestMapping(
+        RequestMappingInfo requestMappingInfo = new RequestMappingInfo(
                 testURI,
                 new RequestMethod[]{requestMethod}
         );
-
-        RequestMappingInfo requestMappingInfo = new RequestMappingInfo(fakeRequestMapping);
 
         //when
         List<HandlerKey> handlerKeys = requestMappingInfo.handlerKeys();
@@ -38,8 +36,10 @@ class RequestMappingInfoTest {
     void createHandlerKeys_withoutSpecifiedRequestMethods() {
         // given
         final String testURI = "/test";
-        final var fakeRequestMapping = new FakeRequestMapping("/test", new RequestMethod[]{});
-        RequestMappingInfo requestMappingInfo = new RequestMappingInfo(fakeRequestMapping);
+        RequestMappingInfo requestMappingInfo = new RequestMappingInfo(
+                testURI,
+                new RequestMethod[]{}
+        );
 
         //when
         List<HandlerKey> handlerKeys = requestMappingInfo.handlerKeys();

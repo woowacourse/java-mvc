@@ -13,7 +13,7 @@ public class HandlerKey {
     public HandlerKey(final HttpServletRequest request) {
         this(
                 request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod().toUpperCase())
+                RequestMethod.valueOf(request.getMethod())
         );
     }
 
