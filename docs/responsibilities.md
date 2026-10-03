@@ -54,3 +54,13 @@ HTTP 요청에 대응하는 Handler를 반환한다.
 ### 계약
 
 - [x] HTTP 요청에 대응하는 Handler를 반환한다.
+
+## DispatcherServlet
+
+### 책임
+
+요청을 처리할 Handler를 HandlerMapping에서 찾는다.
+
+### 계약
+
+- [x] 등록된 HandlerMapping들을 순회해 요청에 대응하는 Handler를 찾는다.
