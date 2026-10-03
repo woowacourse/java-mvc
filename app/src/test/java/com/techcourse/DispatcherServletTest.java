@@ -1,12 +1,17 @@
 package com.techcourse;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -162,6 +167,23 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendRedirect("/annotation-complete");
+    }
+
+    @Test
+    @DisplayName("요청 처리 중 발생한 예외를 ServletException의 원인으로 보존한다")
+    void preservesOriginalException() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        final var original = new IOException("forward failed");
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+        doThrow(original).when(dispatcher).forward(request, response);
+
+        ServletException thrown = assertThrows(ServletException.class, () -> servlet.service(request, response));
+
+        assertThat(thrown.getCause()).isSameAs(original);
     }
 }
 
