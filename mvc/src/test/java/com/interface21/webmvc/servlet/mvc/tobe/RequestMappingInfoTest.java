@@ -45,6 +45,6 @@ class RequestMappingInfoTest {
         List<HandlerKey> handlerKeys = requestMappingInfo.handlerKeys();
 
         //then
-        assertEquals(8, handlerKeys.size());
+        assertEquals(RequestMethod.values().length, handlerKeys.size());
     }
 }
