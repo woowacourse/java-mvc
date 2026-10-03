@@ -28,8 +28,8 @@ public class JspView implements View {
         }
 
         model.forEach((key, value) -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
+            log.debug("attribute name : {}, value : {}", key, value);
+            request.setAttribute(key, value);
         });
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
