@@ -1,18 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,40 +24,36 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> classObjectMap = controllerScanner.getControllers();
 
-        for (Class<?> aClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            try {
-                Object controller = aClass.getDeclaredConstructor().newInstance();
-                Method[] methods = aClass.getDeclaredMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                        RequestMethod[] requestMethods = requestMapping.method();
-                        if (requestMethods.length == 0) {
-                            requestMethods = RequestMethod.values();
+        for (Entry<Class<?>, Object> entry : classObjectMap.entrySet()) {
+            Method[] methods = entry.getKey().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(RequestMapping.class)) {
+                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                    RequestMethod[] requestMethods = requestMapping.method();
+                    if (requestMethods.length == 0) {
+                        requestMethods = RequestMethod.values();
+                    }
+
+                    Object controller = entry.getValue();
+                    HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                    for (RequestMethod requestMethod : requestMethods) {
+                        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                        if (handlerExecutions.containsKey(handlerKey)) {
+                            throw new IllegalArgumentException("Duplicate handler mapping: " + handlerKey);
                         }
-
-                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                            if (handlerExecutions.containsKey(handlerKey)) {
-                                throw new IllegalArgumentException("Duplicate handler mapping: " + handlerKey);
-                            }
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
+                        handlerExecutions.put(handlerKey, handlerExecution);
                     }
                 }
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                     IllegalAccessException e) {
-                throw new RuntimeException(e);
             }
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         String method = request.getMethod();
