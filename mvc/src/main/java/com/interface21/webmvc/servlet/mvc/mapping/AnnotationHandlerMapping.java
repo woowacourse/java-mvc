@@ -5,11 +5,8 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,14 +51,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         validateReturnType(method);
 
         String uri = requestMapping.value();
-        Function<RequestMethod, HandlerKey> toHandlerKey = (requestMethod) ->
-                new HandlerKey(uri, requestMethod);
-        Function<RequestMethod, HandlerExecution> toHandlerExecution = (requestMethod) ->
-                (request, response) -> (ModelAndView) method.invoke(controller, request, response);
 
-        Arrays.stream(getRequestMethods(requestMapping))
-                .collect(Collectors.toMap(toHandlerKey, toHandlerExecution))
-                .forEach(this::put);
+        for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
+            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            HandlerExecution execution = (request, response) ->
+                    (ModelAndView) method.invoke(controller, request, response);
+
+            put(handlerKey, execution);
+        }
     }
 
     @Nonnull
