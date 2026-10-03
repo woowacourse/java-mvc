@@ -34,13 +34,19 @@ public class AnnotationHandlerMapping {
         final Object controller = createInstance(controllerClass);
 
         Arrays.stream(controllerClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> {
-                    final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-                    Arrays.stream(mapping.method())
-                            .forEach(requestMethod -> handlerExecutions.put(
-                                    new HandlerKey(mapping.value(), requestMethod),
-                                    new HandlerExecution(controller, method)));
+                .filter(controllerMethod -> controllerMethod.isAnnotationPresent(RequestMapping.class))
+                .forEach(controllerMethod -> {
+                    final RequestMapping mapping = controllerMethod.getAnnotation(RequestMapping.class);
+                    RequestMethod[] requestHttpMethods = mapping.method();
+
+                    if (requestHttpMethods.length == 0) {
+                        requestHttpMethods = RequestMethod.values();
+                    }
+
+                    Arrays.stream(requestHttpMethods)
+                            .forEach(requestHttpMethod -> handlerExecutions.put(
+                                    new HandlerKey(mapping.value(), requestHttpMethod),
+                                    new HandlerExecution(controller, controllerMethod)));
                 });
     }
 
