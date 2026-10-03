@@ -1,12 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,17 +23,11 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses =
-                reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        for (Class<?> controllerClass : controllerClasses) {
-            Object controller;
-            try {
-                controller = controllerClass.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 생성 실패: " + controllerClass.getName(), e);
-            }
+        for (Class<?> controllerClass : controllers.keySet()) {
+            Object controller = controllers.get(controllerClass);
 
             for (Method method : controllerClass.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
