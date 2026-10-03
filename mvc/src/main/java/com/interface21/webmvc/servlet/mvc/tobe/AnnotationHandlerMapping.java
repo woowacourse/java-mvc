@@ -29,34 +29,54 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerType : controllerTypes) {
-            Object controller;
-            try {
-                controller = controllerType.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 생성 실패: " + controllerType.getName(), e);
-            }
-
-            for (Method method : controllerType.getDeclaredMethods()) {
-                RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-                if (mapping == null) {
-                    continue;
-                }
-
-                HandlerExecution execution = new HandlerExecution(controller, method);
-
-                RequestMethod[] requestMethods = mapping.method();
-                if (requestMethods.length == 0) {
-                    requestMethods = RequestMethod.values();
-                }
-
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
-                    handlerExecutions.put(key, execution);
-                }
-            }
+            registerController(controllerType);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerController(Class<?> controllerType) {
+        Object controller = createController(controllerType);
+
+        for (Method method : controllerType.getDeclaredMethods()) {
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            if (mapping != null) {
+                registerHandlerMethod(method, controller, mapping);
+            }
+        }
+    }
+
+    private Object createController(Class<?> controllerType) {
+        try {
+            return controllerType.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 생성 실패: " + controllerType.getName(), e);
+        }
+    }
+
+    private void registerHandlerMethod(Method method, Object controller, RequestMapping mapping) {
+        makeAccessible(method);
+        HandlerExecution execution = new HandlerExecution(controller, method);
+
+        RequestMethod[] requestMethods = mapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+
+            HandlerExecution previous = handlerExecutions.putIfAbsent(key, execution);
+            if (previous != null) {
+                throw new IllegalStateException("중복 요청 매핑: " + key);
+            }
+        }
+    }
+
+    private void makeAccessible(Method method) {
+        if (!method.trySetAccessible()) {
+            throw new IllegalStateException("@RequestMapping 메서드에 접근할 수 없습니다: " + method);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
