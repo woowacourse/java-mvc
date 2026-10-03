@@ -30,4 +30,9 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping("/all-test")
+    public ModelAndView supportAllMethods(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
 }
