@@ -94,4 +94,20 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("잘못된 컨트롤러 반환타입 입니다.:");
     }
+
+    @Test
+    void invokesPrivateMappedMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/private-method-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution =
+                (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
 }

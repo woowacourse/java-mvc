@@ -36,4 +36,10 @@ public class TestController {
         return new ModelAndView(new JspView(""))
                 .addObject("id", request.getAttribute("id"));
     }
+
+    @RequestMapping("/private-method-test")
+    private ModelAndView privateMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""))
+                .addObject("id", request.getAttribute("id"));
+    }
 }
