@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +68,8 @@ class HandlerExecutionTest {
         // when, then
         Assertions.assertThatThrownBy(
                 () -> handlerExecution.handle(request, response)
-        ).isInstanceOf(InvocationTargetException.class);
+        ).isInstanceOf(IllegalStateException.class)
+                .hasMessage("fail");
     }
 
     public static class ThrowingController {
