@@ -44,3 +44,13 @@ JSP 기반 View를 렌더링한다.
 - [x] 리다이렉트 View는 지정된 경로로 리다이렉트한다.
 - [x] Model의 값을 Request attribute로 전달한다.
 - [x] 일반 View는 지정된 JSP로 요청을 전달한다.
+
+## HandlerMapping
+
+### 책임
+
+HTTP 요청에 대응하는 Handler를 반환한다.
+
+### 계약
+
+- [x] HTTP 요청에 대응하는 Handler를 반환한다.
