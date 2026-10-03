@@ -22,15 +22,15 @@ class ReflectionsTest {
         Set<Class<?>> repositories = reflections.getTypesAnnotatedWith(Repository.class);
 
         for (Class<?> controller : controllers) {
-            log.info("Controller: {}", controller.getName());
+            log.debug("Controller: {}", controller.getName());
         }
 
         for (Class<?> service : services) {
-            log.info("Service: {}", service.getName());
+            log.debug("Service: {}", service.getName());
         }
 
         for (Class<?> repository : repositories) {
-            log.info("Repository: {}", repository.getName());
+            log.debug("Repository: {}", repository.getName());
         }
     }
 }
