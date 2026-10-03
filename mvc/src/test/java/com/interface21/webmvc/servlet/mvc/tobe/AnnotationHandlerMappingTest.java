@@ -70,10 +70,28 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void throwExceptionWhenDuplicatedMethodAndUrl() {
-        var mapping = new AnnotationHandlerMapping("duplicatesamples");
+        var mapping = new AnnotationHandlerMapping("wrongsamples.duplicate");
 
         assertThatThrownBy(() -> mapping.initialize())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("중복된 요청 매핑입니다.");
+    }
+
+    @Test
+    void throwExceptionWhenInvalidParameter() {
+        var mapping = new AnnotationHandlerMapping("wrongsamples.invalidparameter");
+
+        assertThatThrownBy(() -> mapping.initialize())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("잘못된 컨트롤러 매개변수 입니다.:");
+    }
+
+    @Test
+    void throwExceptionWhenInvalidReturnType() {
+        var mapping = new AnnotationHandlerMapping("wrongsamples.invalidreturntype");
+
+        assertThatThrownBy(() -> mapping.initialize())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("잘못된 컨트롤러 반환타입 입니다.:");
     }
 }
