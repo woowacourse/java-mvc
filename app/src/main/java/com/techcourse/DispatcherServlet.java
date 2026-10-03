@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.web.bind.annotation.UnknownHttpMethodException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
@@ -57,13 +56,6 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
-        try {
-            RequestMethod.getRequestMethod(request.getMethod());
-        } catch (UnknownHttpMethodException e) {
-            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            return;
-        }
 
         Object handler = getHandler(request);
         if (handler == null) {

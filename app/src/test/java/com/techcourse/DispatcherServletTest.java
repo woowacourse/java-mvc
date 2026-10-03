@@ -67,16 +67,31 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("지원하지 않는 HTTP 메서드는 기존 컨트롤러를 조회하기 전에 501로 응답한다")
-    void unknownHttpMethodReturns501() throws Exception {
+    @DisplayName("열거형에 없는 HTTP 메서드도 기존 컨트롤러까지 전달된다")
+    void extensionHttpMethodReachesLegacyController() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("BREW");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    @DisplayName("열거형에 없는 메서드도 URL이 없으면 404로 응답한다")
+    void extensionHttpMethodWithUnknownPathReturns404() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/missing");
         when(request.getMethod()).thenReturn("BREW");
 
         servlet.service(request, response);
 
-        verify(response).sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
@@ -99,6 +114,20 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("PUT");
+
+        servlet.service(request, response);
+
+        verify(response).setHeader("Allow", "GET, POST");
+        verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    }
+
+    @Test
+    @DisplayName("열거형에 없는 메서드도 URL에 메서드 제한이 있으면 405로 응답한다")
+    void extensionHttpMethodWithRestrictedPathReturns405() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn("BREW");
 
         servlet.service(request, response);
 
