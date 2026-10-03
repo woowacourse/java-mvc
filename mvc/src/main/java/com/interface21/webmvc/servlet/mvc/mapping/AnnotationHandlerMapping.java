@@ -6,8 +6,12 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,19 +52,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void enrollHandler(RequestMapping requestMapping, Method method, Object controller) {
+        validateReturnType(method);
+
         String uri = requestMapping.value();
+        Function<RequestMethod, HandlerKey> toHandlerKey = (requestMethod) ->
+                new HandlerKey(uri, requestMethod);
+        Function<RequestMethod, HandlerExecution> toHandlerExecution = (requestMethod) ->
+                (request, response) -> (ModelAndView) method.invoke(controller, request, response);
+
+        Arrays.stream(getRequestMethods(requestMapping))
+                .collect(Collectors.toMap(toHandlerKey, toHandlerExecution))
+                .forEach(this::put);
+    }
+
+    @Nonnull
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
-        for (RequestMethod requestMethod : requestMethods) {
-            validateReturnType(method);
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution handlerExecution = (request, response) ->
-                    (ModelAndView) method.invoke(controller, request, response);
-
-            put(handlerKey, handlerExecution);
-        }
+        return requestMethods;
     }
 
     private void put(HandlerKey handlerKey, HandlerExecution handlerExecution) {

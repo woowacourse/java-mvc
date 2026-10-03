@@ -25,13 +25,13 @@ class RegisterControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /register는 회원을 저장하지 않고 가입 화면을 보여준다")
+    @DisplayName("GET /register/view는 회원을 저장하지 않고 가입 화면을 보여준다")
     void showRegistrationForm() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
         final var account = "register-get-" + UUID.randomUUID();
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/register/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getParameter("account")).thenReturn(account);
         when(request.getParameter("password")).thenReturn("password");
