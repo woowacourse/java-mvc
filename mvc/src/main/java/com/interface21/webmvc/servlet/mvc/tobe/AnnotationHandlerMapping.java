@@ -36,27 +36,7 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controller : controllers) {
-            List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
-                    .toList();
-            methods = methods.stream()
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .toList();
-
-            for (Method method : methods) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                String value = requestMapping.value();
-                RequestMethod[] requestMethods = requestMapping.method();
-                if (requestMethods.length < 1) {
-                    requestMethods = RequestMethod.values();
-                }
-
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                    Object instance = controller.getDeclaredConstructor().newInstance();
-                    HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
+            registerControllerHandlers(controller);
         }
     }
 
@@ -64,5 +44,36 @@ public class AnnotationHandlerMapping {
         HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
+    }
+
+    private void registerControllerHandlers(Class<?> controller)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
+                .toList();
+        methods = methods.stream()
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+        for (Method method : methods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            String value = requestMapping.value();
+            RequestMethod[] requestMethods = requestMapping.method();
+
+            registerHandlerExecutions(requestMethods, value, controller, method);
+        }
+    }
+
+    private void registerHandlerExecutions(RequestMethod[] requestMethods, String value, Class<?> controller,
+                                           Method method)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        if (requestMethods.length < 1) {
+            requestMethods = RequestMethod.values();
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+            Object instance = controller.getDeclaredConstructor().newInstance();
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 }
