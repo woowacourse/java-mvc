@@ -1,6 +1,6 @@
-package com.techcourse;
+package com.techcourse.mapping;
 
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.techcourse.controller.LoginController;
