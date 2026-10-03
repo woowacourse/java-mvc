@@ -26,31 +26,35 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            for (Method method : controller.getMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    RequestMethod[] configuredMethods = requestMapping.method();
-                    RequestMethod[] requestMethods = configuredMethods.length == 0
-                            ? RequestMethod.values()
-                            : configuredMethods;
+        for (Class<?> controllerClass : controllerClasses) {
+            Object controller = null;
+            for (Method method : controllerClass.getMethods()) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                if (requestMapping == null) {
+                    continue;
+                }
 
-                    Object instance;
+                if (controller == null) {
                     try {
-                        instance = controller.getDeclaredConstructor().newInstance();
+                        controller = controllerClass.getDeclaredConstructor().newInstance();
                     } catch (ReflectiveOperationException e) {
-                        throw new IllegalStateException("컨트롤러 생성 실패: " + controller.getName(), e);
+                        throw new IllegalStateException("컨트롤러 생성 실패: " + controllerClass.getName(), e);
                     }
+                }
 
-                    HandlerExecution execution = new HandlerExecution(instance, method);
-                    for (RequestMethod requestMethod : requestMethods) {
-                        handlerExecutions.put(
-                                new HandlerKey(requestMapping.value(), requestMethod),
-                                execution
-                        );
-                    }
+                RequestMethod[] configuredMethods = requestMapping.method();
+                RequestMethod[] requestMethods = configuredMethods.length == 0
+                        ? RequestMethod.values()
+                        : configuredMethods;
+
+                HandlerExecution execution = new HandlerExecution(controller, method);
+                for (RequestMethod requestMethod : requestMethods) {
+                    handlerExecutions.put(
+                            new HandlerKey(requestMapping.value(), requestMethod),
+                            execution
+                    );
                 }
             }
         }
