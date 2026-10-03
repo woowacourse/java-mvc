@@ -24,7 +24,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
-    private HandlerExecution execution;
 
 
     public DispatcherServlet() {
