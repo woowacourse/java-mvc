@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.mapping;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.web.bind.annotation.UnknownHttpMethodException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,15 +93,13 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    @DisplayName("알 수 없는 HTTP 메서드 요청에는 메서드 이름을 담은 예외가 발생한다")
+    @DisplayName("알 수 없는 HTTP 메서드는 매핑되지 않는다")
     @Test
-    void rejectsUnknownHttpMethod() {
+    void unknownHttpMethodHasNoHandler() {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("BREW");
 
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(UnknownHttpMethodException.class)
-                .hasMessageContaining("BREW");
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 }

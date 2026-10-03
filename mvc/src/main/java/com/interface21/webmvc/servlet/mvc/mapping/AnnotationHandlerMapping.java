@@ -2,11 +2,14 @@ package com.interface21.webmvc.servlet.mvc.mapping;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.web.bind.annotation.UnknownHttpMethodException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +35,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.getRequestMethod(request.getMethod());
+        RequestMethod requestMethod;
+        try {
+            requestMethod = RequestMethod.getRequestMethod(request.getMethod());
+        } catch (UnknownHttpMethodException e) {
+            return null;
+        }
 
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    @Override
+    public Set<RequestMethod> getAllowedMethods(final String requestURI) {
+        Set<RequestMethod> allowedMethods = EnumSet.noneOf(RequestMethod.class);
+        for (HandlerKey handlerKey : handlerExecutions.keySet()) {
+            if (handlerKey.getUrl().equals(requestURI)) {
+                allowedMethods.add(handlerKey.getRequestMethod());
+            }
+        }
+        return allowedMethods;
     }
 
     private void enrollController(Class<?> aClass, Object controller) {
