@@ -2,6 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.HandlerExecutor;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
@@ -22,6 +24,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final HandlerExecutor handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
 
     public DispatcherServlet() {
     }
@@ -34,15 +37,23 @@ public class DispatcherServlet extends HttpServlet {
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+        addHandlerMapping(manualHandlerMapping);
+        addHandlerMapping(annotationHandlerMapping);
 
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        addHandlerAdapter(new ControllerHandlerAdapter());
+        addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -54,12 +65,15 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
 
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
