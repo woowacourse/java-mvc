@@ -44,9 +44,13 @@ public class AnnotationHandlerMapping {
                     }
 
                     Arrays.stream(requestHttpMethods)
-                            .forEach(requestHttpMethod -> handlerExecutions.put(
-                                    new HandlerKey(mapping.value(), requestHttpMethod),
-                                    new HandlerExecution(controller, controllerMethod)));
+                            .map(requestHttpMethod -> new HandlerKey(mapping.value(), requestHttpMethod))
+                            .forEach(handlerKey -> {
+                                final HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
+                                if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                                    throw new IllegalStateException("이미 등록된 핸들러입니다: " + handlerKey);
+                                }
+                            });
                 });
     }
 
