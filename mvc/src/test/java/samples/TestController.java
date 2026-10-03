@@ -30,4 +30,28 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/all-methods-test")
+    public ModelAndView allMethods(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping(value = "/same-url-test", method = RequestMethod.GET)
+    public ModelAndView findWithSameUrl(final HttpServletRequest request, final HttpServletResponse response) {
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("handler", "get");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/same-url-test", method = RequestMethod.POST)
+    public ModelAndView saveWithSameUrl(final HttpServletRequest request, final HttpServletResponse response) {
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("handler", "post");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/multiple-methods-test", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView multipleMethods(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
 }
