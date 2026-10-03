@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +48,43 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void allMethods() throws Exception {
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(getRequest.getRequestURI()).thenReturn("/all-methods-test");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/all-methods-test");
+        when(postRequest.getMethod()).thenReturn("POST");
+
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+
+        assertThat(getHandler.handle(getRequest, response).getObject("mapping")).isEqualTo("all-methods");
+        assertThat(postHandler.handle(postRequest, response).getObject("mapping")).isEqualTo("all-methods");
+    }
+
+    @Test
+    void unsupportedMethod() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CUSTOM");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void duplicateHandler() {
+        final var duplicateHandlerMapping = new AnnotationHandlerMapping("mappingfixtures.duplicate");
+
+        assertThatThrownBy(duplicateHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/duplicate")
+                .hasMessageContaining("GET");
     }
 }
