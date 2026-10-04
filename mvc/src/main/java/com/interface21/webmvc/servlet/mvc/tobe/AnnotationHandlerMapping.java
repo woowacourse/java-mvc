@@ -22,11 +22,9 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
-        initialize();
     }
 
     public void initialize()
@@ -53,25 +51,25 @@ public class AnnotationHandlerMapping {
         methods = methods.stream()
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
+
+        Object instance = controller.getDeclaredConstructor().newInstance();
         for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             String value = requestMapping.value();
             RequestMethod[] requestMethods = requestMapping.method();
 
-            registerHandlerExecutions(requestMethods, value, controller, method);
+            registerHandlerExecutions(requestMethods, value, instance, method);
         }
     }
 
-    private void registerHandlerExecutions(RequestMethod[] requestMethods, String value, Class<?> controller,
-                                           Method method)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void registerHandlerExecutions(RequestMethod[] requestMethods, String value, Object instance,
+                                           Method method) {
         if (requestMethods.length < 1) {
             requestMethods = RequestMethod.values();
         }
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-            Object instance = controller.getDeclaredConstructor().newInstance();
             HandlerExecution handlerExecution = new HandlerExecution(instance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
