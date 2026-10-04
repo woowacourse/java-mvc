@@ -1,13 +1,14 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.LegacyControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,19 +24,28 @@ public final class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
         addHandlerMapping(new ManualHandlerMapping());
         addHandlerMapping(new AnnotationHandlerMapping());
+
+        addHandlerAdapter(new LegacyControllerHandlerAdapter());
+        addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+    private void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    private void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -53,14 +63,8 @@ public final class DispatcherServlet extends HttpServlet {
             }
 
             final Object handler = found.get();
-            final ModelAndView modelAndView;
-            if (handler instanceof Controller controller) {
-                modelAndView = new ModelAndView(new JspView(controller.execute(request, response)));
-            } else if (handler instanceof HandlerExecution execution) {
-                modelAndView = execution.handle(request, response);
-            } else {
-                throw new ServletException("지원하지 않는 핸들러: " + handler.getClass());
-            }
+            final HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = adapter.handle(request, response, handler);
 
             render(modelAndView, request, response);
         } catch (ServletException e) {
