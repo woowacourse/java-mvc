@@ -8,7 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,32 +28,41 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        controllerScanner.getControllers().forEach(this::addHandlers);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        getRequestMappingMethods(controllers.keySet())
+                .forEach(method -> addHandlerExecutions(controllers, method, method.getAnnotation(RequestMapping.class)));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlers(final Class<?> controllerClass, final Object controllerObject) {
-        ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class))
-                        .forEach(controllerMethod -> addHandler(controllerObject, controllerMethod));
-    }
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers,
+                                      final Method method,
+                                      final RequestMapping requestMapping) {
+        final HandlerExecution handlerExecution =
+                new HandlerExecution(controllers.get(method.getDeclaringClass()), method);
 
-    private void addHandler(final Object controllerObject, final Method controllerMethod) {
-        final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
-        RequestMethod[] requestHttpMethods = requestMapping.method();
-
-        if (requestHttpMethods.length == 0) {
-            requestHttpMethods = RequestMethod.values();
-        }
-
-        Arrays.stream(requestHttpMethods)
-                .map(requestHttpMethod -> new HandlerKey(requestMapping.value(), requestHttpMethod))
+        mapHandlerKeys(requestMapping.value(), requestMapping.method())
                 .forEach(handlerKey -> {
-                    final HandlerExecution handlerExecution = new HandlerExecution(controllerObject, controllerMethod);
                     if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
                         throw new IllegalStateException("이미 등록된 핸들러입니다: " + handlerKey);
                     }
                 });
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllerClasses) {
+        return controllerClasses.stream()
+                .flatMap(controllerClass -> ReflectionUtils.getAllMethods(controllerClass,
+                        ReflectionUtils.withAnnotation(RequestMapping.class)).stream())
+                .collect(Collectors.toSet());
+    }
+
+    private List<HandlerKey> mapHandlerKeys(final String url, final RequestMethod[] requestMethods) {
+        final RequestMethod[] targetMethods = requestMethods.length == 0 ? RequestMethod.values() : requestMethods;
+
+        return Arrays.stream(targetMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
     }
 
     public Object getHandler(final HttpServletRequest request) {
