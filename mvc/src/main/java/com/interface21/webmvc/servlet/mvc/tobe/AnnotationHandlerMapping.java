@@ -1,11 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +23,13 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        // @Controller 클래스를 찾아 객체를 만든다.
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllerClasses) {
-            Object controller = createController(controllerClass);
+        for (Class<?> controllerClass : controllers.keySet()) {
+            Object controller = controllers.get(controllerClass);
 
-            // @RequestMapping이 붙은 메서드를 찾는다.
+            // @RequestMapping이 붙은 메서드를 찾아 등록한다.
             for (Method method : controllerClass.getDeclaredMethods()) {
                 RequestMapping mapping = method.getAnnotation(RequestMapping.class);
                 if (mapping == null) {
@@ -66,14 +62,6 @@ public class AnnotationHandlerMapping {
             requestMethods = RequestMethod.values();
         }
         return requestMethods;
-    }
-
-    private Object createController(Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 생성 실패: " + controllerClass.getName(), e);
-        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
