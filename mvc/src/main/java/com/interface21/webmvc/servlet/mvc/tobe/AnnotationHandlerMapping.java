@@ -9,13 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -80,6 +79,7 @@ public class AnnotationHandlerMapping {
             }
 
             handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
         }
     }
 
@@ -91,17 +91,12 @@ public class AnnotationHandlerMapping {
         return methods;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod httpMethod = RequestMethod.valueOf(request.getMethod());
         log.debug("getHandler 호출, requestURI = {}, httpMethod = {}", requestURI, httpMethod.name());
 
-        final HandlerExecution handlerExecution = handlerExecutions.get(new HandlerKey(requestURI, httpMethod));
-
-        if (handlerExecution == null) {
-            throw new NoSuchElementException("요청을 처리할 핸들러가 없습니다: " + requestURI + " " + httpMethod.name());
-        }
-
-        return handlerExecution;
+        return handlerExecutions.get(new HandlerKey(requestURI, httpMethod));
     }
 }
