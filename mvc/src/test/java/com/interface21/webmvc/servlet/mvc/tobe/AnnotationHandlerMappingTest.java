@@ -28,6 +28,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
@@ -43,6 +44,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
@@ -57,10 +59,12 @@ class AnnotationHandlerMappingTest {
     void sameUrlIsMappedByHttpMethod() throws Exception {
         // given
         final var getRequest = mock(HttpServletRequest.class);
+        when(getRequest.getContextPath()).thenReturn("");
         when(getRequest.getRequestURI()).thenReturn("/same-test");
         when(getRequest.getMethod()).thenReturn("GET");
 
         final var postRequest = mock(HttpServletRequest.class);
+        when(postRequest.getContextPath()).thenReturn("");
         when(postRequest.getRequestURI()).thenReturn("/same-test");
         when(postRequest.getMethod()).thenReturn("POST");
 
@@ -83,6 +87,7 @@ class AnnotationHandlerMappingTest {
         for (final RequestMethod method : RequestMethod.values()) {
             // given
             final var request = mock(HttpServletRequest.class);
+            when(request.getContextPath()).thenReturn("");
             when(request.getRequestURI()).thenReturn("/any-method");
             when(request.getMethod()).thenReturn(method.name());
 
@@ -105,5 +110,21 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("/duplicate")
                 .hasMessageContaining("GET");
+    }
+
+    @Test
+    @DisplayName("애플리케이션의 context path를 제외한 경로로 핸들러를 찾는다")
+    void matchesRequestPathWithoutContextPath() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+        when(request.getContextPath()).thenReturn("/java-mvc");
+        when(request.getRequestURI()).thenReturn("/java-mvc/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        final var handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }

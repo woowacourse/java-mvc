@@ -47,7 +47,8 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final var requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
+        final var requestPath = request.getRequestURI().substring(request.getContextPath().length());
+        return handlerExecutions.get(new HandlerKey(requestPath, requestMethod));
     }
 
     private Object createController(Class<?> controllerClass) {
