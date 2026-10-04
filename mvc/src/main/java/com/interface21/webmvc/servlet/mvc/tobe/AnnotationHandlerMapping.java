@@ -39,19 +39,25 @@ public class AnnotationHandlerMapping {
 
     private void registerController(final Class<?> controllerClass) {
         final Object controller = createController(controllerClass);
+        final RequestMapping classRequestMapping =
+                controllerClass.getAnnotation(RequestMapping.class);
 
         for (Method method : controllerClass.getDeclaredMethods()) {
-            registerMethod(controller, method);
+            registerMethod(controller, classRequestMapping, method);
         }
     }
 
-    private void registerMethod(final Object controller, final Method method) {
+    private void registerMethod(
+            final Object controller,
+            final RequestMapping classRequestMapping,
+            final Method method
+    ) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return;
         }
 
-        final String path = requestMapping.value();
+        final String path = resolvePath(classRequestMapping, requestMapping);
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
@@ -67,7 +73,8 @@ public class AnnotationHandlerMapping {
     ) {
         final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
         handlerExecutions.put(handlerKey, handlerExecution);
-        log.info("Mapped {} {} to {}", requestMethod, path, method);
+        log.info("핸들러 매핑 등록 - HTTP 메서드: {}, 경로: {}, 메서드: {}",
+                requestMethod, path, method);
     }
 
     private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
@@ -78,6 +85,47 @@ public class AnnotationHandlerMapping {
         }
 
         return RequestMethod.values();
+    }
+
+    private String resolvePath(
+            final RequestMapping classRequestMapping,
+            final RequestMapping methodRequestMapping
+    ) {
+        final String classPath = getClassPath(classRequestMapping);
+        final String methodPath = methodRequestMapping.value();
+
+        if (classPath.isEmpty()) {
+            return normalizePath(methodPath);
+        }
+        if (methodPath.isEmpty()) {
+            return normalizePath(classPath);
+        }
+        return String.format(
+                "/%s/%s",
+                trimSlashes(classPath),
+                trimSlashes(methodPath)
+        );
+    }
+
+    private String getClassPath(final RequestMapping classRequestMapping) {
+        if (classRequestMapping == null) {
+            return "";
+        }
+
+        return classRequestMapping.value();
+    }
+
+    private String normalizePath(final String path) {
+        final String trimmedPath = trimSlashes(path);
+        if (trimmedPath.isEmpty()) {
+            return "/";
+        }
+
+        return "/" + trimmedPath;
+    }
+
+    private String trimSlashes(final String path) {
+        return path.replaceAll("^/+|/+$", "");
     }
 
     private Object createController(final Class<?> controllerClass) {
