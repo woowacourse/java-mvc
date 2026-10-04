@@ -27,28 +27,38 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllerClasses =  reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Class<?> controllerClass : controllerClasses){
+        for (Class<?> controllerClass : controllerClasses) {
             try {
                 final Object controller = controllerClass.getDeclaredConstructor().newInstance();
                 Method[] methods = controllerClass.getDeclaredMethods();
-                for (Method method : methods){
-                    if (method.getAnnotation(RequestMapping.class) != null){
+                for (Method method : methods) {
+                    if (method.getAnnotation(RequestMapping.class) != null) {
                         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                         RequestMethod[] requestMethods = requestMapping.method();
                         String url = requestMapping.value();
-                        if (requestMethods.length==0){
-                            // todo : 모든 http 메서드랑 매핑
+                        if (requestMethods.length == 0) {
+                            requestMethods = RequestMethod.values();
                         }
-                        for (RequestMethod rm : requestMethods){
-                            // todo: 중복된 매핑 있으면 예외처리
-                            handlerExecutions.put(new HandlerKey(url, rm), new HandlerExecution(controller, method));
+                        for (RequestMethod rm : requestMethods) {
+                            HandlerKey handlerKey = new HandlerKey(url, rm);
+                            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+                            HandlerExecution previous =
+                                    handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+
+                            if (previous != null) {
+                                throw new IllegalStateException(
+                                        "초기화 실패 : 중복 매핑 존재" + handlerKey
+                                                + ", 기존 핸들러: " + previous
+                                                + ", 신규 핸들러: " + handlerExecution);
+                            }
                         }
                     }
                 }
 
-            } catch (ReflectiveOperationException e){
+            } catch (ReflectiveOperationException e) {
                 throw new IllegalArgumentException("초기화 실패", e);
             }
         }
