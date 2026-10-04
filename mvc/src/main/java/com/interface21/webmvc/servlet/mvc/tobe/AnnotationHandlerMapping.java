@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,7 @@ public class AnnotationHandlerMapping {
     // 클래스 탐색 -> 객체 생성 -> 매핑 메서드 탐색 -> Map 등록
     public void initialize() {
         try {
+            // controller 어노테이션이 붙은 클래스 탐색
             ControllerScanner scanner = new ControllerScanner();
             Map<Class<?>, Object> controllers = scanner.scan(basePackage);
 
@@ -31,25 +34,26 @@ public class AnnotationHandlerMapping {
                 Class<?> clazz = entry.getKey();
                 Object controller = entry.getValue();
 
-                Method[] methods = clazz.getDeclaredMethods();
+                Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
+                        ReflectionUtils.withAnnotation(RequestMapping.class));
                 for (final Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-                        String url = requestMapping.value();
-                        RequestMethod[] requestMethods = requestMapping.method();
+                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-                        // Map 등록
-                        if (requestMethods.length == 0) {
-                            requestMethods = RequestMethod.values();
-                        }
+                    String url = requestMapping.value();
+                    RequestMethod[] requestMethods = requestMapping.method();
 
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
+                    // Map 등록
+                    if (requestMethods.length == 0) {
+                        requestMethods = RequestMethod.values();
                     }
+
+                    for (RequestMethod requestMethod : requestMethods) {
+                        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                        handlerExecutions.put(handlerKey, handlerExecution);
+                    }
+
                 }
             }
 
