@@ -3,6 +3,10 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
@@ -25,6 +29,10 @@ public class DispatcherServlet extends HttpServlet {
     private AnnotationHandlerMapping annotationHandlerMapping;
     private HandlerMappingRegistry handlerMappingRegistry;
 
+    private ControllerHandlerAdapter  controllerHandlerAdapter;
+    private HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter;
+    private HandlerAdapterRegistry  handlerAdapterRegistry;
+
     public DispatcherServlet() {
     }
 
@@ -39,6 +47,13 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry = HandlerMappingRegistry.empty();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+        controllerHandlerAdapter = new ControllerHandlerAdapter();
+        handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
+
+        handlerAdapterRegistry = HandlerAdapterRegistry.empty();
+        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerExecutionHandlerAdapter);
     }
 
     @Override
@@ -68,6 +83,18 @@ public class DispatcherServlet extends HttpServlet {
                 throw new RuntimeException("처리할 수 없는 핸들러입니다. : " + handler.getClass());
             }
 
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    protected void serviceV3(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+        try{
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
