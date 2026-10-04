@@ -1,12 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,30 +28,24 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        // @Controller가 직접 붙은 클래스만 스캔한다 (하위 클래스 제외)
-        for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class, true)) {
-            registerController(controller);
-        }
+        new ControllerScanner(basePackage).getControllers().forEach(this::registerController);
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.forEach((handlerKey, handlerExecution) ->
                 log.info("{} -> {}", handlerKey, handlerExecution));
     }
 
-    private void registerController(final Class<?> controller) {
-        final Object instance = getInstance(controller);
-        for (final Method method : controller.getDeclaredMethods()) {
+    public Object getHandler(final HttpServletRequest request) {
+        return RequestMethod.findByName(request.getMethod())
+                .map(requestMethod ->
+                        handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod)))
+                .orElse(null);
+    }
+
+    private void registerController(final Class<?> clazz, final Object instance) {
+        for (final Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 registerHandler(method, instance);
             }
-        }
-    }
-
-    private Object getInstance(final Class<?> controller) {
-        try {
-            return controller.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controller.getName(), e);
         }
     }
 
@@ -84,12 +76,5 @@ public class AnnotationHandlerMapping {
             return RequestMethod.values();
         }
         return annotation.method();
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        return RequestMethod.findByName(request.getMethod())
-                .map(requestMethod ->
-                        handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod)))
-                .orElse(null);
     }
 }
