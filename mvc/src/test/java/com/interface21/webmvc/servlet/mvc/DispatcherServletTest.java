@@ -166,10 +166,10 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 어댑터가_null을_반환하면_렌더링하지_않는다() throws Exception {
+    void 어댑터가_null_ModelAndView를_반환하면_렌더링하지_않는다() throws Exception {
         final Object handler = new Object();
         dispatcherServlet.addHandlerMapping(anyRequest -> handler);
-        dispatcherServlet.addHandlerAdapter(new NullReturningHandlerAdapter(handler));
+        dispatcherServlet.addHandlerAdapter(new FixedResultHandlerAdapter(handler, null));
 
         dispatcherServlet.service(request, response);
 
@@ -177,7 +177,7 @@ class DispatcherServletTest {
         verify(response, never()).sendRedirect(anyString());
     }
 
-    private record NullReturningHandlerAdapter(Object target) implements HandlerAdapter {
+    private record FixedResultHandlerAdapter(Object target, ModelAndView result) implements HandlerAdapter {
 
         @Override
         public boolean supports(final Object handler) {
@@ -188,7 +188,7 @@ class DispatcherServletTest {
         public ModelAndView handle(final HttpServletRequest request,
                                    final HttpServletResponse response,
                                    final Object handler) {
-            return null;
+            return result;
         }
     }
 }

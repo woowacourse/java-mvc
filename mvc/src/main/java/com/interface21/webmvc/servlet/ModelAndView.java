@@ -10,8 +10,15 @@ public class ModelAndView {
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
+        validateView(view);
         this.view = view;
         this.model = new HashMap<>();
+    }
+
+    private void validateView(View view) {
+        if (view == null) {
+            throw new IllegalArgumentException("View는 null일 수 없습니다.");
+        }
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {

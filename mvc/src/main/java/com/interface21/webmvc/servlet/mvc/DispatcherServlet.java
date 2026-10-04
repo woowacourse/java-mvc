@@ -26,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Optional<Object> foundHandler = handlerMappingRegistry.getHandler(request);
         if (foundHandler.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
@@ -45,6 +45,10 @@ public class DispatcherServlet extends HttpServlet {
     private void render(final ModelAndView modelAndView,
                         final HttpServletRequest request,
                         final HttpServletResponse response) throws Exception {
+        if (modelAndView == null) {
+            return;
+        }
+
         request.setAttribute("modelAndView", modelAndView);
         Map<String, Object> model = modelAndView.getModel();
         modelAndView.getView().render(model, request, response);
