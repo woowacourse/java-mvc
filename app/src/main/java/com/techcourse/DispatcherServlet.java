@@ -1,11 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,9 +16,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -40,6 +40,7 @@ public class DispatcherServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
+
             final ModelAndView modelAndView = handle(handler.get(), request, response);
             render(modelAndView, request, response);
         } catch (Throwable e) {
@@ -49,13 +50,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (handler instanceof Controller controller) {
-            return new ModelAndView(new JspView(controller.execute(request, response)));
-        }
-        if (handler instanceof HandlerExecution handlerExecution) {
-            return handlerExecution.handle(request, response);
-        }
-        throw new IllegalStateException("지원하지 않는 핸들러입니다: " + handler);
+        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        return handlerAdapter.handle(handler, request, response);
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
