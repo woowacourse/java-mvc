@@ -19,7 +19,6 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     @Test
@@ -83,49 +82,38 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void 핸들러_메서드의_반환_타입이_ModelAndView가_아니면_초기화할_때_예외가_발생한다() {
-        final AnnotationHandlerMapping invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.returntype");
-
-        assertThatThrownBy(invalidHandlerMapping::initialize)
+    void 핸들러_메서드의_반환_타입이_ModelAndView가_아니면_생성할_때_예외가_발생한다() {
+        assertThatThrownBy(() -> new AnnotationHandlerMapping("invalidsamples.returntype"))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void 핸들러_메서드의_파라미터가_요청과_응답이_아니면_초기화할_때_예외가_발생한다() {
-        final AnnotationHandlerMapping invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.parameter");
-
-        assertThatThrownBy(invalidHandlerMapping::initialize)
+    void 핸들러_메서드의_파라미터가_요청과_응답이_아니면_생성할_때_예외가_발생한다() {
+        assertThatThrownBy(() -> new AnnotationHandlerMapping("invalidsamples.parameter"))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void 핸들러_메서드의_파라미터에_요청과_응답_외의_타입이_있으면_초기화할_때_예외가_발생한다() {
-        final AnnotationHandlerMapping invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.extraparameter");
-
-        assertThatThrownBy(invalidHandlerMapping::initialize)
+    void 핸들러_메서드의_파라미터에_요청과_응답_외의_타입이_있으면_생성할_때_예외가_발생한다() {
+        assertThatThrownBy(() -> new AnnotationHandlerMapping("invalidsamples.extraparameter"))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void 핸들러_메서드의_파라미터_순서가_요청_응답_순이_아니면_초기화할_때_예외가_발생한다() {
-        final AnnotationHandlerMapping invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.parameterorder");
-
-        assertThatThrownBy(invalidHandlerMapping::initialize)
+    void 핸들러_메서드의_파라미터_순서가_요청_응답_순이_아니면_생성할_때_예외가_발생한다() {
+        assertThatThrownBy(() -> new AnnotationHandlerMapping("invalidsamples.parameterorder"))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void 같은_URL과_HTTP_메서드로_두_번_등록하면_초기화할_때_예외가_발생한다() {
-        final AnnotationHandlerMapping invalidHandlerMapping = new AnnotationHandlerMapping("invalidsamples.duplicate");
-
-        assertThatThrownBy(invalidHandlerMapping::initialize)
+    void 같은_URL과_HTTP_메서드로_두_번_등록하면_생성할_때_예외가_발생한다() {
+        assertThatThrownBy(() -> new AnnotationHandlerMapping("invalidsamples.duplicate"))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void HTTP_메서드를_명시한_매핑이_생략한_매핑보다_우선한다() throws Exception {
         final AnnotationHandlerMapping overlapHandlerMapping = new AnnotationHandlerMapping("overlapsamples");
-        overlapHandlerMapping.initialize();
 
         final ModelAndView modelAndView = handle(overlapHandlerMapping, "/users", "GET");
 
@@ -135,7 +123,6 @@ class AnnotationHandlerMappingTest {
     @Test
     void HTTP_메서드를_명시한_매핑이_있어도_나머지_메서드는_생략한_매핑이_처리한다() throws Exception {
         final AnnotationHandlerMapping overlapHandlerMapping = new AnnotationHandlerMapping("overlapsamples");
-        overlapHandlerMapping.initialize();
 
         final ModelAndView modelAndView = handle(overlapHandlerMapping, "/users", "POST");
 
@@ -144,9 +131,8 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void RequestMapping이_없는_메서드는_핸들러로_등록하지_않는다() {
-        final AnnotationHandlerMapping helperHandlerMapping = new AnnotationHandlerMapping("helpersamples");
-
-        assertThatCode(helperHandlerMapping::initialize).doesNotThrowAnyException();
+        assertThatCode(() -> new AnnotationHandlerMapping("helpersamples"))
+                .doesNotThrowAnyException();
     }
 
     private ModelAndView handle(final AnnotationHandlerMapping mapping, final String uri, final String method) throws Exception {

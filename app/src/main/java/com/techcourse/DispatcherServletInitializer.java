@@ -40,9 +40,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
 
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
-
         dispatcherServlet.addHandlerMapping(manualHandlerMapping);
         dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
 
