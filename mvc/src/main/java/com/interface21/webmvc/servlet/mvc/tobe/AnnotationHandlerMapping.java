@@ -3,12 +3,14 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -30,11 +32,9 @@ public class AnnotationHandlerMapping {
             Object controller = controllers.get(controllerClass);
 
             // @RequestMapping이 붙은 메서드를 찾아 등록한다.
-            for (Method method : controllerClass.getDeclaredMethods()) {
+            Set<Method> methods = ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
+            for (Method method : methods) {
                 RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-                if (mapping == null) {
-                    continue;
-                }
                 registerHandlerExecution(method, controller, mapping);
             }
         }
