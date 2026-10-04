@@ -38,7 +38,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         Object handler = handlerMappingRegistry.getHandler(request)
-                .orElseThrow(() -> new IllegalArgumentException("사용할 수 있는 핸들러가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "사용할 수 있는 핸들러가 없습니다: " + request.getMethod() + " " + requestURI));
 
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 

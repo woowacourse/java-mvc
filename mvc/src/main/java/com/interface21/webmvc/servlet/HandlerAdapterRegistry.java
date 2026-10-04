@@ -20,6 +20,7 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("사용할 수 있는 핸들러 어댑터가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "사용할 수 있는 핸들러 어댑터가 없습니다: " + handler.getClass().getName()));
     }
 }
