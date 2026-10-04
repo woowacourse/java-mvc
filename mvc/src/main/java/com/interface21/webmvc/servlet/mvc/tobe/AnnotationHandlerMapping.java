@@ -1,6 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +25,41 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    public void initialize()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         log.info("Initialized AnnotationHandlerMapping!");
+
+        Reflections reflections = new Reflections(basePackage);
+
+        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
+
+            for (Method method : clazz.getMethods()) {
+                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+
+                if (annotation != null) {
+                    String url = annotation.value();
+                    RequestMethod[] requestMethods = annotation.method();
+
+                    for (RequestMethod requestMethod : requestMethods) {
+                        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+                        Object controller = clazz.getDeclaredConstructor().newInstance();
+
+                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                        if (handlerExecutions.containsKey(handlerKey)){
+                            throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
+                        }
+                        handlerExecutions.put(handlerKey, handlerExecution);
+                    }
+                }
+            }
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestUrl = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+        HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
+        return handlerExecutions.getOrDefault(handlerKey, null);
     }
 }
