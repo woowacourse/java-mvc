@@ -20,40 +20,27 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
     private HandlerMappingRegistry handlerMappingRegistry;
-
-    private ControllerHandlerAdapter  controllerHandlerAdapter;
-    private HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter;
-    private HandlerAdapterRegistry  handlerAdapterRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-
         handlerMappingRegistry = HandlerMappingRegistry.empty();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-
-        controllerHandlerAdapter = new ControllerHandlerAdapter();
-        handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        handlerMappingRegistry.initialize();
 
         handlerAdapterRegistry = HandlerAdapterRegistry.empty();
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
-        handlerAdapterRegistry.addHandlerAdapter(handlerExecutionHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        try{
+        try {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = getAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);

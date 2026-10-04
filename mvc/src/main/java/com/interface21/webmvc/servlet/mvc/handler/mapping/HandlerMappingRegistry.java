@@ -30,4 +30,8 @@ public class HandlerMappingRegistry {
                 .orElseThrow(() -> new RuntimeException(request.getRequestURL().toString() + "에 해당하는 핸들러를 찾을 수 없습니다"));
     }
 
+    public void initialize() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
 }
