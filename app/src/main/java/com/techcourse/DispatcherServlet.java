@@ -2,7 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -21,11 +21,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
     private final List<HandlerAdaptor> handlerAdaptors;
 
     public DispatcherServlet() {
-        handlerMappings = new ArrayList<>();
+        handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdaptors = new ArrayList<>();
     }
 
@@ -37,8 +37,8 @@ public class DispatcherServlet extends HttpServlet {
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
-        handlerMappings.add(manualHandlerMapping);
-        handlerMappings.add(annotationHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
         handlerAdaptors.add(new SimpleControllerHandlerAdaptor());
         handlerAdaptors.add(new AnnotationHandlerAdaptor());
@@ -51,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = getHandler(request);
+            final var handler = handlerMappingRegistry.getHandler(request);
             final var handlerAdaptor = getHandlerAdaptor(handler);
             ModelAndView mav = handlerAdaptor.handle(request, response, handler);
             mav.getView().render(mav.getModel(), request, response);
@@ -59,22 +59,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        for (final HandlerMapping handlerMapping : handlerMappings) {
-            try {
-                Object handler = handlerMapping.getHandler(request);
-
-                if (handler != null) {
-                    return handler;
-                }
-
-            } catch (Exception e) {
-                throw new NoSuchElementException("요청에 대응하는 핸들러가 없습니다.");
-            }
-        }
-        return null;
     }
 
     private HandlerAdaptor getHandlerAdaptor(final Object handler) {
