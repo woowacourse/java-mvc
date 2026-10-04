@@ -1,9 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.annotation;
 
 import com.interface21.core.ControllerScanner;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping implements HandlerMapping{
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
