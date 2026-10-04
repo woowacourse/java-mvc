@@ -20,4 +20,15 @@ class JspViewTest {
 
         verify(request).setAttribute("id", "gugu");
     }
+
+    @Test
+    void redirect_뷰는_지정한_경로로_리다이렉트한다() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final JspView jspView = new JspView("redirect:/index.jsp");
+
+        jspView.render(Map.of(), request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
 }
