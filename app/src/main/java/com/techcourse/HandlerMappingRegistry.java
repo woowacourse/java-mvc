@@ -12,6 +12,10 @@ public class HandlerMappingRegistry {
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
+        if (handlerMappings.stream().anyMatch(registered -> registered.getClass() == handlerMapping.getClass())) {
+            throw new IllegalArgumentException("이미 등록된 핸들러 매핑입니다: " + handlerMapping.getClass().getSimpleName());
+        }
+
         handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
