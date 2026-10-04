@@ -15,19 +15,20 @@ public class ControllerScanner {
         this.basePackage = basePackage;
     }
 
-    public Map<Class<?>, Object> scan() {
+    public Map<Class<?>, Object> getControllers() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        return controllerClasses.stream()
-                .map(this::createInstance)
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        return instantiateControllers(controllerClasses);
     }
 
-    private Entry<Class<?>, Object> createInstance(final Class<?> controllerClass) {
-        try {
-            return Map.entry(controllerClass, controllerClass.getConstructor().newInstance());
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 객체를 생성할 수 없습니다: " + controllerClass.getName(), e);
-        }
+    private  Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllerClasses) {
+        return controllerClasses.stream()
+                .map(controllerClass -> {
+                    try {
+                        return Map.entry(controllerClass, controllerClass.getConstructor().newInstance());
+                    } catch (ReflectiveOperationException e) {
+                        throw new IllegalStateException("컨트롤러 객체를 생성할 수 없습니다: " + controllerClass.getName(), e);
+                    }
+                }).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 }
