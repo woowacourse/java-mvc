@@ -26,15 +26,17 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Optional<Object> foundHandler = handlerMappingRegistry.getHandler(request);
         if (foundHandler.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
         Object handler = foundHandler.get();
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         try {
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
+        } catch (IOException | ServletException e) {
+            throw e;
         } catch (Exception e) {
             throw new ServletException(e);
         }
