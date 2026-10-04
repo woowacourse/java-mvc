@@ -32,7 +32,10 @@ public class AnnotationHandlerMapping {
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         getRequestMappingMethods(controllers.keySet())
-                .forEach(method -> addHandlerExecutions(controllers, method, method.getAnnotation(RequestMapping.class)));
+                .forEach(method ->
+                        addHandlerExecutions(controllers, method, method.getAnnotation(RequestMapping.class))
+                );
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
