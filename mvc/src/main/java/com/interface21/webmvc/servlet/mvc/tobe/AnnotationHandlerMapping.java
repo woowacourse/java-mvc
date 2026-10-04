@@ -27,22 +27,29 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClazz : controllerAnnotatedWith) {
-            Object controller = createController(controllerClazz);
-            Method[] declaredMethods = controllerClazz.getDeclaredMethods();
-            for (Method declaredMethod : declaredMethods) {
-                if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                    HandlerExecution handlerExecution = new HandlerExecution(controller, declaredMethod);
-                    RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
-                    String url = requestMapping.value();
-                    RequestMethod[] requestMethods = getRequestMethods(requestMapping);
-                    for (RequestMethod method : requestMethods) {
-                        addHandlerExecution(handlerExecution, method, url);
-                    }
-                }
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClasses.forEach(this::registerController);
+    }
+
+    private void registerController(final Class<?> controllerClass) {
+        final Object controller = createController(controllerClass);
+
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
+                continue;
             }
+
+            registerHandlerMethod(controller, method);
+        }
+    }
+
+    private void registerHandlerMethod(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+        for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
+            addHandlerExecution(handlerExecution, requestMethod, requestMapping.value());
         }
     }
 
