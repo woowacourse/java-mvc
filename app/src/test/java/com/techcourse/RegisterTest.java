@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMapping;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -27,6 +28,7 @@ class RegisterTest {
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         dispatcherServlet.init();
     }
