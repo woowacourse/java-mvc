@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,32 +27,47 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : classes) {
-
-            Object target = null;
-            try {
-                target = clazz.getDeclaredConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
-
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-                    RequestMethod[] requestMethods = requestMapping.method();
-                    if (requestMethods.length == 0) {
-                        requestMethods = RequestMethod.values();
-                    }
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                        HandlerExecution handlerExecution = new HandlerExecution(method, target);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
-            }
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
+            registerController(controllerClass);
         }
+    }
+
+    private void registerController(final Class<?> controllerClass) {
+        Object controller = createControllerInstance(controllerClass);
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            registerHandlerMethod(controller, method);
+        }
+    }
+
+    private Object createControllerInstance(final Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 인스턴스를 생성할 수 없습니다: " + controllerClass.getName(), e);
+        }
+    }
+
+    private void registerHandlerMethod(final Object controller, final Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        HandlerExecution handlerExecution = new HandlerExecution(method, controller);
+
+        for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
