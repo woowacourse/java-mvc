@@ -1,19 +1,19 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.handler.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -34,13 +34,16 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         try {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = getAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
+        } catch (NoHandlerFoundException e) {
+            log.warn(e.getMessage());
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }

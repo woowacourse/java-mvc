@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.handler.mapping;
 
+import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class HandlerMappingRegistry {
                 .map(mapping -> mapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(request.getRequestURL().toString() + "에 해당하는 핸들러를 찾을 수 없습니다"));
+                .orElseThrow(() -> new NoHandlerFoundException(request.getMethod(), request.getRequestURI()));
     }
 
     public void initialize() {
