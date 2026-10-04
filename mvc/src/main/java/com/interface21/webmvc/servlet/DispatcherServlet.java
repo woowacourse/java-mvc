@@ -1,12 +1,9 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +13,13 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public DispatcherServlet() {
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -35,14 +37,19 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        try {
-            final var controller = (Controller) handlerMappingRegistry.getHandler(request).get();
-            final var viewName = controller.execute(request, response);
+        Object handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow(() -> new IllegalArgumentException("사용할 수 있는 핸들러가 없습니다."));
 
-            new JspView(viewName).render(Map.of(), request, response);
-        } catch (Throwable e) {
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
+        try {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }
