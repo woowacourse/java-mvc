@@ -3,13 +3,17 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +35,7 @@ public class AnnotationHandlerMapping {
             final Object controller = createController(controllerClass);
 
             for (final Method method : ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class))) {
+                validateHandlerMethod(method);
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
                     final var key = new HandlerKey(requestMapping.value(), requestMethod);
@@ -56,6 +61,17 @@ public class AnnotationHandlerMapping {
             return controllerClass.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Cannot create controller: " + controllerClass.getName(), e);
+        }
+    }
+
+    private void validateHandlerMethod(Method method) {
+        final boolean validParameters = Arrays.equals(method.getParameterTypes(),
+                new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class});
+        if (!Modifier.isPublic(method.getModifiers())
+                || !validParameters
+                || !ModelAndView.class.isAssignableFrom(method.getReturnType())) {
+            throw new IllegalStateException("Invalid handler method: "
+                    + method.getDeclaringClass().getSimpleName() + "." + method.getName());
         }
     }
 

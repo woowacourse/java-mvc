@@ -127,4 +127,40 @@ class AnnotationHandlerMappingTest {
         // then
         assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
+
+    @Test
+    @DisplayName("요청과 응답 인자가 아닌 핸들러는 초기화할 때 거부한다")
+    void rejectsInvalidHandlerParameters() {
+        // given
+        final var invalidMapping = new AnnotationHandlerMapping("invalidhandlers.parameters");
+
+        // when, then
+        assertThatThrownBy(invalidMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("InvalidParametersController.invalid");
+    }
+
+    @Test
+    @DisplayName("ModelAndView를 반환하지 않는 핸들러는 초기화할 때 거부한다")
+    void rejectsInvalidHandlerReturnType() {
+        // given
+        final var invalidMapping = new AnnotationHandlerMapping("invalidhandlers.returntype");
+
+        // when, then
+        assertThatThrownBy(invalidMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("InvalidReturnTypeController.invalid");
+    }
+
+    @Test
+    @DisplayName("공개되지 않은 핸들러는 초기화할 때 거부한다")
+    void rejectsNonPublicHandler() {
+        // given
+        final var invalidMapping = new AnnotationHandlerMapping("invalidhandlers.visibility");
+
+        // when, then
+        assertThatThrownBy(invalidMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("NonPublicController.invalid");
+    }
 }
