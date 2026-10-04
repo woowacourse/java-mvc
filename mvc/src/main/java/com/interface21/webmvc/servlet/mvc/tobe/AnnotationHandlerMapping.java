@@ -69,13 +69,11 @@ public class AnnotationHandlerMapping {
     }
 
     private Object createController(Class<?> controllerClass) {
-        final Object controller;
         try {
-            controller = controllerClass.getDeclaredConstructor().newInstance();
+            return controllerClass.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("컨트롤러 생성 실패: " + controllerClass.getName(), e);
         }
-        return controller;
     }
 
     public Object getHandler(final HttpServletRequest request) {
