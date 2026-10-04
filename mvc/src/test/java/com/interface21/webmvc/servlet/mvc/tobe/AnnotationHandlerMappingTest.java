@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -114,5 +115,16 @@ class AnnotationHandlerMappingTest {
 
         when(request.getMethod()).thenReturn("PUT");
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 같은_URL과_HTTP_메서드가_중복되면_예외가_발생한다() {
+        final var duplicateHandlerMapping = new AnnotationHandlerMapping("duplicatemapping");
+
+        assertThatThrownBy(() -> duplicateHandlerMapping.initialize())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("중복된 요청 매핑")
+                .hasMessageContaining("/duplicate-test")
+                .hasMessageContaining("GET");
     }
 }

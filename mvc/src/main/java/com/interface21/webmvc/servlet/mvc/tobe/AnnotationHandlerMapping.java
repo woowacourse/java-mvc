@@ -52,6 +52,9 @@ public class AnnotationHandlerMapping {
         // URL과 HTTP 메서드를 키로 실행 정보를 등록한다.
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+            if (handlerExecutions.containsKey(key)) {
+                throw new IllegalStateException("중복된 요청 매핑: " + key);
+            }
             handlerExecutions.put(key, execution);
         }
     }
