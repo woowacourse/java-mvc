@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,7 +51,7 @@ public class AnnotationHandlerMapping {
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
 
-        Object instance = controller.getDeclaredConstructor().newInstance();
+        Object instance = ReflectionUtils.accessibleConstructor(controller).newInstance();
         for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             String value = requestMapping.value();
