@@ -1,10 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,37 +32,41 @@ public class AnnotationHandlerMapping {
             try {
                 registerHandlers(clazz);
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException("Can't create controller: " + clazz.getName(), e);
             }
         }
     }
 
-    private void registerHandlers(Class<?> clazz)
-            throws ReflectiveOperationException {
-        Object controller = clazz.getConstructor().newInstance();
+    private void registerHandlers(Class<?> clazz) throws ReflectiveOperationException {
+        Object controller = ReflectionUtils.accessibleConstructor(clazz).newInstance();
         final Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            String value = requestMapping.value();
-            RequestMethod[] requestMethods = requestMapping.method();
-            if (requestMethods.length == 0) {
-                requestMethods = RequestMethod.values();
-            }
-            for (RequestMethod requestMethod : requestMethods) {
-                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                if (handlerExecutions.containsKey(handlerKey)) {
-                    throw new IllegalArgumentException("Duplicated path and method.");
-                }
-                handlerExecutions.put(
-                        handlerKey,
-                        new HandlerExecution(controller, method)
-                );
-            }
+            registerHandlerMethod(method, controller);
         }
 
+    }
+
+    private void registerHandlerMethod(Method method, Object controller) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        ReflectionUtils.makeAccessible(method);
+        String value = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalArgumentException("Duplicated path and method.");
+            }
+            handlerExecutions.put(
+                    handlerKey,
+                    new HandlerExecution(controller, method)
+            );
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
