@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.core.ControllerScanner;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,21 +31,20 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlers(final Class<?> controllerClass, final Object controllerObject) {
-        Arrays.stream(controllerClass.getMethods())
-                .filter(controllerMethod -> controllerMethod.isAnnotationPresent(RequestMapping.class))
-                .forEach(controllerMethod -> addHandler(controllerObject, controllerMethod));
+        ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class))
+                        .forEach(controllerMethod -> addHandler(controllerObject, controllerMethod));
     }
 
     private void addHandler(final Object controllerObject, final Method controllerMethod) {
-        final RequestMapping mapping = controllerMethod.getAnnotation(RequestMapping.class);
-        RequestMethod[] requestHttpMethods = mapping.method();
+        final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestHttpMethods = requestMapping.method();
 
         if (requestHttpMethods.length == 0) {
             requestHttpMethods = RequestMethod.values();
         }
 
         Arrays.stream(requestHttpMethods)
-                .map(requestHttpMethod -> new HandlerKey(mapping.value(), requestHttpMethod))
+                .map(requestHttpMethod -> new HandlerKey(requestMapping.value(), requestHttpMethod))
                 .forEach(handlerKey -> {
                     final HandlerExecution handlerExecution = new HandlerExecution(controllerObject, controllerMethod);
                     if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
