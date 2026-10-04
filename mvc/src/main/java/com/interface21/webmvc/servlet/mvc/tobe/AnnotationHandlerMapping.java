@@ -1,6 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +28,49 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Arrays.stream(basePackage).forEach(pkg -> {
+            final var reflections = new Reflections(pkg.toString());
+
+            var controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
+            controllers.forEach(clazz -> {
+                try {
+                    Object controller = clazz.getDeclaredConstructor().newInstance();
+                    Arrays.stream(clazz.getDeclaredMethods())
+                            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                            .forEach(method -> addHandler(controller, method));
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            log.info("Controllers : {}", controllers);
+        });
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        log.info("Request URI : {}", requestURI);
+
+        String method = request.getMethod();
+        log.info("Request Method : {}", method);
+        return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
+    }
+
+    private void addHandler(final Object controller, final Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        log.info("value: {} -> method: {}", annotation.value(), annotation.method());
+
+        RequestMethod[] requestMethods;
+        if (annotation.method().length == 0) {
+            requestMethods = RequestMethod.values();
+        } else {
+            requestMethods = annotation.method();
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+        }
     }
 }
