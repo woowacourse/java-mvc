@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -25,33 +24,43 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
 
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-
             for (Method method : clazz.getMethods()) {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
                 if (annotation != null) {
-                    String url = annotation.value();
-                    RequestMethod[] requestMethods = annotation.method();
-
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                        Object controller = clazz.getDeclaredConstructor().newInstance();
-
-                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                        if (handlerExecutions.containsKey(handlerKey)){
-                            throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
-                        }
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
+                    registerHandler(clazz, method, annotation);
                 }
             }
+        }
+    }
+
+    private void registerHandler(Class<?> clazz, Method method, RequestMapping annotation) {
+        String url = annotation.value();
+        RequestMethod[] requestMethods = annotation.method();
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            Object controller = getController(clazz);
+
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
+            }
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private Object getController(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 생성에 실패했습니다: ", e);
         }
     }
 
