@@ -47,8 +47,6 @@ public class AnnotationHandlerMapping {
     private void registerControllerHandlers(Class<?> controller)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
-                .toList();
-        methods = methods.stream()
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
 
