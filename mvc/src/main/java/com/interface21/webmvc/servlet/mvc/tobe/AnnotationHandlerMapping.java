@@ -31,38 +31,30 @@ public class AnnotationHandlerMapping {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClasses) {
-            final Object controller = createController(controllerClass);
-
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-
-                final RequestMethod[] requestMethods = requestMapping.method();
-                if (requestMethods.length == 0) {
-                    registerAllRequestMethods(controller, method, requestMapping.value());
-                    continue;
-                }
-
-                final HandlerExecution handlerExecution =
-                        new HandlerExecution(controller, method);
-                for (RequestMethod requestMethod : requestMethods) {
-                    registerHandler(requestMapping.value(), requestMethod, handlerExecution, method);
-                }
-            }
+            registerController(controllerClass);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerAllRequestMethods(
-            final Object controller,
-            final Method method,
-            final String path
-    ) {
+    private void registerController(final Class<?> controllerClass) {
+        final Object controller = createController(controllerClass);
+
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            registerMethod(controller, method);
+        }
+    }
+
+    private void registerMethod(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
+
+        final String path = requestMapping.value();
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        for (RequestMethod requestMethod : RequestMethod.values()) {
+
+        for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
             registerHandler(path, requestMethod, handlerExecution, method);
         }
     }
@@ -76,6 +68,16 @@ public class AnnotationHandlerMapping {
         final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
         handlerExecutions.put(handlerKey, handlerExecution);
         log.info("Mapped {} {} to {}", requestMethod, path, method);
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length > 0) {
+            return requestMethods;
+        }
+
+        return RequestMethod.values();
     }
 
     private Object createController(final Class<?> controllerClass) {
