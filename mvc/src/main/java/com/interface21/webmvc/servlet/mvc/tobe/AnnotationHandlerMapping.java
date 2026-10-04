@@ -26,14 +26,18 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (Object packageName : basePackage) {
-            Reflections reflections = new Reflections(packageName.toString());
-            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        if (basePackage.length == 0) {
+            log.info("Initialized AnnotationHandlerMapping!");
+            return;
+        }
 
-            for (Class<?> controllerClass : controllerClasses) {
-                Object controller = createController(controllerClass);
-                registerHandlerExecutions(controllerClass, controller);
-            }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses =
+                reflections.getTypesAnnotatedWith(Controller.class);
+
+        for (Class<?> controllerClass : controllerClasses) {
+            Object controller = createController(controllerClass);
+            registerHandlerExecutions(controllerClass, controller);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
