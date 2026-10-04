@@ -1,18 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -28,21 +23,15 @@ public class AnnotationHandlerMapping {
 
     // 클래스 탐색 -> 객체 생성 -> 매핑 메서드 탐색 -> Map 등록
     public void initialize() {
-        Set<Class<?>> classes = new HashSet<>();
-        // 컨트롤러 클래스 탐색
-        for (final var basePackage : this.basePackage) {
-            Reflections reflections = new Reflections(basePackage);
-            classes.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        }
+        try {
+            ControllerScanner scanner = new ControllerScanner();
+            Map<Class<?>, Object> controllers = scanner.scan(basePackage);
 
-        for (final Class<?> clazz : classes) {
-            try {
-                // 객체 생성
-                Object controller = clazz.getDeclaredConstructor().newInstance();
+            for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+                Class<?> clazz = entry.getKey();
+                Object controller = entry.getValue();
 
-                // 매핑 메서드 탐색
                 Method[] methods = clazz.getDeclaredMethods();
-
                 for (final Method method : methods) {
                     if (method.isAnnotationPresent(RequestMapping.class)) {
                         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
@@ -62,9 +51,11 @@ public class AnnotationHandlerMapping {
                         }
                     }
                 }
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
             }
+
+
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
