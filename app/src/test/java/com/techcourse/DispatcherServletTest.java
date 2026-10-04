@@ -1,5 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.HandlerAdaptorRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.techcourse.controller.UserSession;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -27,7 +32,15 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
+        final var handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+
+        final var handlerAdaptorRegistry = new HandlerAdaptorRegistry();
+        handlerAdaptorRegistry.addHandlerAdaptor(new SimpleControllerHandlerAdaptor());
+        handlerAdaptorRegistry.addHandlerAdaptor(new AnnotationHandlerAdaptor());
+
+        servlet = new DispatcherServlet(handlerMappingRegistry, handlerAdaptorRegistry);
         servlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -40,6 +53,19 @@ class DispatcherServletTest {
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestURI()).thenReturn("/");
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    @DisplayName("애노테이션 기반 회원가입 화면 요청을 register.jsp로 포워드한다")
+    void annotationHandlerForward() throws Exception {
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
 
         servlet.service(request, response);
 
