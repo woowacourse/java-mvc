@@ -31,5 +31,8 @@ public class JspView implements View {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
+
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
