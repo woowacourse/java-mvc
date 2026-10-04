@@ -13,7 +13,7 @@ public class ReversedParameterController {
 
     @RequestMapping(value = "/reversed-parameter", method = RequestMethod.GET)
     public ModelAndView reversedParameter(final HttpServletResponse response, final HttpServletRequest request) {
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
