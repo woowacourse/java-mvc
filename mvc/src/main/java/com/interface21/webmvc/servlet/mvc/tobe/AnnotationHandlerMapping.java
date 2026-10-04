@@ -40,6 +40,14 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    public Object getHandler(final HttpServletRequest request) {
+        String requestUrl = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+        HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
+        return handlerExecutions.getOrDefault(handlerKey, null);
+    }
+
     private void registerHandler(Class<?> clazz, Method method, RequestMapping annotation) {
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
@@ -50,7 +58,7 @@ public class AnnotationHandlerMapping {
 
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             if (handlerExecutions.containsKey(handlerKey)) {
-                throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
+                throw new IllegalArgumentException("중복된 요청 매핑입니다: " + handlerKey);
             }
             handlerExecutions.put(handlerKey, handlerExecution);
         }
@@ -62,13 +70,5 @@ public class AnnotationHandlerMapping {
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("컨트롤러 생성에 실패했습니다: ", e);
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        String requestUrl = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
-        return handlerExecutions.getOrDefault(handlerKey, null);
     }
 }
