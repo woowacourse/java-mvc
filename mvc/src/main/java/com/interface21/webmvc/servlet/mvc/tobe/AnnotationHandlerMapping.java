@@ -34,7 +34,10 @@ public class AnnotationHandlerMapping {
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
                     final var key = new HandlerKey(requestMapping.value(), requestMethod);
-                    handlerExecutions.put(key, new HandlerExecution(controller, method));
+                    final var previous = handlerExecutions.putIfAbsent(key, new HandlerExecution(controller, method));
+                    if (previous != null) {
+                        throw new IllegalStateException("Duplicate request mapping: " + key);
+                    }
                     log.info("Mapped {} to {}.{}", key, controllerClass.getSimpleName(), method.getName());
                 }
             }

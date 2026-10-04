@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -91,5 +92,18 @@ class AnnotationHandlerMappingTest {
             // then
             assertThat(handler).isInstanceOf(HandlerExecution.class);
         }
+    }
+
+    @Test
+    @DisplayName("동일한 URL과 HTTP 메서드가 중복되면 초기화에 실패한다")
+    void duplicateMappingFailsOnInitialization() {
+        // given
+        final var duplicateMapping = new AnnotationHandlerMapping("duplicatehandlers");
+
+        // when, then
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/duplicate")
+                .hasMessageContaining("GET");
     }
 }
