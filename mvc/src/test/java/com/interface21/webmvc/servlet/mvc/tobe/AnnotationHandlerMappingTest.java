@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,7 +9,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMappi
 import com.interface21.webmvc.servlet.mvc.tobe.annotation.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.NoSuchElementException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,6 +82,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn(NOT_SUPPORT_METHOD);
 
-        assertThatThrownBy(() -> handlerMapping.getHandler(request)).isInstanceOf(NoSuchElementException.class);
+        Object handler = handlerMapping.getHandler(request);
+        Assertions.assertNull(handler);
     }
 }
