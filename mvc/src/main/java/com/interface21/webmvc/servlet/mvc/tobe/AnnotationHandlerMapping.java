@@ -1,21 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
-import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,12 +26,12 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("핸들러 매핑 초기화 시작: 탐색 패키지={}", Arrays.toString(basePackage));
-        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        Set<Class<?>> annotatedController = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> clazz : annotatedController) {
-            Object controller = createController(clazz);
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Class<?> clazz = entry.getKey();
+            Object controller = entry.getValue();
 
             for (Method declaredMethod : clazz.getDeclaredMethods()) {
                 if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
@@ -43,7 +40,7 @@ public class AnnotationHandlerMapping {
             }
         }
         log.info("핸들러 매핑 초기화 완료: 컨트롤러 {}개, 매핑 {}개",
-                annotatedController.size(), handlerExecutions.size());
+                controllers.size(), handlerExecutions.size());
     }
 
     private void registerHandler(Object controller, Method declaredMethod) {
@@ -59,14 +56,6 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : method) {
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
             handlerExecutions.put(handlerKey, execution);
-        }
-    }
-
-    private Object createController(Class<?> clazz) {
-        try {
-            return ReflectionUtils.accessibleConstructor(clazz).newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
         }
     }
 

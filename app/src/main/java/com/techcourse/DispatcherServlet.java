@@ -1,11 +1,12 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdaptorRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +15,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdaptorRegistry handlerAdaptorRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
+                             final HandlerAdaptorRegistry handlerAdaptorRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdaptorRegistry = handlerAdaptorRegistry;
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappingRegistry.initialize();
     }
 
     @Override
@@ -32,10 +36,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final var jspView = new JspView(viewName);
-            jspView.render(Map.of(), request, response);
+            final var handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new IllegalStateException("요청에 대응하는 핸들러가 없습니다."));
+            final var handlerAdaptor = handlerAdaptorRegistry.getHandlerAdaptor(handler);
+            ModelAndView mav = handlerAdaptor.handle(request, response, handler);
+            mav.getView().render(mav.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
