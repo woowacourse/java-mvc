@@ -11,9 +11,9 @@ import java.util.Set;
 
 public class ControllerScanner {
 
-    private final String[] basePackages;
+    private final Object[] basePackages;
 
-    public ControllerScanner(final String... basePackages) {
+    public ControllerScanner(final Object... basePackages) {
         if (basePackages == null || basePackages.length == 0) {
             throw new IllegalArgumentException("At least one base package is required");
         }
@@ -21,7 +21,7 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> scan() {
-        final Reflections reflections = new Reflections((Object[]) basePackages);
+        final Reflections reflections = new Reflections(basePackages);
         final Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
         final Map<Class<?>, Object> controllers = new LinkedHashMap<>();
 
