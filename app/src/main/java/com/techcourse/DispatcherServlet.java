@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,19 +15,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String BASE_PACKAGE = "com.techcourse";
 
-    private HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
     public DispatcherServlet() {
     }
 
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
     @Override
     public void init() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
+        handlerMappingRegistry.initialize();
     }
 
     @Override

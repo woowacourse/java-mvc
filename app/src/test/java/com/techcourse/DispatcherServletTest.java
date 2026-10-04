@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,10 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
+
+        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+
         dispatcherServlet.init();
     }
 
