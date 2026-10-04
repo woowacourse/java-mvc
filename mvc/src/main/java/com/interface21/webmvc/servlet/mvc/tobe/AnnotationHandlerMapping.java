@@ -41,8 +41,8 @@ public class AnnotationHandlerMapping {
                 .orElse(null);
     }
 
-    private void registerController(final Class<?> clazz, final Object instance) {
-        for (final Method method : clazz.getDeclaredMethods()) {
+    private void registerController(final Class<?> controller, final Object instance) {
+        for (final Method method : controller.getDeclaredMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 registerHandler(method, instance);
             }
@@ -54,12 +54,7 @@ public class AnnotationHandlerMapping {
         final var annotation = method.getAnnotation(RequestMapping.class);
         final var handlerExecution = new HandlerExecution(instance, method);
         for (final RequestMethod requestMethod : getRequestMethods(annotation)) {
-            final var handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            final HandlerExecution existing = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
-            if (existing != null) {
-                throw new IllegalStateException(
-                        "중복된 요청 매핑입니다: " + handlerKey + " (" + existing + ", " + handlerExecution + ")");
-            }
+            addHandlerExecution(new HandlerKey(annotation.value(), requestMethod), handlerExecution);
         }
     }
 
@@ -76,5 +71,13 @@ public class AnnotationHandlerMapping {
             return RequestMethod.values();
         }
         return annotation.method();
+    }
+
+    private void addHandlerExecution(final HandlerKey handlerKey, final HandlerExecution handlerExecution) {
+        final HandlerExecution existing = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+        if (existing != null) {
+            throw new IllegalStateException(
+                    "중복된 요청 매핑입니다: " + handlerKey + " (" + existing + ", " + handlerExecution + ")");
+        }
     }
 }
