@@ -70,8 +70,12 @@ public class AnnotationHandlerMapping {
         return methods;
     }
 
-    private void addHandlerExecution(HandlerExecution handlerExecution, RequestMethod method, String url) {
-        HandlerKey handlerKey = new HandlerKey(url, method);
-        handlerExecutions.put(handlerKey, handlerExecution);
+    private void addHandlerExecution(final HandlerExecution handlerExecution, final RequestMethod method, final String url) {
+        final HandlerKey handlerKey = new HandlerKey(url, method);
+        final HandlerExecution previousHandler = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+
+        if (previousHandler != null) {
+            throw new IllegalStateException("Duplicate handler mapping: " + handlerKey);
+        }
     }
 }
