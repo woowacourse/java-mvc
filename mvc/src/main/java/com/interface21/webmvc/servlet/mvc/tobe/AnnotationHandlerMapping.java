@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,16 +56,33 @@ public class AnnotationHandlerMapping {
             return ReflectionUtils.accessibleConstructor(clazz).newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
-            throw new IllegalStateException("[ERROR] 컨트롤러 생성 실패: " + clazz.getName(), e);
+            throw new IllegalStateException("[ERROR] 컨트롤러 생성에 실패했습니다. class: " + clazz.getName(), e);
         }
     }
 
     // @RequestMapping의 url과 method를 가지고, 어떤 요청(HandlerKey)을 어떤 HandlerExecution이 처리할지 HandlerExecution 등록
     private void registerHandler(final Method method, final Object controller) {
+        validateReturnType(method);
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
-            handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod), handlerExecution);
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            validateDuplicatedHandlerKey(handlerKey);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private void validateDuplicatedHandlerKey(final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("[ERROR] 이미 등록된 요청 매핑입니다. handlerKey: " + handlerKey);
+        }
+    }
+
+    private static void validateReturnType(final Method method) {
+        if (method.getReturnType() != ModelAndView.class) {
+            throw new IllegalStateException(
+                    "[ERROR] @RequestMapping 메서드는 ModelAndView를 반환해야 합니다. method: " + method.getDeclaringClass()
+                            .getName() + "." + method.getName());
         }
     }
 
