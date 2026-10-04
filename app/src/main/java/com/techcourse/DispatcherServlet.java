@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -14,25 +15,29 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGE = "com.techcourse";
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappingRegistry = new HandlerMappingRegistry();
+
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request,
+                           final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = (Controller) manualHandlerMapping.getHandler(request);
+            final var controller = (Controller) handlerMappingRegistry.getHandler(request).get();
             final var viewName = controller.execute(request, response);
 
             new JspView(viewName).render(Map.of(), request, response);
