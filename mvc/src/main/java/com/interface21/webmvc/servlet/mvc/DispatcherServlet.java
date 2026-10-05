@@ -1,7 +1,8 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.view.resolver.ViewResolver;
+import com.interface21.webmvc.servlet.view.resolver.ViewResolverRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +18,16 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final ViewResolverRegistry viewResolverRegistry;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
+        viewResolverRegistry = new ViewResolverRegistry();
+    }
+
+    public void addViewResolver(ViewResolver viewResolver) {
+        viewResolverRegistry.addViewResolver(viewResolver);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -43,14 +50,10 @@ public class DispatcherServlet extends HttpServlet {
             }
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
-            render(modelAndView, request, response);
+            viewResolverRegistry.resolveView(modelAndView)
+                    .render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             throw new ServletException(e);
         }
-    }
-
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 }

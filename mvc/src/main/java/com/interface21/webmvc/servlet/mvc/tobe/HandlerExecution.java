@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -25,9 +24,7 @@ public class HandlerExecution {
             return modelAndView;
         }
         if (result instanceof String viewName) {
-            if (viewName.startsWith("redirect:") || viewName.contains(".jsp")) {
-                return new ModelAndView(new JspView(viewName));
-            }
+            return new ModelAndView(viewName);
         }
         throw new IllegalStateException("지원하지 않는 반환 타입입니다: " + method);
     }
