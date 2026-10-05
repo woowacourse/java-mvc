@@ -32,8 +32,13 @@ public class AnnotationHandlerMapping {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClasses) {
-            final Method[] controllerDeclaredMethods = controllerClass.getDeclaredMethods();
-            putHandlerExecutions(controllerDeclaredMethods);
+            try {
+                final Object controller = controllerClass.getDeclaredConstructor().newInstance();
+                final Method[] controllerDeclaredMethods = controllerClass.getDeclaredMethods();
+                putHandlerExecutions(controller, controllerDeclaredMethods);
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("Controller 초기화에 실패했습니다: " + controllerClass.getName(), e);
+            }
         }
     }
 
@@ -42,7 +47,7 @@ public class AnnotationHandlerMapping {
             new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 
-    private void putHandlerExecutions(Method[] controllerDeclaredMethods) {
+    private void putHandlerExecutions(Object controller, Method[] controllerDeclaredMethods) {
         for (Method controllerMethod : controllerDeclaredMethods) {
             if (!controllerMethod.isAnnotationPresent(RequestMapping.class)) {
                 continue;
@@ -52,7 +57,7 @@ public class AnnotationHandlerMapping {
 
             for (RequestMethod requestMethod : requestMapping.method()) {
                 HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                handlerExecutions.put(handlerKey, new HandlerExecution());
+                handlerExecutions.put(handlerKey, new HandlerExecution(controller, controllerMethod));
             }
         }
     }
