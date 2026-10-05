@@ -20,18 +20,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = Map.of();
     }
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
 
-        controllerScanner.getControllers().forEach(this::registerHandlers);
+        Map<HandlerKey, HandlerExecution> newHandlerExecutions = new HashMap<>();
+        controllerScanner.getControllers()
+                .forEach((controllerClass, controller) ->
+                        registerHandlers(newHandlerExecutions, controllerClass, controller));
+        this.handlerExecutions = Map.copyOf(newHandlerExecutions);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -48,14 +52,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(key);
     }
 
-    private void registerHandlers(final Class<?> controllerClass, final Object controller) {
+    private void registerHandlers(
+            final Map<HandlerKey, HandlerExecution> handlerExecutions,
+            final Class<?> controllerClass,
+            final Object controller
+    ) {
         String prefix = getPrefix(controllerClass);
 
         for (Method method : findHandlerMethods(controllerClass)) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             for (RequestMethod requestMethod : getRequestMethods(mapping)) {
                 HandlerKey key = new HandlerKey(prefix + mapping.value(), requestMethod);
-                register(key, new HandlerExecution(controller, method), method);
+                register(handlerExecutions, key, new HandlerExecution(controller, method), method);
             }
         }
     }
@@ -72,7 +80,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .filter(ReflectionUtils.withAnnotation(RequestMapping.class)));
     }
 
-    private void register(final HandlerKey key, final HandlerExecution handlerExecution, final Method method) {
+    private void register(
+            final Map<HandlerKey, HandlerExecution> handlerExecutions,
+            final HandlerKey key,
+            final HandlerExecution handlerExecution,
+            final Method method
+    ) {
         if (handlerExecutions.putIfAbsent(key, handlerExecution) != null) {
             throw new IllegalStateException("중복된 매핑입니다: " + key + " -> " + method);
         }

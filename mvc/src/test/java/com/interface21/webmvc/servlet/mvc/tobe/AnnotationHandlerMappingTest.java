@@ -118,6 +118,24 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 다시_초기화해도_기존_매핑과_충돌하지_않는다() throws Exception {
+        handlerMapping.initialize();
+
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
     void 같은_URL과_메서드가_중복_매핑되면_초기화에_실패한다() {
         final var duplicateMapping = new AnnotationHandlerMapping(DuplicateController.class.getPackageName());
 
