@@ -11,6 +11,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 
 @Controller
+@RequestMapping("/")
 public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
@@ -29,5 +30,10 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/private-test", method = RequestMethod.GET)
+    private ModelAndView privateHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,14 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    public Object getHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = new HandlerKey(
+                request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod())
+        );
+        return handlerExecutions.get(handlerKey);
+    }
+
     private void registerController(final Class<?> controllerClass) {
         final Object controller = createController(controllerClass);
         final RequestMapping classRequestMapping =
@@ -52,6 +61,10 @@ public class AnnotationHandlerMapping {
             final RequestMapping classRequestMapping,
             final Method method
     ) {
+        if (!Modifier.isPublic(method.getModifiers())) {
+            return;
+        }
+
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return;
@@ -100,11 +113,7 @@ public class AnnotationHandlerMapping {
         if (methodPath.isEmpty()) {
             return normalizePath(classPath);
         }
-        return String.format(
-                "/%s/%s",
-                trimSlashes(classPath),
-                trimSlashes(methodPath)
-        );
+        return combinePaths(classPath, methodPath);
     }
 
     private String getClassPath(final RequestMapping classRequestMapping) {
@@ -128,6 +137,17 @@ public class AnnotationHandlerMapping {
         return path.replaceAll("^/+|/+$", "");
     }
 
+    private String combinePaths(final String classPath, final String methodPath) {
+        final String normalizedClassPath = normalizePath(classPath);
+        final String normalizedMethodPath = normalizePath(methodPath);
+
+        if (normalizedClassPath.equals("/")) {
+            return normalizedMethodPath;
+        }
+
+        return normalizedClassPath + normalizedMethodPath;
+    }
+
     private Object createController(final Class<?> controllerClass) {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
@@ -139,11 +159,4 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(
-                request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod())
-        );
-        return handlerExecutions.get(handlerKey);
-    }
 }

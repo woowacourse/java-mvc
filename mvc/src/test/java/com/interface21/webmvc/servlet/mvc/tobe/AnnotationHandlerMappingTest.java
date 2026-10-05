@@ -48,4 +48,14 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void private_메서드는_핸들러로_등록하지_않는다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/private-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }

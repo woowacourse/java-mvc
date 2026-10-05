@@ -13,7 +13,6 @@ public class HandlerExecution {
     public HandlerExecution(final Object controller, final Method method) {
         this.controller = controller;
         this.method = method;
-        this.method.setAccessible(true);
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
