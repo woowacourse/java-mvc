@@ -22,23 +22,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize(List<Class<?>> controllers) {
+    public void initialize(List<Object> controllers) {
         log.info("Initialized AnnotationHandlerMapping!");
-        controllers.forEach(controllerType -> {
-            log.info("Controller: {}", controllerType.getName());
-            initHandlerExecutions(createController(controllerType));
+        controllers.forEach(controller -> {
+            log.info("Controller: {}", controller.getClass().getName());
+            initHandlerExecutions(controller);
         });
-    }
-
-    private Object createController(Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException exception) {
-            throw new IllegalStateException(
-                    "컨트롤러 인스턴스를 생성할 수 없습니다: " + controllerType.getName(),
-                    exception
-            );
-        }
     }
 
     private void initHandlerExecutions(final Object controller) {
