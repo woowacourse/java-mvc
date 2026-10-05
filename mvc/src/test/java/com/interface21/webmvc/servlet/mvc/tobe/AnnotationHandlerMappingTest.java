@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Set;
@@ -118,6 +119,18 @@ class AnnotationHandlerMappingTest {
     @Test
     void returnsNoHandlerForUnmappedPath() {
         assertThat(handler("/missing", RequestMethod.GET)).isNull();
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"FOO", "CONNECT", "get", ""})
+    void unsupportedMethodDoesNotMatchAnyMapping(final String method) {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn(method);
+        for (final var path : new String[]{"/all-methods-test", "/priority-test", "/get-test"}) {
+            when(request.getRequestURI()).thenReturn(path);
+            assertThat(handlerMapping.getHandler(request)).isNull();
+        }
     }
 
     private HandlerExecution handler(final String path, final RequestMethod method) {

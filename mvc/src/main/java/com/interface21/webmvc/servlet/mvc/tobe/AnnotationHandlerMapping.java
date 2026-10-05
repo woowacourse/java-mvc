@@ -10,6 +10,7 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 public class AnnotationHandlerMapping {
 
@@ -40,7 +41,7 @@ public class AnnotationHandlerMapping {
         final var requestUri = request.getRequestURI();
         final var requestMethod = findRequestMethod(request.getMethod());
 
-        return handlerRegistry.getHandler(requestUri, requestMethod);
+        return requestMethod.map(method -> handlerRegistry.getHandler(requestUri, method)).orElse(null);
     }
 
     private Object createController(final Class<?> controllerType) {
@@ -81,11 +82,14 @@ public class AnnotationHandlerMapping {
         return registeredHandlers;
     }
 
-    private RequestMethod findRequestMethod(final String method) {
+    private Optional<RequestMethod> findRequestMethod(final String method) {
+        if (method == null) {
+            return Optional.empty();
+        }
         try {
-            return RequestMethod.valueOf(method);
+            return Optional.of(RequestMethod.valueOf(method));
         } catch (IllegalArgumentException exception) {
-            return null;
+            return Optional.empty();
         }
     }
 }
