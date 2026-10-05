@@ -33,7 +33,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getServletPath()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -48,13 +48,24 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getServletPath()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("context path를 제외한 servlet path로 핸들러를 조회한다")
+    void context_path를_제외하고_핸들러를_조회한다() throws Exception {
+        final var request = request("/app/method-test","/app", RequestMethod.GET);
+        final var response = mock(HttpServletResponse.class);
+        
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThat(handlerExecution).isNotNull();
     }
 
     @Test
@@ -132,10 +143,36 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    private HttpServletRequest request(final String requestUri, final RequestMethod requestMethod) {
+    private HttpServletRequest request(
+            final String requestUri,
+            final RequestMethod requestMethod
+    ) {
+        return request(requestUri, "", requestMethod);
+    }
+
+
+    private HttpServletRequest request(
+            final String requestUri,
+            final String contextPath,
+            final RequestMethod requestMethod
+    ) {
+        if (!requestUri.startsWith(contextPath)) {
+            throw new IllegalArgumentException(
+                    "requestUri는 contextPath로 시작해야 합니다."
+            );
+        }
+
+        final String servletPath =
+                requestUri.substring(contextPath.length());
+
         final var request = mock(HttpServletRequest.class);
+
         when(request.getRequestURI()).thenReturn(requestUri);
+        when(request.getContextPath()).thenReturn(contextPath);
+        when(request.getServletPath()).thenReturn(servletPath);
+        when(request.getPathInfo()).thenReturn(null);
         when(request.getMethod()).thenReturn(requestMethod.name());
+
         return request;
     }
 
