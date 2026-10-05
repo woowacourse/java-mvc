@@ -67,8 +67,12 @@ public class AnnotationHandlerMapping {
         }
 
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        final boolean isFallbackMapping = requestMapping.method().length == 0;
         for (RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            if (isFallbackMapping && handlerExecutions.containsKey(handlerKey)) {
+                continue;
+            }
             handlerExecutions.put(handlerKey, handlerExecution);
             log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(), method.getName());
         }

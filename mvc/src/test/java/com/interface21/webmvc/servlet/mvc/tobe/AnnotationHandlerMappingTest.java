@@ -103,4 +103,30 @@ class AnnotationHandlerMappingTest {
         assertThat(getHandler.handle(getRequest, response).getObject("handler")).isEqualTo("GET");
         assertThat(postHandler.handle(postRequest, response).getObject("handler")).isEqualTo("POST");
     }
+
+    @Test
+    @DisplayName("같은 URL에서는 HTTP 메서드를 명시한 매핑이 공통 매핑보다 우선한다")
+    void prefersExplicitMethodsToMappingWithoutMethod() throws Exception {
+        // given
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var putRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(getRequest.getRequestURI()).thenReturn("/overlapping");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/overlapping");
+        when(postRequest.getMethod()).thenReturn("POST");
+        when(putRequest.getRequestURI()).thenReturn("/overlapping");
+        when(putRequest.getMethod()).thenReturn("PUT");
+
+        // when
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+        final var putHandler = (HandlerExecution) handlerMapping.getHandler(putRequest);
+
+        // then
+        assertThat(getHandler.handle(getRequest, response).getObject("handler")).isEqualTo("명시적");
+        assertThat(postHandler.handle(postRequest, response).getObject("handler")).isEqualTo("명시적");
+        assertThat(putHandler.handle(putRequest, response).getObject("handler")).isEqualTo("공통");
+    }
 }

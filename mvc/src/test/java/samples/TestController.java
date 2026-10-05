@@ -45,4 +45,14 @@ public class TestController {
     public ModelAndView handlePost(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("")).addObject("handler", "POST");
     }
+
+    @RequestMapping("/overlapping")
+    public ModelAndView handleFallback(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("handler", "공통");
+    }
+
+    @RequestMapping(value = "/overlapping", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView handleExplicitMethods(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("handler", "명시적");
+    }
 }
