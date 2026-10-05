@@ -38,4 +38,14 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/priority-test", method = RequestMethod.GET)
+    public ModelAndView explicit(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("source", "explicit");
+    }
+
+    @RequestMapping("/priority-test")
+    public ModelAndView fallback(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("")).addObject("source", "fallback");
+    }
 }
