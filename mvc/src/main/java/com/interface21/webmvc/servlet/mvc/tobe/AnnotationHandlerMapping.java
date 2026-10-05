@@ -6,8 +6,11 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +65,7 @@ public class AnnotationHandlerMapping {
 
     // @RequestMapping의 url과 method를 가지고, 어떤 요청(HandlerKey)을 어떤 HandlerExecution이 처리할지 HandlerExecution 등록
     private void registerHandler(final Method method, final Object controller) {
-        validateReturnType(method);
+        validateHandlerMethod(method);
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
@@ -72,10 +75,10 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void validateDuplicatedHandlerKey(final HandlerKey handlerKey) {
-        if (handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalStateException("[ERROR] 이미 등록된 요청 매핑입니다. handlerKey: " + handlerKey);
-        }
+    private static void validateHandlerMethod(final Method method) {
+        validateAccessModifier(method);
+        validateParameterType(method);
+        validateReturnType(method);
     }
 
     private static void validateReturnType(final Method method) {
@@ -83,6 +86,29 @@ public class AnnotationHandlerMapping {
             throw new IllegalStateException(
                     "[ERROR] @RequestMapping 메서드는 ModelAndView를 반환해야 합니다. method: " + method.getDeclaringClass()
                             .getName() + "." + method.getName());
+        }
+    }
+
+    private static void validateAccessModifier(final Method method) {
+        if (!Modifier.isPublic(method.getModifiers())) {
+            throw new IllegalStateException(
+                    "[ERROR] @RequestMapping 메서드는 public이어야 합니다. method: " + method.getDeclaringClass().getName() + "."
+                            + method.getName());
+        }
+    }
+
+    private static void validateParameterType(final Method method) {
+        Class<?>[] expected = {HttpServletRequest.class, HttpServletResponse.class};
+        if (!Arrays.equals(method.getParameterTypes(), expected)) {
+            throw new IllegalStateException(
+                    "[ERROR] @RequestMapping 메서드의 파라미터는 (HttpServletRequest, HttpServletResponse)여야 합니다. method: "
+                            + method.getDeclaringClass().getName() + "." + method.getName());
+        }
+    }
+
+    private void validateDuplicatedHandlerKey(final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("[ERROR] 이미 등록된 요청 매핑입니다. handlerKey: " + handlerKey);
         }
     }
 
