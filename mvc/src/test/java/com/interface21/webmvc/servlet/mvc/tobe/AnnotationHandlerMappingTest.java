@@ -1,20 +1,23 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.interface21.web.bind.annotation.RequestMethod;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() {
+    void setUp()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
@@ -47,5 +50,22 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void allMethod() throws Exception {
+        final var response = mock(HttpServletResponse.class);
+
+        for (RequestMethod method : RequestMethod.values()) {
+            final var request = mock(HttpServletRequest.class);
+            when(request.getAttribute("id")).thenReturn("gugu");
+            when(request.getRequestURI()).thenReturn("/all-methods-test");
+            when(request.getMethod()).thenReturn(method.name());
+
+            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+            final var modelAndView = handlerExecution.handle(request, response);
+
+            assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        }
     }
 }
