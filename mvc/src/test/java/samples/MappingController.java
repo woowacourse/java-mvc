@@ -25,4 +25,12 @@ public class MappingController {
     public ModelAndView allMethods(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("")).addObject("route", "all-methods");
     }
+
+    @RequestMapping(value = "/private-test", method = RequestMethod.GET)
+    private ModelAndView privateHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        return new ModelAndView(new JspView(""))
+                .addObject("route", "private-handler")
+                .addObject("id", request.getAttribute("id"));
+    }
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
@@ -81,6 +82,25 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("route")).isEqualTo("all-methods");
+    }
+
+    @Test
+    void invokesPrivateMappedMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/private-test");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getAttribute("id")).thenReturn("gugu");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        assertThat(handlerExecution).isNotNull();
+
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("route")).isEqualTo("private-handler");
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
     @ParameterizedTest
