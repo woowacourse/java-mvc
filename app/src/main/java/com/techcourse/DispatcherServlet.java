@@ -8,19 +8,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
 
+import java.util.Collections;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final ManualHandlerMapping manualHandlerMapping;
 
     public DispatcherServlet() {
+        this(new ManualHandlerMapping());
+    }
+
+    DispatcherServlet(final ManualHandlerMapping manualHandlerMapping) {
+        this.manualHandlerMapping = manualHandlerMapping;
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
     }
 
@@ -32,20 +38,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            new JspView(viewName).render(Collections.emptyMap(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-    }
 }
