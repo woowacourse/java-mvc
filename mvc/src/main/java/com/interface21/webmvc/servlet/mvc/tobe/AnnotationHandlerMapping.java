@@ -39,10 +39,7 @@ public class AnnotationHandlerMapping {
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
                     final var key = new HandlerKey(requestMapping.value(), requestMethod);
-                    final var previous = handlerExecutions.putIfAbsent(key, new HandlerExecution(controller, method));
-                    if (previous != null) {
-                        throw new IllegalStateException("Duplicate request mapping: " + key);
-                    }
+                    registerHandler(key, new HandlerExecution(controller, method));
                     log.info("Mapped {} to {}.{}", key, controllerClass.getSimpleName(), method.getName());
                 }
             }
@@ -82,5 +79,11 @@ public class AnnotationHandlerMapping {
         }
 
         return methods;
+    }
+
+    private void registerHandler(HandlerKey key, HandlerExecution handler) {
+        if (handlerExecutions.putIfAbsent(key, handler) != null) {
+            throw new IllegalStateException("Duplicate request mapping: " + key);
+        }
     }
 }
