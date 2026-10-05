@@ -35,12 +35,12 @@ public class AnnotationHandlerMapping {
 
     private void registerController(Class<?> controllerClass) {
         Object controllerInstance = createControllerInstance(controllerClass);
-        Arrays.stream(controllerClass.getMethods())
+        Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(handlerMethod -> handlerMethod.isAnnotationPresent(RequestMapping.class))
                 .forEach(handlerMethod -> registerHandlerMethod(controllerInstance, handlerMethod));
     }
 
-    public Object createControllerInstance(Class<?> controllerClass) {
+    private Object createControllerInstance(Class<?> controllerClass) {
         try {
             return controllerClass.getConstructor().newInstance();
         } catch (InstantiationException
@@ -52,6 +52,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandlerMethod(Object controllerInstance, Method handlerMethod) {
+        handlerMethod.setAccessible(true);
         RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         String path = requestMapping.value();
         HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, handlerMethod);
