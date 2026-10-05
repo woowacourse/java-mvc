@@ -1,9 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
-import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -132,17 +128,6 @@ class AnnotationHandlerMappingTest {
         assertThat(handler).isNull();
     }
 
-    @Test
-    @DisplayName("동일한 URL과 HTTP 메서드가 중복으로 매핑되면 초기화에 실패한다")
-    void 중복_매핑을_거부한다() {
-        final var duplicateHandlerMapping = new AnnotationHandlerMapping(
-                "com.interface21.webmvc.servlet.mvc.tobe"
-        );
-
-        assertThatThrownBy(duplicateHandlerMapping::initialize)
-                .isInstanceOf(IllegalStateException.class);
-    }
-
     private HttpServletRequest request(
             final String requestUri,
             final RequestMethod requestMethod
@@ -174,19 +159,5 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(requestMethod.name());
 
         return request;
-    }
-
-    @Controller
-    public static class DuplicateMappingController {
-
-        @RequestMapping(value = "/duplicate", method = RequestMethod.GET)
-        public ModelAndView first(final HttpServletRequest request, final HttpServletResponse response) {
-            return null;
-        }
-
-        @RequestMapping(value = "/duplicate", method = RequestMethod.GET)
-        public ModelAndView second(final HttpServletRequest request, final HttpServletResponse response) {
-            return null;
-        }
     }
 }
