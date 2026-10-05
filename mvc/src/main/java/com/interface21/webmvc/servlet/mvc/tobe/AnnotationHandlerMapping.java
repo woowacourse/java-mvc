@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -9,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,28 +26,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::registerHandlers);
 
-        final Reflections reflections = new Reflections(basePackage);
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-            try {
-                registerHandlers(clazz);
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("Can't create controller: " + clazz.getName(), e);
-            }
-        }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlers(Class<?> clazz) throws ReflectiveOperationException {
-        Object controller = ReflectionUtils.accessibleConstructor(clazz).newInstance();
-        final Method[] methods = clazz.getDeclaredMethods();
+    private void registerHandlers(Class<?> clazz, Object controller) {
+        Set<Method> methods = ReflectionUtils.getDeclaredMethods(
+                clazz,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
         for (Method method : methods) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
             registerHandlerMethod(method, controller);
         }
-
     }
 
     private void registerHandlerMethod(Method method, Object controller) {
@@ -62,7 +54,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
             if (handlerExecutions.containsKey(handlerKey)) {
-                throw new IllegalArgumentException("Duplicated path and method.");
+                throw new IllegalArgumentException("Duplicated mapping: " + handlerKey);
             }
             handlerExecutions.put(
                     handlerKey,
@@ -73,8 +65,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
-        return handlerExecutions.get(new HandlerKey(uri, RequestMethod.valueOf(method)));
+        final String uri = request.getRequestURI();
+        final RequestMethod requestMethod;
+        try {
+            String method = request.getMethod();
+            requestMethod = RequestMethod.valueOf(method);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        return handlerExecutions.get(new HandlerKey(uri, requestMethod));
     }
 }

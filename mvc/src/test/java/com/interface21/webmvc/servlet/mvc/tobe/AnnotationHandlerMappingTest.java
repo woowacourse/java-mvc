@@ -67,4 +67,28 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void handle_WhenUnregisteredMethod_ThenReturnNull() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("UNREGISTERED");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        assertThat(handlerExecution).isNull();
+    }
+
+    @Test
+    void handle_WhenNotMappedMethod_ThenReturnNull() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        assertThat(handlerExecution).isNull();
+    }
 }
