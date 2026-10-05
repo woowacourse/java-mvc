@@ -2,10 +2,12 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.interface21.web.bind.annotation.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +49,28 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void supportsAllHttpMethodsWhenRequestMethodIsNotSpecified() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/all-test");
+
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            when(request.getMethod()).thenReturn(requestMethod.name());
+
+            assertThat(handlerMapping.getHandler(request)).isNotNull();
+        }
+    }
+
+    @Test
+    void throwsExceptionWhenHandlerMappingIsDuplicated() {
+        final var duplicatedHandlerMapping = new AnnotationHandlerMapping("fixtures.duplicate");
+
+        assertThatThrownBy(duplicatedHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Duplicate handler mapping")
+                .hasMessageContaining("/duplicate")
+                .hasMessageContaining("GET");
     }
 }
