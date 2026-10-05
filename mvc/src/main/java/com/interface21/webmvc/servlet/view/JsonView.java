@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
@@ -23,7 +23,7 @@ public class JsonView implements View {
             value = model.values().iterator().next();
         }
 
-        String jsonStr = objectMapper.writeValueAsString(value);
+        String jsonStr = OBJECT_MAPPER.writeValueAsString(value);
 
         response.getWriter().write(jsonStr);
     }
