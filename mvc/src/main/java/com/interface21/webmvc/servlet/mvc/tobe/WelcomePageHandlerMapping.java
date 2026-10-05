@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 
@@ -8,26 +9,33 @@ public class WelcomePageHandlerMapping implements HandlerMapping {
 
     private static final String WELCOME_PAGE = "/index.html";
 
-    @Override
-    public Object getHandler(HttpServletRequest request) {
-        if (!"/".equals(request.getRequestURI())) {
-            return null;
-        }
-        if (existsWelcomePage(request)) {
-            return new WelcomePageHandler(WELCOME_PAGE);
-        }
-        return null;
-    }
+    private final ServletContext servletContext;
+    private WelcomePageHandler welcomePageHandler;
 
-    private boolean existsWelcomePage(final HttpServletRequest request) {
-        try {
-            return request.getServletContext().getResource(WELCOME_PAGE) != null;
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e);
-        }
+    public WelcomePageHandlerMapping(final ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     @Override
     public void initialize() {
+        if (existsWelcomePage()) {
+            welcomePageHandler = new WelcomePageHandler(WELCOME_PAGE);
+        }
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        if ("/".equals(request.getRequestURI())) {
+            return welcomePageHandler;
+        }
+        return null;
+    }
+
+    private boolean existsWelcomePage() {
+        try {
+            return servletContext.getResource(WELCOME_PAGE) != null;
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
