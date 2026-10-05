@@ -1,45 +1,60 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.NoHandlerFoundException;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
-import java.util.Map;
+import java.io.IOException;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry, HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappingRegistry.initialize();
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            JspView jspView = new JspView(viewName);
-            jspView.render(Map.of(), request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (NoHandlerFoundException e) {
+            log.warn(e.getMessage());
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappingRegistry.getHandler(request);
+    }
+
+    private HandlerAdapter getAdapter(Object handler) {
+        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 
 }
