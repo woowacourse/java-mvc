@@ -10,31 +10,29 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private HandlerRegistry handlerRegistry;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage.clone();
-        this.handlerExecutions = Map.of();
+        this.handlerRegistry = new HandlerRegistry();
     }
 
     public void initialize() {
-        final var initializedHandlerExecutions = new HashMap<HandlerKey, HandlerExecution>();
+        var initializedHandlers = new HandlerRegistry();
         final var reflections = new Reflections(basePackage);
 
         for (final var controllerType : reflections.getTypesAnnotatedWith(Controller.class)) {
             final var controller = createController(controllerType);
-            registerHandlerMethods(initializedHandlerExecutions, controller);
+            initializedHandlers = registerHandlerMethods(initializedHandlers, controller);
         }
 
-        handlerExecutions = Map.copyOf(initializedHandlerExecutions);
+        handlerRegistry = initializedHandlers;
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -42,14 +40,7 @@ public class AnnotationHandlerMapping {
         final var requestUri = request.getRequestURI();
         final var requestMethod = findRequestMethod(request.getMethod());
 
-        if (requestMethod != null) {
-            final var handlerExecution = handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
-            if (handlerExecution != null) {
-                return handlerExecution;
-            }
-        }
-
-        return handlerExecutions.get(new HandlerKey(requestUri, null));
+        return handlerRegistry.getHandler(requestUri, requestMethod);
     }
 
     private Object createController(final Class<?> controllerType) {
@@ -61,44 +52,33 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerHandlerMethods(final Map<HandlerKey, HandlerExecution> initializedHandlerExecutions,
-                                        final Object controller) {
+    private HandlerRegistry registerHandlerMethods(final HandlerRegistry handlers, final Object controller) {
+        var registeredHandlers = handlers;
         for (final var method : controller.getClass().getDeclaredMethods()) {
             final var requestMapping = method.getAnnotation(RequestMapping.class);
-            if (requestMapping == null) {
-                continue;
+            if (requestMapping != null) {
+                registeredHandlers = registerHandlerExecution(registeredHandlers, controller, method, requestMapping);
             }
-
-            registerHandlerExecution(initializedHandlerExecutions, controller, method, requestMapping);
         }
+        return registeredHandlers;
     }
 
-    private void registerHandlerExecution(final Map<HandlerKey, HandlerExecution> initializedHandlerExecutions,
-                                          final Object controller,
-                                          final Method method,
-                                          final RequestMapping requestMapping) {
+    private HandlerRegistry registerHandlerExecution(final HandlerRegistry handlers,
+                                                     final Object controller,
+                                                     final Method method,
+                                                     final RequestMapping requestMapping) {
+        final var execution = new HandlerExecution(controller, method);
         final var requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
-            register(initializedHandlerExecutions, new HandlerKey(requestMapping.value(), null), controller, method);
-            return;
+            return handlers.register(new HandlerKey(requestMapping.value(), null), execution);
         }
 
+        var registeredHandlers = handlers;
         for (final var requestMethod : requestMethods) {
-            register(initializedHandlerExecutions, new HandlerKey(requestMapping.value(), requestMethod), controller, method);
+            registeredHandlers = registeredHandlers.register(
+                    new HandlerKey(requestMapping.value(), requestMethod), execution);
         }
-    }
-
-    private void register(final Map<HandlerKey, HandlerExecution> initializedHandlerExecutions,
-                          final HandlerKey handlerKey,
-                          final Object controller,
-                          final Method method) {
-        final var previousHandler = initializedHandlerExecutions.putIfAbsent(
-                handlerKey,
-                new HandlerExecution(controller, method)
-        );
-        if (previousHandler != null) {
-            throw new IllegalStateException("Duplicate handler mapping: " + handlerKey);
-        }
+        return registeredHandlers;
     }
 
     private RequestMethod findRequestMethod(final String method) {
