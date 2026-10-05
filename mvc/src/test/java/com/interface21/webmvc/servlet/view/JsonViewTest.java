@@ -11,6 +11,18 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 public class JsonViewTest {
 
+    public static class TestUser {
+        private final String account;
+
+        public TestUser(String account) {
+            this.account = account;
+        }
+
+        public String getAccount() {
+            return account;
+        }
+    }
+
     @Test
     void renderSingleModelValue() throws Exception {
         // given
@@ -55,5 +67,21 @@ public class JsonViewTest {
         // then
         assertThat(response.getContentAsString()).isEqualTo("{}");
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    }
+
+    @Test
+    void renderSingleObjectValue() throws Exception {
+        // given
+        var request = new MockHttpServletRequest();
+        var response = new MockHttpServletResponse();
+        var model = Map.of("user", new TestUser("gugu"));
+
+        // when
+        new JsonView().render(model, request, response);
+        var mapper = new ObjectMapper();
+
+        // then
+        assertThat(mapper.readTree(response.getContentAsString()))
+                .isEqualTo(mapper.readTree("{\"account\":\"gugu\"}"));
     }
 }
