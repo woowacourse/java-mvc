@@ -48,4 +48,15 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void handlerNotFound() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/not-found");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isNull();
+    }
 }
