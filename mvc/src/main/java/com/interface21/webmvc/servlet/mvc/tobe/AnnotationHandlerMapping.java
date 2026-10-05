@@ -1,14 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,32 +22,20 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner();
+        Map<Class<?>, Object> controllers = controllerScanner.scan(basePackage);
 
-        for (Class<?> controllerType : controllerTypes) {
-            registerController(controllerType);
-        }
+        controllers.forEach(this::registerController);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerController(Class<?> controllerType) {
-        Object controller = createController(controllerType);
-
+    private void registerController(Class<?> controllerType, Object controller) {
         for (Method method : controllerType.getDeclaredMethods()) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             if (mapping != null) {
                 registerHandlerMethod(method, controller, mapping);
             }
-        }
-    }
-
-    private Object createController(Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 생성 실패: " + controllerType.getName(), e);
         }
     }
 
