@@ -13,7 +13,7 @@ public class HandlerMappingRegistry {
         this.handlerMappings = new ArrayList<>();
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
         this.handlerMappings.add(handlerMapping);
     }
 

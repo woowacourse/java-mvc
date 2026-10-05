@@ -13,7 +13,7 @@ public class JsonView implements View {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(DEFAULT_CONTENT_TYPE);
         final Object body = extractBody(model);
         response.getWriter().write(OBJECT_MAPPER.writeValueAsString(body));
