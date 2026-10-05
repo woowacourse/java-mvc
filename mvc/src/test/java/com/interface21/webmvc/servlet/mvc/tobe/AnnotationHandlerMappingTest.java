@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -128,5 +129,16 @@ class AnnotationHandlerMappingTest {
         assertThat(getHandler.handle(getRequest, response).getObject("handler")).isEqualTo("명시적");
         assertThat(postHandler.handle(postRequest, response).getObject("handler")).isEqualTo("명시적");
         assertThat(putHandler.handle(putRequest, response).getObject("handler")).isEqualTo("공통");
+    }
+
+    @Test
+    @DisplayName("응답 매개변수가 빠진 핸들러는 초기화 단계에서 거부한다")
+    void rejectsHandlerWhenResponseParameterIsMissing() {
+        // given
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("fixtures");
+
+        // when & then
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class);
     }
 }
