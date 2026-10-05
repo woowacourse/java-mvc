@@ -33,6 +33,6 @@ public final class HandlerRegistry {
                 return execution;
             }
         }
-        return handlers.get(new HandlerKey(path, null));
+        return handlers.get(HandlerKey.anyMethod(path));
     }
 }

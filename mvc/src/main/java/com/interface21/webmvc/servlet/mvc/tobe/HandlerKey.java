@@ -14,11 +14,15 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public static HandlerKey anyMethod(final String path) {
+        return new HandlerKey(path, null);
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +
                 "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
+                ", requestMethod=" + (requestMethod == null ? "모든 메서드" : requestMethod) +
                 '}';
     }
 

@@ -28,7 +28,7 @@ class HandlerRegistryTest {
         final var explicit = mock(HandlerExecution.class);
         final var fallback = mock(HandlerExecution.class);
         final var explicitKey = new HandlerKey("/test", RequestMethod.GET);
-        final var fallbackKey = new HandlerKey("/test", null);
+        final var fallbackKey = HandlerKey.anyMethod("/test");
         final var registry = explicitFirst
                 ? new HandlerRegistry().register(explicitKey, explicit).register(fallbackKey, fallback)
                 : new HandlerRegistry().register(fallbackKey, fallback).register(explicitKey, explicit);
@@ -46,5 +46,17 @@ class HandlerRegistryTest {
         assertThatThrownBy(() -> registry.register(key, mock(HandlerExecution.class)))
                 .isInstanceOf(IllegalStateException.class);
         assertThat(registry.getHandler("/test", RequestMethod.GET)).isSameAs(original);
+    }
+
+    @Test
+    void duplicateUnrestrictedMappingDescribesAllMethods() {
+        final var key = HandlerKey.anyMethod("/test");
+        final var registry = new HandlerRegistry().register(key, mock(HandlerExecution.class));
+
+        assertThatThrownBy(() -> registry.register(HandlerKey.anyMethod("/test"), mock(HandlerExecution.class)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/test")
+                .hasMessageContaining("모든 메서드")
+                .hasMessageNotContaining("null");
     }
 }

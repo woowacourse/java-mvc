@@ -70,7 +70,7 @@ public class AnnotationHandlerMapping {
         final var execution = new HandlerExecution(controller, method);
         final var requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
-            return handlers.register(new HandlerKey(requestMapping.value(), null), execution);
+            return handlers.register(HandlerKey.anyMethod(requestMapping.value()), execution);
         }
 
         var registeredHandlers = handlers;
