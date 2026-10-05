@@ -9,12 +9,5 @@ class Junit4TestRunner {
         Class<Junit4Test> clazz = Junit4Test.class;
 
         // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
-        var methods = clazz.getDeclaredMethods();
-        var instance = new Junit4Test();
-        for(var method : methods){
-            if(method.isAnnotationPresent(MyTest.class)){
-                method.invoke(instance);
-            }
-        }
     }
 }
