@@ -37,7 +37,11 @@ public class AnnotationHandlerMapping {
 
                     HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
                     String url = mapping.value();
-                    for (RequestMethod requestMethod : mapping.method()) {
+                    RequestMethod[] methods = mapping.method().length == 0
+                            ? RequestMethod.values()
+                            : mapping.method();
+
+                    for (RequestMethod requestMethod : methods) {
                         HandlerKey key = new HandlerKey(url, requestMethod);
                         handlerExecutions.put(key, handlerExecution);
                     }
