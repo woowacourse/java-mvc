@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,10 +34,16 @@ public class AnnotationHandlerMapping {
 
         Set<Class> classes = findAllClassesUsingClassLoader(basePackage[0].toString());
 
-        for (Class annotation : classes) {
-            Method[] methods = annotation.getDeclaredMethods();
+        for (Class clazz : classes) {
+            if (!clazz.isAnnotationPresent(Controller.class)) {
+                continue;
+            }
+            Method[] methods = clazz.getDeclaredMethods();
 
             for (Method method : methods) {
+                if (!method.isAnnotationPresent(RequestMapping.class)) {
+                    continue;
+                }
                 String url = method.getAnnotation(RequestMapping.class).value();
                 RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
                 if (requestMethods.length == 0) {
