@@ -58,6 +58,7 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            validateNotDuplicated(handlerKey);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
@@ -68,6 +69,12 @@ public class AnnotationHandlerMapping {
             return RequestMethod.values();
         }
         return requestMethods;
+    }
+
+    private void validateNotDuplicated(final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("이미 등록된 핸들러 매핑입니다: " + handlerKey);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
