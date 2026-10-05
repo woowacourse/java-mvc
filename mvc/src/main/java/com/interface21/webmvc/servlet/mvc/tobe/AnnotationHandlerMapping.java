@@ -30,16 +30,29 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controller : controllers) {
+            Object controllerInstance = createController(controller);
             for (Method method : controller.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     RequestMapping mapping = method.getDeclaredAnnotation(RequestMapping.class);
 
+                    HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
                     String url = mapping.value();
-                    RequestMethod[] requestMethods = mapping.method();
+                    for (RequestMethod requestMethod : mapping.method()) {
+                        HandlerKey key = new HandlerKey(url, requestMethod);
+                        handlerExecutions.put(key, handlerExecution);
+                    }
                 }
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Object createController(final Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to create controller: " + controller.getName(), e);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
