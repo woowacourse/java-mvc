@@ -8,8 +8,12 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -24,23 +28,10 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final var controllerClasses = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controllerClass : controllerClasses) {
+        for (final Class<?> controllerClass : findControllerClasses()) {
             final var target = createController(controllerClass);
-            for (final var method : controllerClass.getDeclaredMethods()) {
-                final var mapping = method.getAnnotation(RequestMapping.class);
-                if (mapping == null) {
-                    continue;
-                }
-
-                final var handlerExecution = new HandlerExecution(target, method);
-                final var requestMethods = mapping.method().length == 0
-                        ? RequestMethod.values()
-                        : mapping.method();
-                for (final var requestMethod : requestMethods) {
-                    final var handlerKey = new HandlerKey(mapping.value(), requestMethod);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
+            for (final var method : findHandlerMethods(controllerClass)) {
+                registerHandler(target, method);
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
@@ -50,6 +41,28 @@ public class AnnotationHandlerMapping {
         final var handlerKey = new HandlerKey(
                 request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
+    }
+
+    private Set<Class<?>> findControllerClasses() {
+        return new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
+    }
+
+    private List<Method> findHandlerMethods(final Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    private void registerHandler(final Object target, final Method method) {
+        final var mapping = method.getAnnotation(RequestMapping.class);
+        final var handlerExecution = new HandlerExecution(target, method);
+        final var requestMethods = mapping.method().length == 0
+                ? RequestMethod.values()
+                : mapping.method();
+        for (final var requestMethod : requestMethods) {
+            final var handlerKey = new HandlerKey(mapping.value(), requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     private Object createController(final Class<?> controllerClass) {
