@@ -44,11 +44,11 @@ public class DispatcherServlet extends HttpServlet {
         addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    private void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+    private void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
