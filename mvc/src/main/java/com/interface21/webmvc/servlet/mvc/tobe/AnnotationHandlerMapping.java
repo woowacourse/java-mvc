@@ -22,11 +22,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this(new ControllerScanner(basePackage));
-    }
-
-    AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
-        this.controllerScanner = controllerScanner;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
