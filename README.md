@@ -29,8 +29,8 @@
 - [x] HTTP 메서드 생략 지원: `method`를 지정하지 않으면 지원하는 모든 HTTP 메서드에 등록한다.
 - [x] 요청 매핑 조회: 요청의 URL과 HTTP 메서드로 HandlerExecution을 찾는다.
 - [x] HandlerExecution: 컨트롤러 객체의 메서드를 `invoke()`로 호출하고 ModelAndView를 반환한다.
-- [ ] JspView forward: 모델 데이터를 요청 속성에 담고 지정한 JSP로 전달한다.
-- [ ] JspView redirect: `redirect:` 뒤의 주소로 리다이렉트한다.
+- [x] JspView forward: 모델 데이터를 요청 속성에 담고 지정한 JSP로 전달한다.
+- [x] JspView redirect: `redirect:` 뒤의 주소로 리다이렉트한다.
 - [ ] Step 1 테스트: GET·POST 매핑, 같은 URL의 메서드 구분, 메서드 생략, JSP 모델 전달·forward·redirect를 검증한다.
 
 </details>
