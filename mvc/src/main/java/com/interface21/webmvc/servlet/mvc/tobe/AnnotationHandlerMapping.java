@@ -36,10 +36,7 @@ public class AnnotationHandlerMapping {
                     continue;
                 }
 
-                RequestMethod[] configuredMethods = requestMapping.method();
-                RequestMethod[] requestMethods = configuredMethods.length == 0
-                        ? RequestMethod.values()
-                        : configuredMethods;
+                RequestMethod[] requestMethods = getRequestMethods(requestMapping);
 
                 HandlerExecution execution = new HandlerExecution(controller, method);
                 for (RequestMethod requestMethod : requestMethods) {
@@ -62,11 +59,19 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private Object generateInstanceOf(final Class<?> clazz) {
+    private static Object generateInstanceOf(final Class<?> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("컨트롤러 생성 실패: " + clazz.getName(), e);
         }
+    }
+
+    private static RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        RequestMethod[] configuredMethods = requestMapping.method();
+        if (configuredMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return configuredMethods;
     }
 }
