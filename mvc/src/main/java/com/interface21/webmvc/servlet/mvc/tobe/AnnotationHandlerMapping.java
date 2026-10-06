@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -13,10 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -30,7 +32,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize()
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         Set<Method> methodSet = getRequestMappingMethods(controllers.keySet());
         for (Method method : methodSet) {
@@ -41,7 +44,8 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(url, method));

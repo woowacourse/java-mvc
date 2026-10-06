@@ -8,15 +8,14 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
-    private final Object[] basePackage;
+    private final Reflections reflections;
 
-    public ControllerScanner(Object[] basePackage) {
-        this.basePackage = basePackage;
+    public ControllerScanner(Reflections reflections) {
+        this.reflections = reflections;
     }
 
     public Map<Class<?>, Object> getControllers()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        Reflections reflections = new Reflections(basePackage);
         // basePackage에서 Controller 어노테이션 붙은 모든 클래스 가져오기
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         return instantiateControllers(controllerClasses);
