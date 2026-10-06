@@ -1,6 +1,7 @@
 package com.interface21.core;
 
 import com.interface21.context.stereotype.Controller;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -17,7 +18,9 @@ public class ControllerScanner {
 
     public Map<Class<?>, Object> getControllers() {
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class).stream()
+                .filter(clazz -> Modifier.isPublic(clazz.getModifiers()))
+                .collect(Collectors.toSet());
         return instantiateControllers(controllerClasses);
     }
 
