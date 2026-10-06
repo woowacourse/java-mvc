@@ -4,11 +4,13 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +66,11 @@ public class AnnotationHandlerMapping {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return;
+        }
+
+        if (!Arrays.equals(method.getParameterTypes(),
+                new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class})) {
+            throw new IllegalStateException("Handler must accept request and response: " + method);
         }
 
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
