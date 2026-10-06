@@ -35,6 +35,20 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 정의되지_않은_HTTP_메서드도_수동_매핑을_조회한다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("PROPFIND");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     void 어노테이션_컨트롤러의_모델을_JSP에_전달한다() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
