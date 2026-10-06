@@ -20,7 +20,7 @@ public class LoginController implements Controller {
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
-                    log.info("User : {}", user);
+                    log.info("Login attempt account : {}", user.getAccount());
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
