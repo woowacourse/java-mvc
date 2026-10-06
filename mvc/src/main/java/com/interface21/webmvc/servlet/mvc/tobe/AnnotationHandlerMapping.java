@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import java.util.Map;
  *
  * 요청을 받기 전에 initialize()를 완료하고, 요청 처리 중에는 조회만 하는 사용을 전제로 한다.
  */
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -35,6 +36,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         // @Controller 클래스를 찾고 객체를 생성한다.
         // 결과 예: TestController.class → 생성된 TestController 객체
@@ -93,6 +95,7 @@ public class AnnotationHandlerMapping {
         return methods;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod;
         try {
