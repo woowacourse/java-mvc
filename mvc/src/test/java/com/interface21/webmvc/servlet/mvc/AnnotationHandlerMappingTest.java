@@ -4,9 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,13 +51,21 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @Test
-    void privateRequestMappingMethodFailsDuringInitialization() {
-        final var mapping = new AnnotationHandlerMapping("invalidmethods");
+    @ParameterizedTest
+    @ValueSource(strings = {"private", "protected", "package-private"})
+    void handlesNonPublicRequestMappingMethods(String visibility) throws Exception {
+        final var mapping = new AnnotationHandlerMapping("nonpublicmethods");
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/" + visibility + "-test");
+        when(request.getMethod()).thenReturn("GET");
 
-        assertThatThrownBy(mapping::initialize)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("handle")
-                .hasMessageContaining("public");
+        final var handlerExecution = (HandlerExecution) mapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("visibility")).isEqualTo(visibility);
     }
 }

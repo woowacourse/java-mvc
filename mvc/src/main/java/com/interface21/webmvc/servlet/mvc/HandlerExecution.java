@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 public class HandlerExecution {
@@ -14,14 +13,11 @@ public class HandlerExecution {
     private final Method method;
 
     public HandlerExecution(Object declaredObject, Method method) {
-        if (!Modifier.isPublic(method.getModifiers())) {
-            throw new IllegalArgumentException("Invalid @RequestMapping method: " + method
-                    + ". Method must be public");
-        }
         if (!isValidHandlerMethod(method)) {
             throw new IllegalArgumentException("Invalid @RequestMapping method: " + method
                     + ". Expected ModelAndView return type and (HttpServletRequest, HttpServletResponse) parameters");
         }
+        method.setAccessible(true);
         this.declaredObject = declaredObject;
         this.method = method;
     }
