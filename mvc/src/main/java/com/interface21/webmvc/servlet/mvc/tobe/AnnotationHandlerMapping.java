@@ -51,26 +51,34 @@ public class AnnotationHandlerMapping {
                     throw new IllegalStateException("요청 매핑 메서드는 public이어야 합니다: "
                             + controllerClass.getName() + "#" + method.getName());
                 }
-
-                RequestMethod[] requestMethods = requestMapping.method();
-                if (requestMethods.length == 0) {
-                    requestMethods = RequestMethod.values();
-                }
-
-                final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                for (RequestMethod requestMethod : requestMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                    final HandlerExecution existingHandler = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
-                    if (existingHandler != null) {
-                        throw new IllegalStateException("중복된 핸들러 매핑입니다: " + handlerKey
-                                + ", Controller: " + controllerClass.getName() + "#" + method.getName());
-                    }
-                    log.info("Mapped {} {} to {}.{}", requestMethod, requestMapping.value(),
-                            controllerClass.getSimpleName(), method.getName());
-                }
+                registerHandler(controller, method, requestMapping);
             }
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("컨트롤러 초기화에 실패했습니다: " + controllerClass.getName(), e);
+        }
+    }
+
+    private RequestMethod[] determineRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
+    }
+
+    private void registerHandler(final Object controller, final Method method, final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = determineRequestMethods(requestMapping);
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            final HandlerExecution existingHandler = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+            if (existingHandler != null) {
+                throw new IllegalStateException("중복된 핸들러 매핑입니다: " + handlerKey
+                        + ", 컨트롤러: " + method.getDeclaringClass().getName() + "#" + method.getName());
+            }
+            log.info("Mapped {} {} to {}.{}", requestMethod, requestMapping.value(),
+                    method.getDeclaringClass().getSimpleName(), method.getName());
         }
     }
 
