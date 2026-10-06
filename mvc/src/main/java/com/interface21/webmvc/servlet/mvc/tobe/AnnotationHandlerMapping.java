@@ -4,6 +4,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -47,9 +48,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllers) {
         return controllers.stream()
-            .map(Class::getMethods)
+            .map(Class::getDeclaredMethods)
             .flatMap(Arrays::stream)
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .filter(method -> Modifier.isPublic(method.getModifiers()))
             .collect(Collectors.toSet());
     }
 

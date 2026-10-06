@@ -1,11 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +52,31 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 직접_선언한_public_메서드만_지원한다() {
+        // given
+        HttpServletRequest parentRequest = mock(HttpServletRequest.class);
+        HttpServletRequest childRequest = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(parentRequest.getRequestURI()).thenReturn("/parent");
+        when(parentRequest.getMethod()).thenReturn("GET");
+        when(childRequest.getRequestURI()).thenReturn("/child");
+        when(childRequest.getMethod()).thenReturn("GET");
+
+        final HandlerExecution parentHandlerExecution =
+            (HandlerExecution) handlerMapping.getHandler(parentRequest);
+        final HandlerExecution childHandlerExecution =
+            (HandlerExecution) handlerMapping.getHandler(childRequest);
+
+        assertAll(
+            () -> assertThat(parentHandlerExecution).isNull(),
+            () -> assertThat(childHandlerExecution).isNotNull(),
+            () -> assertThatCode(() ->
+                childHandlerExecution.handle(childRequest, response))
+                .doesNotThrowAnyException()
+        );
     }
 }
