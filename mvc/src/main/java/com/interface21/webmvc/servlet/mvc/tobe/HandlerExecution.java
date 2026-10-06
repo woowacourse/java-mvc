@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -29,7 +30,19 @@ public class HandlerExecution {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        Object result = method.invoke(controller, request, response);
+        Object result;
+        try {
+            result = method.invoke(controller, request, response);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception exception) {
+                throw exception;
+            }
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            throw e;
+        }
         if (result instanceof ModelAndView modelAndView) {
             return modelAndView;
         }
