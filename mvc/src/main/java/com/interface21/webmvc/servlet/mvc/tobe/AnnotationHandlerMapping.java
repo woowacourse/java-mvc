@@ -29,19 +29,11 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClasses) {
-            Object controller = null;
+            Object controller = generateInstanceOf(controllerClass);
             for (Method method : controllerClass.getMethods()) {
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 if (requestMapping == null) {
                     continue;
-                }
-
-                if (controller == null) {
-                    try {
-                        controller = controllerClass.getDeclaredConstructor().newInstance();
-                    } catch (ReflectiveOperationException e) {
-                        throw new IllegalStateException("컨트롤러 생성 실패: " + controllerClass.getName(), e);
-                    }
                 }
 
                 RequestMethod[] configuredMethods = requestMapping.method();
@@ -68,5 +60,13 @@ public class AnnotationHandlerMapping {
                 RequestMethod.valueOf(request.getMethod())
         );
         return handlerExecutions.get(handlerKey);
+    }
+
+    private Object generateInstanceOf(final Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("컨트롤러 생성 실패: " + clazz.getName(), e);
+        }
     }
 }
