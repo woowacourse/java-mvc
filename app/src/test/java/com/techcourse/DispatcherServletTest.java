@@ -123,6 +123,32 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 애노테이션_컨트롤러로_로그인하지_않은_상태면_로그인_화면을_보여준다() throws Exception {
+        final var request = createRequest("GET", "/login/view");
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 애노테이션_컨트롤러로_이미_로그인한_상태면_로그인_화면_대신_메인_페이지로_리다이렉트한다() throws Exception {
+        final var request = createRequest("GET", "/login/view");
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(new User(1, "gugu", "password", "gugu@email.com"));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
     void 컨트롤러가_redirect_뷰_이름을_반환하면_리다이렉트한다() throws Exception {
         final var request = createRequest("GET", "/logout");
         final var response = mock(HttpServletResponse.class);
