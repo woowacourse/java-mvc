@@ -1,12 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.LegacyControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,32 +70,5 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         return null;
-    }
-
-    private static class LegacyControllerHandlerAdapter implements HandlerAdapter {
-
-        @Override
-        public boolean supports(final Object handler) {
-            return handler instanceof Controller;
-        }
-
-        @Override
-        public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-            final String viewName = ((Controller) handler).execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
-    }
-
-    private static class HandlerExecutionHandlerAdapter implements HandlerAdapter {
-
-        @Override
-        public boolean supports(final Object handler) {
-            return handler instanceof HandlerExecution;
-        }
-
-        @Override
-        public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
     }
 }
