@@ -119,6 +119,16 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("RequestMapping이 없는 메서드는 핸들러로 등록하지 않는다")
+    void RequestMapping이_없는_메서드는_등록하지_않는다() {
+        final var request = request("/not-mapped", RequestMethod.GET);
+
+        final var handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isNull();
+    }
+
+    @Test
     @DisplayName("여러 HTTP 메서드 매핑에 포함되지 않은 HTTP 메서드는 매핑하지 않는다")
     void 매핑되지_않은_HTTP_메서드를_제외한다() {
         final var request = request("/multiple-methods", RequestMethod.PUT);

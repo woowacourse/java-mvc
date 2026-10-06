@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -37,12 +39,13 @@ public class AnnotationHandlerMapping {
     }
 
     private void register(Class<?> controllerClass, Object controller) {
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final Set<Method> methods = ReflectionUtils.getAllMethods(
+                controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
 
-            if (requestMapping == null) {
-                continue;
-            }
+        for (Method method : methods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
             registerMethod(method, requestMapping, controller);
         }
@@ -53,7 +56,11 @@ public class AnnotationHandlerMapping {
         String url = requestMapping.value();
 
         requestMethods = getAllRequestMethodsIfAbsent(requestMethods);
-        addHandlerExecution(method, requestMethods, url, controller);
+
+        for (RequestMethod rm : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, rm);
+            addHandlerExecution(method, handlerKey, controller);
+        }
     }
 
     private RequestMethod[] getAllRequestMethodsIfAbsent(RequestMethod[] requestMethods) {
@@ -63,13 +70,9 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
-    private void addHandlerExecution(Method method, RequestMethod[] requestMethods, String url, Object controller) {
-        for (RequestMethod rm : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, rm);
+    private void addHandlerExecution(Method method, HandlerKey handlerKey,  Object controller) {
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-
-            HandlerExecution previous =
-                    handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+            HandlerExecution previous = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
 
             if (previous != null) {
                 throw new IllegalStateException(
@@ -77,7 +80,6 @@ public class AnnotationHandlerMapping {
                                 + ", 기존 핸들러: " + previous
                                 + ", 신규 핸들러: " + handlerExecution);
             }
-        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
