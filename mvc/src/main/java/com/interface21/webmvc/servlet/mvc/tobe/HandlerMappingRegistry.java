@@ -11,7 +11,7 @@ public class HandlerMappingRegistry {
     private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappingRegistry(final List<HandlerMapping> handlerMappings) {
-        this.handlerMappings = handlerMappings;
+        this.handlerMappings = new ArrayList<>(handlerMappings);
     }
 
     public static HandlerMappingRegistry empty() {

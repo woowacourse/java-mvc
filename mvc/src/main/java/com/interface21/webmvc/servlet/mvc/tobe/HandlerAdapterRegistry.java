@@ -8,7 +8,7 @@ public class HandlerAdapterRegistry {
     private final List<HandlerAdapter> handlerAdapters;
 
     public HandlerAdapterRegistry(final List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+        this.handlerAdapters = new ArrayList<>(handlerAdapters);
     }
 
     public static HandlerAdapterRegistry empty() {
