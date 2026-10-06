@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -68,8 +69,11 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    @DisplayName("HTTP 메서드를 지정하지 않으면 모든 HTTP 메서드에서 핸들러를 찾는다")
-    void findsHandlerForEveryHttpMethodWhenMethodIsOmitted() {
+    @DisplayName("HTTP 메서드를 지정하지 않으면 모든 HTTP 메서드가 해당 핸들러에 매핑된다")
+    void findsHandlerForEveryHttpMethodWhenMethodIsOmitted() throws NoSuchMethodException {
+        final var expectedMethod = TestController.class.getDeclaredMethod(
+                "handleAllMethods", HttpServletRequest.class, HttpServletResponse.class);
+
         for (RequestMethod requestMethod : RequestMethod.values()) {
             // given
             final var request = mock(HttpServletRequest.class);
@@ -77,10 +81,11 @@ class AnnotationHandlerMappingTest {
             when(request.getMethod()).thenReturn(requestMethod.name());
 
             // when
-            final var handler = handlerMapping.getHandler(request);
+            final var handler = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handler).as(requestMethod.name()).isNotNull();
+            assertThat(handler).isNotNull();
+            assertThat(handler.getHandlerMethod()).isEqualTo(expectedMethod);
         }
     }
 
