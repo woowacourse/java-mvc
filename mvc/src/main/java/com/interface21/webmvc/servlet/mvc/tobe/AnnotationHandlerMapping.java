@@ -72,7 +72,7 @@ public class AnnotationHandlerMapping {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 생성에 실패했습니다: ", e);
+            throw new IllegalStateException("컨트롤러 생성에 실패했습니다: " + clazz.getName(), e);
         }
     }
 }
