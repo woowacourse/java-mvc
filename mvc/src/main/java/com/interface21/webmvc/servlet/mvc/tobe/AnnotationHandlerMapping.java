@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -62,9 +63,39 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
-        RequestMethod method = RequestMethod.valueOf(request.getMethod());
+        String methodName = request.getMethod();
+        RequestMethod method = resolveMethod(methodName);
 
-        HandlerKey key = new HandlerKey(url, method);
-        return handlerExecutions.get(key);
+        if (method != null) {
+            HandlerExecution execution = handlerExecutions.get(new HandlerKey(url, method));
+            if (execution != null) {
+                return execution;
+            }
+        }
+
+        Set<RequestMethod> supportedMethods = findSupportedMethods(url);
+        if (supportedMethods.isEmpty()) {
+            return null;
+        }
+
+        throw new RequestMethodNotSupportedException(methodName, supportedMethods);
+    }
+
+    private RequestMethod resolveMethod(final String methodName) {
+        try {
+            return RequestMethod.valueOf(methodName);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private Set<RequestMethod> findSupportedMethods(final String url) {
+        Set<RequestMethod> supportedMethods = EnumSet.noneOf(RequestMethod.class);
+        for (HandlerKey key : handlerExecutions.keySet()) {
+            if (key.getUrl().equals(url)) {
+                supportedMethods.add(key.getRequestMethod());
+            }
+        }
+        return supportedMethods;
     }
 }
