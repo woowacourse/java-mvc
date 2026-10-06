@@ -1,63 +1,51 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping() {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    public void initialize(List<Object> controllers) {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers =  reflections.getTypesAnnotatedWith(Controller.class);
-
         controllers.forEach(controller -> {
-            log.info("Controller: {}", controller.getName());
+            log.info("Controller: {}", controller.getClass().getName());
             initHandlerExecutions(controller);
         });
     }
 
-    private void initHandlerExecutions(final Class<?> controller) {
-        final Method[] methods = controller.getDeclaredMethods();
+    private void initHandlerExecutions(final Object controller) {
+        final Method[] methods = controller.getClass().getDeclaredMethods();
         for (var method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                HandlerKey handlerKey = new HandlerKey(requestMapping.value(),requestMapping.method());
+                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
 
-                Object newInstance = getNewInstance(controller);
-                HandlerExecution handlerExecution = new HandlerExecution(newInstance, method);
-                handlerExecutions.put(handlerKey, handlerExecution);
+                HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                    throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
+                }
             }
         }
     }
 
-    private Object getNewInstance(final Class<?> controller) {
-        try {
-            return controller.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
