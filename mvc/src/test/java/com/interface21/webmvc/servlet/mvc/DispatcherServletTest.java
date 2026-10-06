@@ -1,8 +1,7 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.mvc.exception.AdapterNotFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.RequestMappingHandlerAdapter;
@@ -35,8 +34,8 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new RequestMappingHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new TestHandlerAdapter());
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -45,9 +44,9 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 레거시_컨트롤러가_반환한_뷰로_포워드한다() throws Exception {
-        final Controller controller = (req, res) -> "/login.jsp";
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+    void 핸들러가_반환한_뷰로_포워드한다() throws Exception {
+        final TestHandler handler = (req, res) -> new ModelAndView(new JspView("/login.jsp"));
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
 
         dispatcherServlet.service(request, response);
 
@@ -56,9 +55,9 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 레거시_컨트롤러가_redirect를_반환하면_리다이렉트한다() throws Exception {
-        final Controller controller = (req, res) -> "redirect:/index.jsp";
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+    void 핸들러가_redirect_뷰를_반환하면_리다이렉트한다() throws Exception {
+        final TestHandler handler = (req, res) -> new ModelAndView(new JspView("redirect:/index.jsp"));
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
 
         dispatcherServlet.service(request, response);
 
@@ -80,9 +79,9 @@ class DispatcherServletTest {
 
     @Test
     void 앞의_매핑이_처리하지_못하면_다음_매핑의_핸들러를_실행한다() throws Exception {
-        final Controller controller = (req, res) -> "/login.jsp";
+        final TestHandler handler = (req, res) -> new ModelAndView(new JspView("/login.jsp"));
         dispatcherServlet.addHandlerMapping(anyRequest -> null);
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
 
         dispatcherServlet.service(request, response);
 
@@ -120,10 +119,10 @@ class DispatcherServletTest {
     @Test
     void 핸들러가_IOException을_던지면_감싸지_않고_그대로_던진다() {
         final IOException expected = new IOException("handler failed");
-        final Controller controller = (req, res) -> {
+        final TestHandler handler = (req, res) -> {
             throw expected;
         };
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isSameAs(expected);
@@ -132,10 +131,10 @@ class DispatcherServletTest {
     @Test
     void 핸들러가_ServletException을_던지면_감싸지_않고_그대로_던진다() {
         final ServletException expected = new ServletException("handler failed");
-        final Controller controller = (req, res) -> {
+        final TestHandler handler = (req, res) -> {
             throw expected;
         };
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isSameAs(expected);
@@ -144,8 +143,8 @@ class DispatcherServletTest {
     @Test
     void 포워드_중_IOException이_발생하면_감싸지_않고_그대로_던진다() throws Exception {
         final IOException expected = new IOException("forward failed");
-        final Controller controller = (req, res) -> "/login.jsp";
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+        final TestHandler handler = (req, res) -> new ModelAndView(new JspView("/login.jsp"));
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
         doThrow(expected).when(requestDispatcher).forward(request, response);
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
@@ -155,10 +154,10 @@ class DispatcherServletTest {
     @Test
     void 핸들러가_그_외_checked_예외를_던지면_ServletException으로_감싸_던진다() {
         final Exception expected = new Exception("handler failed");
-        final Controller controller = (req, res) -> {
+        final TestHandler handler = (req, res) -> {
             throw expected;
         };
-        dispatcherServlet.addHandlerMapping(anyRequest -> controller);
+        dispatcherServlet.addHandlerMapping(anyRequest -> handler);
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(ServletException.class)
@@ -167,9 +166,8 @@ class DispatcherServletTest {
 
     @Test
     void 어댑터가_null_ModelAndView를_반환하면_렌더링하지_않는다() throws Exception {
-        final Object handler = new Object();
+        final TestHandler handler = (req, res) -> null;
         dispatcherServlet.addHandlerMapping(anyRequest -> handler);
-        dispatcherServlet.addHandlerAdapter(new FixedResultHandlerAdapter(handler, null));
 
         dispatcherServlet.service(request, response);
 
@@ -177,18 +175,23 @@ class DispatcherServletTest {
         verify(response, never()).sendRedirect(anyString());
     }
 
-    private record FixedResultHandlerAdapter(Object target, ModelAndView result) implements HandlerAdapter {
+    @FunctionalInterface
+    private interface TestHandler {
+        ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    }
+
+    private static class TestHandlerAdapter implements HandlerAdapter {
 
         @Override
         public boolean supports(final Object handler) {
-            return handler == target;
+            return handler instanceof TestHandler;
         }
 
         @Override
         public ModelAndView handle(final HttpServletRequest request,
                                    final HttpServletResponse response,
-                                   final Object handler) {
-            return result;
+                                   final Object handler) throws Exception {
+            return ((TestHandler) handler).handle(request, response);
         }
     }
 }
