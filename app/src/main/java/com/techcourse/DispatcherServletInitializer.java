@@ -36,7 +36,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     }
 
     private void registerHandlers(DispatcherServlet dispatcherServlet) {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(DispatcherServletInitializer.class.getPackageName());
         dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
         dispatcherServlet.addHandlerAdapter(new RequestMappingHandlerAdapter());
     }
