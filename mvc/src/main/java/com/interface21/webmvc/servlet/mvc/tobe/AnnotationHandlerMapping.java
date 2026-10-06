@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -9,8 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,17 +24,14 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections samples = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = samples.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : typesAnnotatedWith) {
-            registerHandlers(aClass);
-        }
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = scanner.scan();
+        controllers.forEach(this::registerHandlers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlers(Class<?> controllerClass) {
+    private void registerHandlers(Class<?> controllerClass, Object controller) {
         Method[] declaredMethods = controllerClass.getDeclaredMethods();
-        Object controller = createController(controllerClass);
         for (Method declaredMethod : declaredMethods) {
             RequestMapping mapping = declaredMethod.getAnnotation(RequestMapping.class);
             if (mapping == null) {
@@ -57,16 +51,6 @@ public class AnnotationHandlerMapping {
                 handlerExecutions.put(handlerKey, new HandlerExecution(controller, declaredMethod));
             }
         }
-    }
-
-    private static Object createController(Class<?> aClass) {
-        Object controller;
-        try {
-            controller = aClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 생성 실패: " + aClass.getName(), e);
-        }
-        return controller;
     }
 
     public Object getHandler(final HttpServletRequest request) {
