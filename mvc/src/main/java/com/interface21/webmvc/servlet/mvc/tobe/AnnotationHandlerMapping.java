@@ -28,29 +28,8 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : controllers) {
-            Method[] methods = clazz.getDeclaredMethods();
-            try {
-                Object controller = clazz.getConstructor().newInstance();
-                for (Method method : methods) {
-                    HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                        String url = annotation.value();
-                        RequestMethod[] requestMethods = annotation.method();
-                        if (requestMethods.length == 0) {
-                            requestMethods = RequestMethod.values();
-                        }
-
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
-                    }
-                }
-
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
-            }
+            Object controller = createController(clazz);
+            registerHandlerMethods(controller, clazz);
         }
     }
 
@@ -59,5 +38,39 @@ public class AnnotationHandlerMapping {
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, method);
         return handlerExecutions.get(handlerKey);
+    }
+
+    private Object createController(Class<?> clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void registerHandlerMethods(Object controller, Class<?> clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
+                continue;
+            }
+            registerHandlerMethod(controller, method);
+        }
+    }
+
+    private void registerHandlerMethod(Object controller, Method method) {
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        for (RequestMethod requestMethod : getRequestMethods(annotation)) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping annotation) {
+        RequestMethod[] requestMethods = annotation.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 }
