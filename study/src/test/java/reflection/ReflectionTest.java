@@ -50,7 +50,7 @@ class ReflectionTest {
         // 클래스에 선언된 필드 하나에 대한 정보를 담는 객체가 Field
         // 필드의 값 예를 들어서 Student 객체의 name이 nana라는 정보가 X
         // Student 객체는 String name, int age가 선언되어 있다는 정보
-        final Field[] fields = Student.class.getDeclaredFields();
+        final Field[] fields = student.getClass().getDeclaredFields();
         final List<String> actualFieldNames = Arrays.stream(fields)
                 .map(Field::getName)
                 .toList();
