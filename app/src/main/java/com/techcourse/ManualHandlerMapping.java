@@ -2,7 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
