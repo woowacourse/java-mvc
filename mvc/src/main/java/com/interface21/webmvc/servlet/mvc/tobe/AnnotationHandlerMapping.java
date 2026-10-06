@@ -26,24 +26,8 @@ public final class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-
         for (final Object controller : controllers.values()) {
-            final Class<?> clazz = controller.getClass();
-            for (final Method method : clazz.getDeclaredMethods()) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-
-                final HandlerExecution execution = new HandlerExecution(controller, method);
-                for (final RequestMethod requestMethod : getRequestMethods(requestMapping)) {
-                    final HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-                    final HandlerExecution existing = handlerExecutions.putIfAbsent(key, execution);
-                    if (existing != null) {
-                        throw new IllegalStateException("중복 핸들러 매핑 오류: " + key);
-                    }
-                }
-            }
+            registerHandlerMethods(controller);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
@@ -56,6 +40,30 @@ public final class AnnotationHandlerMapping implements HandlerMapping {
                 RequestMethod.valueOf(request.getMethod())
         );
         return handlerExecutions.get(handlerKey);
+    }
+
+    private void registerHandlerMethods(final Object controller) {
+        for (final Method method : controller.getClass().getDeclaredMethods()) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping == null) {
+                return;
+            }
+
+            final HandlerExecution execution = new HandlerExecution(controller, method);
+            for (final RequestMethod requestMethod : getRequestMethods(requestMapping)) {
+                registerHandlerExecution(
+                        new HandlerKey(requestMapping.value(), requestMethod),
+                        execution
+                );
+            }
+        }
+    }
+
+    private void registerHandlerExecution(final HandlerKey key, final HandlerExecution execution) {
+        final HandlerExecution existing = handlerExecutions.putIfAbsent(key, execution);
+        if (existing != null) {
+            throw new IllegalStateException("중복 핸들러 매핑 오류: " + key);
+        }
     }
 
     private static RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
