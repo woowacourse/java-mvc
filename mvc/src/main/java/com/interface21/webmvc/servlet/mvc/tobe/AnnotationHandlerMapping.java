@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,10 @@ public class AnnotationHandlerMapping {
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 if (requestMapping == null) {
                     continue;
+                }
+                if (!Modifier.isPublic(method.getModifiers())) {
+                    throw new IllegalStateException("요청 매핑 메서드는 public이어야 합니다: "
+                            + controllerClass.getName() + "#" + method.getName());
                 }
 
                 RequestMethod[] requestMethods = requestMapping.method();
