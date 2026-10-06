@@ -62,6 +62,9 @@ public class AnnotationHandlerMapping {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : getRequestMethods(annotation)) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("[ERROR] 중복된 Handler Mapping입니다. : " + handlerKey);
+            }
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
