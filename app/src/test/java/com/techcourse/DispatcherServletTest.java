@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -70,6 +74,20 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         verify(response).sendRedirect("/");
+    }
+
+    @Test
+    void 애노테이션_컨트롤러로_사용자_정보를_JSON으로_응답한다() throws Exception {
+        final var request = createRequest("GET", "/api/user");
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 
     @Test
