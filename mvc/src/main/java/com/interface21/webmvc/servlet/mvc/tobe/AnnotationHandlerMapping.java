@@ -30,11 +30,13 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
 
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
+            Object controller = getController(clazz);
+
             for (Method method : clazz.getMethods()) {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
                 if (annotation != null) {
-                    registerHandler(clazz, method, annotation);
+                    registerHandler(method, annotation, controller);
                 }
             }
         }
@@ -48,13 +50,12 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.getOrDefault(handlerKey, null);
     }
 
-    private void registerHandler(Class<?> clazz, Method method, RequestMapping annotation) {
+    private void registerHandler(Method method, RequestMapping annotation, Object controller) {
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            Object controller = getController(clazz);
 
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             if (handlerExecutions.containsKey(handlerKey)) {
