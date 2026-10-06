@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.interface21.web.http.MediaType;
+import com.techcourse.controller.UserSession;
+import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -62,6 +66,59 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         assertThat(InMemoryUserRepository.findByAccount("woody")).isPresent();
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 애노테이션_컨트롤러로_로그인에_성공하면_세션에_사용자를_저장하고_리다이렉트한다() throws Exception {
+        final var request = createRequest("POST", "/login");
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("password");
+
+        dispatcherServlet.service(request, response);
+
+        verify(session).setAttribute(eq(UserSession.SESSION_KEY), any(User.class));
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 애노테이션_컨트롤러로_로그인할_때_비밀번호가_틀리면_401_페이지로_리다이렉트한다() throws Exception {
+        final var request = createRequest("POST", "/login");
+        final var response = mock(HttpServletResponse.class);
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong-password");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void 애노테이션_컨트롤러로_로그인할_때_존재하지_않는_계정이면_401_페이지로_리다이렉트한다() throws Exception {
+        final var request = createRequest("POST", "/login");
+        final var response = mock(HttpServletResponse.class);
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("unknown");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void 이미_로그인한_상태로_로그인하면_메인_페이지로_리다이렉트한다() throws Exception {
+        final var request = createRequest("POST", "/login");
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(new User(1, "gugu", "password", "gugu@email.com"));
+
+        dispatcherServlet.service(request, response);
+
         verify(response).sendRedirect("/index.jsp");
     }
 
