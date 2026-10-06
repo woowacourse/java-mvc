@@ -1,19 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,25 +24,15 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllers) {
-            Object controller = createInstance(controllerClass);
-            for (Method method : controllerClass.getDeclaredMethods()) {
+        final Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        for (final Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            for (final Method method : entry.getKey().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
-                    register(controller, method);
+                    register(entry.getValue(), method);
                 }
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private Object createInstance(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException(controllerClass.getName() + " 인스턴스를 생성할 수 없습니다.", e);
-        }
     }
 
     private void register(final Object controller, final Method method) {
@@ -65,6 +53,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
