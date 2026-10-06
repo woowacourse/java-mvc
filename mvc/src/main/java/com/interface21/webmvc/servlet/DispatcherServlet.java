@@ -4,6 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,18 +35,23 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request,
-                           final HttpServletResponse response) throws ServletException {
+                           final HttpServletResponse response) throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        Object handler = handlerMappingRegistry.getHandler(request)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "사용할 수 있는 핸들러가 없습니다: " + request.getMethod() + " " + requestURI));
+        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        if (handler.isEmpty()) {
+            log.warn("사용할 수 있는 핸들러가 없습니다: {} {}", request.getMethod(), requestURI);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().write("요청하신 페이지를 찾을 수 없습니다.");
+            return;
+        }
 
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
 
         try {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
