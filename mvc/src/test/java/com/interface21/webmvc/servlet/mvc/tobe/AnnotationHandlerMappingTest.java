@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,5 +48,28 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("RequestMapping의 method를 생략하면 GET과 POST 요청을 모두 처리한다")
+    void getHandler_RequestMethodOmitted_ReturnsHandlersForGetAndPost() throws Exception {
+        final var getRequest = mock(HttpServletRequest.class);
+        final var getResponse = mock(HttpServletResponse.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var postResponse = mock(HttpServletResponse.class);
+
+        when(getRequest.getRequestURI()).thenReturn("/all-methods");
+        when(getRequest.getMethod()).thenReturn("GET");
+
+        when(postRequest.getRequestURI()).thenReturn("/all-methods");
+        when(postRequest.getMethod()).thenReturn("POST");
+
+        final var handlerExecutionByGet = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var modelAndViewByGet = handlerExecutionByGet.handle(getRequest, getResponse);
+        final var handlerExecutionByPost = (HandlerExecution) handlerMapping.getHandler(postRequest);
+        final var modelAndViewByPost = handlerExecutionByPost.handle(postRequest, postResponse);
+
+        assertThat(modelAndViewByGet.getObject("method")).isEqualTo("GET");
+        assertThat(modelAndViewByPost.getObject("method")).isEqualTo("POST");
     }
 }
