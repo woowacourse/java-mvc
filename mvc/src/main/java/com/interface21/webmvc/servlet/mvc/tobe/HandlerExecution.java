@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class HandlerExecution {
 
@@ -11,6 +12,15 @@ public class HandlerExecution {
     private final Method method;
 
     public HandlerExecution(Object controller, Method method) {
+        Class<?>[] expectedParameters = {
+                HttpServletRequest.class,
+                HttpServletResponse.class
+        };
+        if (!Arrays.equals(method.getParameterTypes(), expectedParameters)
+                || method.getReturnType() != ModelAndView.class) {
+            throw new IllegalStateException("잘못된 핸들러 메서드 시그니처: " + method.toGenericString());
+        }
+
         this.controller = controller;
         this.method = method;
     }
