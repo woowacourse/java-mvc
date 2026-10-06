@@ -32,7 +32,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 컨트롤러가_JSP_뷰_이름을_반환하면_포워드한다() throws Exception {
+    void 애노테이션_컨트롤러로_메인_페이지를_보여준다() throws Exception {
         final var request = createRequest("GET", "/");
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
