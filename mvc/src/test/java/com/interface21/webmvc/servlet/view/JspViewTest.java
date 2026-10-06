@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -31,8 +32,9 @@ class JspViewTest {
         view.render(model, request, response);
 
         // then
-        verify(request).setAttribute("id", "gugu");
-        verify(dispatcher).forward(request, response);
+        final var inOrder = inOrder(request, dispatcher);
+        inOrder.verify(request).setAttribute("id", "gugu");
+        inOrder.verify(dispatcher).forward(request, response);
     }
 
     @Test
