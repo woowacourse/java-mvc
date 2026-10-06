@@ -40,10 +40,11 @@ public class AnnotationHandlerMapping {
 
                 HandlerExecution execution = new HandlerExecution(controller, method);
                 for (RequestMethod requestMethod : requestMethods) {
-                    handlerExecutions.put(
-                            new HandlerKey(requestMapping.value(), requestMethod),
-                            execution
-                    );
+                    HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
+                    HandlerExecution existing = handlerExecutions.putIfAbsent(key, execution);
+                    if (existing != null) {
+                        throw new IllegalStateException("중복 핸들러 매핑 오류: " + key);
+                    }
                 }
             }
         }
