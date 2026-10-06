@@ -85,6 +85,17 @@ class DispatcherServletInitializerTest {
     }
 
     @Test
+    void 회원가입_화면_경로로_요청하면_회원가입_화면을_보여준다() throws Exception {
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("GET");
+
+        servlet.service(request, response);
+
+        verify(request).getRequestDispatcher("/register.jsp");
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     void 어노테이션_컨트롤러로_회원가입하고_메인으로_리다이렉트한다() throws Exception {
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
