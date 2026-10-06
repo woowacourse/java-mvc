@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.techcourse.controller.LogoutController;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +21,9 @@ class ManualHandlerMappingTest {
 
     @Test
     void 등록된_URI로_요청하면_컨트롤러를_반환한다() {
-        final var request = createRequest("", "/logout");
+        final var request = createRequest("", "/");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(LogoutController.class);
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(ForwardController.class);
     }
 
     @Test
@@ -35,9 +35,9 @@ class ManualHandlerMappingTest {
 
     @Test
     void context_path를_제외한_경로로_컨트롤러를_찾는다() {
-        final var request = createRequest("/app", "/app/logout");
+        final var request = createRequest("/app", "/app/");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(LogoutController.class);
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(ForwardController.class);
     }
 
     private HttpServletRequest createRequest(String contextPath, String requestURI) {

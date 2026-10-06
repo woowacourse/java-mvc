@@ -149,13 +149,15 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 컨트롤러가_redirect_뷰_이름을_반환하면_리다이렉트한다() throws Exception {
+    void 애노테이션_컨트롤러로_로그아웃하면_세션에서_사용자를_제거하고_리다이렉트한다() throws Exception {
         final var request = createRequest("GET", "/logout");
         final var response = mock(HttpServletResponse.class);
-        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
 
         dispatcherServlet.service(request, response);
 
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
         verify(response).sendRedirect("/");
     }
 
