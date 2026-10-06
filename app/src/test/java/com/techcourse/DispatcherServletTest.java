@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -27,7 +28,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
         dispatcherServlet.init();
     }
 
