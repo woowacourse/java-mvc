@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ class RegisterControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
+        servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
     }
 
