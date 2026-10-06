@@ -48,4 +48,22 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void 지원하지_않는_HTTP_메서드는_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CONNECT");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 등록되지_않은_URL은_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/unmapped");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }
