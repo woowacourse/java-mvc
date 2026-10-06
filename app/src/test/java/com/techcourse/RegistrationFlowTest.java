@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,8 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +64,25 @@ class RegistrationFlowTest {
                 servlet.service(request, response);
 
                 // then
-                repository.verifyNoInteractions();
+                repository.verify(() -> InMemoryUserRepository.save(any()), never());
+            }
+        }
+
+        @Test
+        @DisplayName("POST /register 요청은 회원가입 컨트롤러를 통해 사용자를 저장한다")
+        void savesUserThroughRegistrationController() throws Exception {
+            // given
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getRequestURI()).thenReturn("/register");
+            when(request.getParameter("account")).thenReturn("new-user");
+            when(request.getParameter("password")).thenReturn("password");
+            when(request.getParameter("email")).thenReturn("user@example.com");
+            try (final var repository = mockStatic(InMemoryUserRepository.class)) {
+                // when
+                servlet.service(request, response);
+
+                // then
+                repository.verify(() -> InMemoryUserRepository.save(any(User.class)));
             }
         }
 

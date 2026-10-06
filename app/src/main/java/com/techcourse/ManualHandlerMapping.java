@@ -11,11 +11,15 @@ import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 수동 등록한 컨트롤러를 매핑 인스턴스별로 보관한다.
+ * 요청 처리 전에 initialize()를 완료하고, 요청 처리 중에는 조회만 한다.
+ */
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, Controller> controllers = new HashMap<>();
 
     @Override
     public void initialize() {

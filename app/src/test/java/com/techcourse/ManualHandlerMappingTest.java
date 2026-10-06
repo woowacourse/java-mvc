@@ -38,6 +38,39 @@ class ManualHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("서로 다른 매핑은 각자의 컨트롤러 인스턴스를 가진다")
+    void usesDifferentControllersForEachMapping() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/login");
+        final var otherMapping = new ManualHandlerMapping();
+        otherMapping.initialize();
+
+        // when
+        final var firstController = handlerMapping.getHandler(request);
+        final var secondController = otherMapping.getHandler(request);
+
+        // then
+        assertThat(firstController).isNotSameAs(secondController);
+    }
+
+    @Test
+    @DisplayName("다른 매핑을 초기화해도 기존 매핑의 컨트롤러를 유지한다")
+    void preservesControllerWhenAnotherMappingInitializes() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/login");
+        final var originalController = handlerMapping.getHandler(request);
+        final var otherMapping = new ManualHandlerMapping();
+
+        // when
+        otherMapping.initialize();
+
+        // then
+        assertThat(handlerMapping.getHandler(request)).isSameAs(originalController);
+    }
+
+    @Test
     @DisplayName("어노테이션 방식으로 옮긴 회원가입 경로는 수동 매핑에서 찾지 않는다")
     void doesNotMapMigratedRegistrationPath() {
         // given

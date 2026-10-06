@@ -4,23 +4,27 @@ import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.techcourse.domain.User;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -117,6 +121,21 @@ class DispatcherServletTest {
 
             // then
             verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        @Test
+        @DisplayName("등록된 핸들러가 없으면 어댑터를 조회하거나 실행하지 않는다")
+        void doesNotUseAdapterWhenNoMappingMatches() throws Exception {
+            // given
+            final var mapping = mock(HandlerMapping.class);
+            final var adapter = mock(HandlerAdapter.class);
+            final var servlet = new DispatcherServlet(List.of(mapping), List.of(adapter));
+
+            // when
+            servlet.service(request, response);
+
+            // then
+            verifyNoInteractions(adapter);
         }
     }
 
@@ -230,11 +249,51 @@ class DispatcherServletTest {
                     .isInstanceOf(ServletException.class)
                     .hasCause(failure);
         }
+
+        @Test
+        @DisplayName("핸들러 실행 결과가 null이면 핸들러 타입을 포함한 예외를 던진다")
+        void reportsHandlerTypeWhenAdapterReturnsNull() throws Exception {
+            // given
+            final var handler = new NullResultHandler();
+            final var mapping = mock(HandlerMapping.class);
+            final var adapter = mock(HandlerAdapter.class);
+            when(mapping.getHandler(request)).thenReturn(handler);
+            when(adapter.supports(handler)).thenReturn(true);
+            when(adapter.handle(request, response, handler)).thenReturn(null);
+            final var servlet = new DispatcherServlet(List.of(mapping), List.of(adapter));
+
+            // when & then
+            assertThatThrownBy(() -> servlet.service(request, response))
+                    .isInstanceOf(ServletException.class)
+                    .hasCauseInstanceOf(IllegalStateException.class)
+                    .hasRootCauseMessage("핸들러 실행 결과가 없습니다: " + NullResultHandler.class.getName());
+        }
+
+        @Test
+        @DisplayName("뷰 렌더링이 실패하면 원인을 보존한다")
+        void preservesViewRenderingFailureAsCause() throws Exception {
+            // given
+            final var handler = new Object();
+            final var mapping = mock(HandlerMapping.class);
+            final var adapter = mock(HandlerAdapter.class);
+            final var view = mock(View.class);
+            final var failure = new IOException("view rendering failed");
+            when(mapping.getHandler(request)).thenReturn(handler);
+            when(adapter.supports(handler)).thenReturn(true);
+            when(adapter.handle(request, response, handler)).thenReturn(new ModelAndView(view));
+            doThrow(failure).when(view).render(Map.of(), request, response);
+            final var servlet = new DispatcherServlet(List.of(mapping), List.of(adapter));
+
+            // when & then
+            assertThatThrownBy(() -> servlet.service(request, response))
+                    .isInstanceOf(ServletException.class)
+                    .hasCause(failure);
+        }
     }
 
     @Nested
-    @DisplayName("기존 방식과 어노테이션 방식의 공존")
-    class Coexistence {
+    @DisplayName("기본 구성의 기존 MVC 연결")
+    class LegacyIntegration {
 
         private HttpServletRequest request;
         private HttpServletResponse response;
@@ -264,23 +323,32 @@ class DispatcherServletTest {
         }
 
         @Test
-        @DisplayName("어노테이션 컨트롤러 요청을 찾아 뷰로 이동한다")
-        void handlesAnnotatedController() throws Exception {
+        @DisplayName("POST /login 요청은 기존 로그인 컨트롤러를 실행해 인덱스로 리다이렉트한다")
+        void handlesLegacyLoginController() throws Exception {
             // given
-            final var dispatcher = mock(RequestDispatcher.class);
-            when(request.getRequestURI()).thenReturn("/step2-annotation");
-            when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestDispatcher("/step2-annotation.jsp")).thenReturn(dispatcher);
-            final var servlet = new DispatcherServlet(
-                    List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse.fixture.mvc")),
-                    List.of(new ControllerAdapter(), new HandlerExecutionAdapter()));
+            final var session = mock(HttpSession.class);
+            final var user = new User(42, "legacy-user", "password", "legacy@example.test");
+            when(request.getRequestURI()).thenReturn("/login");
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getSession()).thenReturn(session);
+            when(request.getParameter("account")).thenReturn("legacy-user");
+            when(request.getParameter("password")).thenReturn("password");
+            final var servlet = new DispatcherServlet();
             servlet.init();
 
-            // when
-            servlet.service(request, response);
+            try (final var repository = mockStatic(InMemoryUserRepository.class)) {
+                repository.when(() -> InMemoryUserRepository.findByAccount("legacy-user"))
+                        .thenReturn(Optional.of(user));
 
-            // then
-            verify(dispatcher).forward(request, response);
+                // when
+                servlet.service(request, response);
+
+                // then
+                verify(response).sendRedirect("/index.jsp");
+            }
         }
+    }
+
+    private static final class NullResultHandler {
     }
 }

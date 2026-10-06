@@ -24,6 +24,8 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
+        // 두 방식이 같은 요청에 일치하면 어노테이션 매핑을 우선한다.
+        // 경로 전체를 어노테이션 방식으로 이전했다면 해당 수동 등록은 제거한다.
         this(
                 List.of(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping()),
                 List.of(new HandlerExecutionAdapter(), new ControllerAdapter())
@@ -53,6 +55,9 @@ public class DispatcherServlet extends HttpServlet {
 
             final var adapter = getHandlerAdapter(handler);
             final var modelAndView = adapter.handle(request, response, handler);
+            if (modelAndView == null) {
+                throw new IllegalStateException("핸들러 실행 결과가 없습니다: " + handler.getClass().getName());
+            }
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -61,6 +66,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
+        // 등록 순서대로 첫 일치 대상을 선택한다. null이면 다음 매핑으로 이어진다.
         return handlerMappings.stream()
                 .map(mapping -> mapping.getHandler(request))
                 .filter(Objects::nonNull)
