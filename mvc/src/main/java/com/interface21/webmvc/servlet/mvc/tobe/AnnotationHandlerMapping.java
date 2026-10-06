@@ -26,38 +26,46 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final ControllerScanner scanner = new ControllerScanner(basePackage);
         final Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
-            final Class<?> controllerClass = entry.getKey();
-            final Object controller = entry.getValue();
-
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-
-                if (mapping == null) {
-                    continue;
-                }
-
-                HandlerExecution execution = new HandlerExecution(controller, method);
-
-                RequestMethod[] requestMethods = mapping.method();
-
-                if (requestMethods.length == 0) {
-                    requestMethods = RequestMethod.values();
-                }
-
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
-
-                    if (handlerExecutions.containsKey(key)) {
-                        throw new IllegalStateException("중복된 매핑 요청 : " + key);
-                    }
-
-                    handlerExecutions.put(key, execution);
-                }
-            }
-        }
+        controllers.forEach(this::registerHandlerMethods);
 
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerHandlerMethods(
+            final Class<?> controllerClass,
+            final Object controller
+    ) {
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+
+            if (mapping == null) {
+                continue;
+            }
+
+            HandlerExecution execution = new HandlerExecution(controller, method);
+            registerMappings(mapping, execution);
+        }
+    }
+
+    private void registerMappings(
+            final RequestMapping mapping,
+            final HandlerExecution execution
+    ) {
+        RequestMethod[] requestMethods = mapping.method();
+
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+
+            if (handlerExecutions.containsKey(key)) {
+                throw new IllegalStateException("중복된 매핑 요청 : " + key);
+            }
+
+            handlerExecutions.put(key, execution);
+        }
     }
 
     @Override
