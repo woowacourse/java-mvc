@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public final class DispatcherServlet extends HttpServlet {
     protected void service(
             final HttpServletRequest request,
             final HttpServletResponse response
-    ) throws ServletException {
+    ) throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -67,7 +68,7 @@ public final class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
 
             render(modelAndView, request, response);
-        } catch (ServletException e) {
+        } catch (IOException | ServletException e) {
             throw e;
         } catch (Exception e) {
             log.error("요청 처리 실패", e);

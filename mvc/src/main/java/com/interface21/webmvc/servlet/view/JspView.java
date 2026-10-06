@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public final class JspView implements View {
     private final String viewName;
 
     public JspView(final String viewName) {
-        this.viewName = viewName;
+        this.viewName = Objects.requireNonNull(viewName, "viewName은 null일 수 없습니다.");
     }
 
     @Override

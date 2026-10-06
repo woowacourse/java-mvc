@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ModelAndView {
 
@@ -10,7 +11,7 @@ public class ModelAndView {
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
-        this.view = view;
+        this.view = Objects.requireNonNull(view, "View는 null일 수 없습니다.");
         this.model = new HashMap<>();
     }
 
