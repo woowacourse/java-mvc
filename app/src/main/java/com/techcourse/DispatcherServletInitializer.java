@@ -29,7 +29,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
         annotationHandlerMapping.initialize();
 
-        final var handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+        final var handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
         final var handlerAdapters = List.of(
                 new ControllerHandlerAdapter(),
                 new HandlerExecutionAdapter()

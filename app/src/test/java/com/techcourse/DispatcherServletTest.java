@@ -5,13 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
@@ -30,6 +35,10 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() throws ServletException {
+        dispatcherServlet = registerDispatcherServlet();
+    }
+
+    private DispatcherServlet registerDispatcherServlet() throws ServletException {
         final var servletContext = mock(ServletContext.class);
         final var registration = mock(ServletRegistration.Dynamic.class);
         when(servletContext.addServlet(eq("dispatcher"), any(DispatcherServlet.class)))
@@ -42,8 +51,9 @@ class DispatcherServletTest {
         verify(registration).setLoadOnStartup(1);
         verify(registration).addMapping("/");
 
-        dispatcherServlet = dispatcherServletCaptor.getValue();
+        final var dispatcherServlet = dispatcherServletCaptor.getValue();
         dispatcherServlet.init(mock(ServletConfig.class));
+        return dispatcherServlet;
     }
 
     @Test
@@ -76,6 +86,31 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void givenBothMappingsHandleSameUri_whenServices_thenUsesAnnotationHandlerFirst() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var annotationRequestDispatcher = mock(RequestDispatcher.class);
+        final var legacyRequestDispatcher = mock(RequestDispatcher.class);
+        final var handlerExecution = mock(HandlerExecution.class);
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/annotation.jsp")).thenReturn(annotationRequestDispatcher);
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(legacyRequestDispatcher);
+        when(handlerExecution.handle(request, response))
+                .thenReturn(new ModelAndView(new JspView("/annotation.jsp")));
+
+        try (var ignored = mockConstruction(
+                AnnotationHandlerMapping.class,
+                (mapping, context) -> when(mapping.getHandler(request)).thenReturn(handlerExecution)
+        )) {
+            registerDispatcherServlet().service(request, response);
+        }
+
+        verify(annotationRequestDispatcher).forward(request, response);
+        verify(legacyRequestDispatcher, never()).forward(request, response);
     }
 
     @Test

@@ -69,6 +69,7 @@ HTTP 요청에 대응하는 Handler를 반환한다.
 - [x] Handler를 찾았지만 지원하는 HandlerAdapter가 없으면 Handler 타입을 식별하는 예외를 발생시킨다.
 - [x] 요청 처리 중 예외가 발생하면 `ServletException`의 원인으로 보존한다.
 - [x] 전달받은 HandlerMapping과 HandlerAdapter를 사용해 요청을 처리한다.
+- [x] 전달받은 순서대로 HandlerMapping을 조회하고 첫 Handler를 선택한다.
 
 ## DispatcherServletInitializer
 
@@ -80,6 +81,7 @@ DispatcherServlet에 필요한 MVC 구성을 준비해 ServletContext에 등록�
 
 - [x] 구성한 HandlerMapping과 HandlerAdapter를 DispatcherServlet에 전달해 등록한다.
 - [x] DispatcherServlet을 `dispatcher` 이름으로 등록하고 애플리케이션 시작 시 초기화되도록 설정하며 `/`에 매핑한다.
+- [x] Annotation Handler가 있으면 Legacy보다 우선 선택하고, 없으면 Legacy Mapping으로 넘긴다.
 
 ## HandlerAdapter
 
