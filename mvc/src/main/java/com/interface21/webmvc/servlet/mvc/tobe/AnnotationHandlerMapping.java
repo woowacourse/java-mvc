@@ -4,12 +4,14 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -40,11 +42,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerHandlerExecutions(final Class<?> controllerClass, final Object controller) {
-        for (Method method : controllerClass.getDeclaredMethods()) {
+        for (Method method : getRequestMappingMethods(controllerClass)) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            if (requestMapping == null) {
-                continue;
-            }
 
             RequestMethod[] requestMethods = requestMapping.method();
             if (requestMethods.length == 0) {
@@ -59,5 +58,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 }
             }
         }
+    }
+
+    private Set<Method> getRequestMappingMethods(final Class<?> controllerClass) {
+        return ReflectionUtils.getAllMethods(
+                controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
     }
 }
