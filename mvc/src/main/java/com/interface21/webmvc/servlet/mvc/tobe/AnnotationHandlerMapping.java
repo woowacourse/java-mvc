@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        final Reflections reflections = new Reflections("samples");
+        final Reflections reflections = new Reflections(basePackage);
 
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
