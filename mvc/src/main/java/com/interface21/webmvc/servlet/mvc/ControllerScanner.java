@@ -10,8 +10,8 @@ import java.util.Set;
 public class ControllerScanner {
     private final Map<Class<?>, Object> controllers = new HashMap<>();
 
-    public ControllerScanner(final Object... basePackage) {
-        Reflections reflections = new Reflections(basePackage);
+    public ControllerScanner(final String... basePackage) {
+        Reflections reflections = new Reflections((Object[]) basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClasses) {
