@@ -1,7 +1,13 @@
 package com.interface21.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class ReflectionUtils {
 
@@ -34,5 +40,15 @@ public abstract class ReflectionUtils {
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
         }
+    }
+
+    public static Predicate<Method> withAnnotation(final Class<? extends Annotation> annotationType) {
+        return method -> method.isAnnotationPresent(annotationType);
+    }
+
+    public static Set<Method> getAllMethods(final Class<?> clazz, final Predicate<Method> methodFilter) {
+        return Arrays.stream(clazz.getMethods())
+                .filter(methodFilter)
+                .collect(Collectors.toSet());
     }
 }
