@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.asis;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -18,6 +17,6 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
                                final HttpServletResponse response,
                                final Object handler) throws Exception {
         final String viewName = ((Controller) handler).execute(request, response);
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(viewName);
     }
 }

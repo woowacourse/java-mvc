@@ -2,11 +2,9 @@ package com.interface21.webmvc.servlet.mvc.asis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class ControllerHandlerAdapterTest {
@@ -27,9 +25,9 @@ class ControllerHandlerAdapterTest {
 
         //when
         final var modelAndView = handlerAdapter.handle(request, response, new ForwardController("redirect:/index.jsp"));
-        modelAndView.getView().render(Map.of(), request, response);
 
         //then
-        verify(response).sendRedirect("/index.jsp");
+        assertThat(modelAndView.isReference()).isTrue();
+        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
     }
 }

@@ -16,6 +16,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
 
     public DispatcherServlet() {
     }
@@ -62,6 +63,11 @@ public class DispatcherServlet extends HttpServlet {
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
                         final HttpServletResponse response) throws Exception {
         View view = modelAndView.getView();
+
+        if (modelAndView.isReference()) {
+            view = viewResolver.resolveViewName(modelAndView.getViewName());
+        }
+
         view.render(modelAndView.getModel(), request, response);
     }
 }
