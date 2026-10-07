@@ -7,12 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
-    public boolean supports(Object handler) {
+    public boolean supports(final Object handler) {
         return handler instanceof HandlerExecution;
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler)
             throws Exception {
         HandlerExecution execution = (HandlerExecution) handler;
         return execution.handle(request, response);
