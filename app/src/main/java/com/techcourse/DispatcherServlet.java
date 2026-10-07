@@ -26,6 +26,11 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
     }
 
+    DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings.addAll(handlerMappings);
+        this.handlerAdapters.addAll(handlerAdapters);
+    }
+
     @Override
     public void init() {
         final var manualHandlerMapping = new ManualHandlerMapping();
@@ -51,12 +56,17 @@ public class DispatcherServlet extends HttpServlet {
         try {
 
             final var handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             final var handlerAdapter = getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
     }
 
@@ -67,7 +77,7 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
 
-        return null;
+        throw new IllegalStateException("No HandlerAdapter for handler type: " + handler.getClass().getName());
     }
 
     private Object getHandler(final HttpServletRequest request) {

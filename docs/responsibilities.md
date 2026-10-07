@@ -54,6 +54,7 @@ HTTP 요청에 대응하는 Handler를 반환한다.
 ### 계약
 
 - [x] HTTP 요청에 대응하는 Handler를 반환한다.
+- [x] 요청에 대응하는 Handler가 없으면 `null`을 반환한다.
 
 ## DispatcherServlet
 
@@ -64,6 +65,9 @@ HTTP 요청에 대응하는 Handler를 반환한다.
 ### 계약
 
 - [x] 등록된 HandlerMapping들을 순회해 요청에 대응하는 Handler를 찾는다.
+- [x] 모든 HandlerMapping에 대응하는 Handler가 없으면 404 응답 후 처리를 종료한다.
+- [x] Handler를 찾았지만 지원하는 HandlerAdapter가 없으면 Handler 타입을 식별하는 예외를 발생시킨다.
+- [x] 요청 처리 중 예외가 발생하면 `ServletException`의 원인으로 보존한다.
 
 ## HandlerAdapter
 
