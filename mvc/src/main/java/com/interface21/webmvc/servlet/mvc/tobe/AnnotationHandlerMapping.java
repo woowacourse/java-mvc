@@ -54,11 +54,19 @@ public class AnnotationHandlerMapping {
     private void registerHandler(final Object controller, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        for (final RequestMethod requestMethod : requestMapping.method()) {
+        for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Path : {}, Method : {}, Handler : {}", requestMapping.value(), requestMethod, method);
         }
+    }
+
+    private RequestMethod[] resolveRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
