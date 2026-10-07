@@ -50,3 +50,86 @@ newInstance()는 InvocationTargetException, InstantiationException, IllegalAcces
 5. key: HandlerKey, value: HandlerExecution으로 된 handlerMapping에 추가
 
 url과 HttpMethod를 기준으로 HandlerExecution을 매핑하여 초기화한다.
+
+
+-----
+
+1. ControllerScanner
+ControllerScanner는 @Controller가 붙은 클래스를 탐색하고 각 클래스의 인스턴스를 생성해 반환한다. 
+기존 코드에서 AnnotationHandlerMapping이 수행하던 그 책임이 이번 미션에서 분리되었다. 
+AnnotationHandlerMapping에서는 controllerScanner.getControllers()를 해서 컨트롤러를 반환 받고, 
+그 컨트롤러의 @RequestMapping 메서드를 찾아서 컨트롤러 인스턴스와 메서드를 HandlerExecution으로 묶어 등록한다.
+컨트롤러는 엄밀한 싱글톤은 아니지만 초기화 시 한 번 생성되어 모든 요청에서 재사용되므로, 프레임워크 안에서는 사실상 싱글톤처럼 동작한다.
+
+
+2. ReflectionUtils.getAllMethods()
+
+기존에는 controllerClass.getDeclaredMethods()를 사용했지만, 이번 미션에서는 Reflections 라이브러리의 ReflectionUtils.getAllMethods()로 변경하였다.
+
+1)controllerClass.getDeclaredMethods()   
+해당 클래스에 직접 선언된 메서드만 반환하고(public, protected, private 등 모두 포함), 
+부모 클래스와 인터페이스에서 상속받은 메서드는 제외한다.
+
+```java
+Method[] methods = controllerClass.getDeclaredMethods();
+```
+
+@RequestMapping 여부와 관계없이 모든 메서드를 반환하기 때문에, method.getAnnotation(RequestMapping.class);을 하면 null이 반환될 수 있다.
+
+```java
+for (Method method : controllerClass.getDeclaredMethods()) {
+    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+    if (requestMapping == null) {
+        continue;
+    }
+
+    // HandlerExecution 등록
+}
+```
+2)ReflectionUtils.getAllMethods()
+
+해당 클래스에 선언된 메서드, 부모 클래스, 인터페이스의 메서드도 모두 탐색해서 반환한다.
+또한, 전달된 조건으로 필터링이 된다.
+
+아래 코드에서는@RequestMapping 메서드만 필터링 되어서 반환된다.
+
+```java
+Set<Method> methods = ReflectionUtils.getAllMethods(
+        controllerClass,
+        ReflectionUtils.withAnnotation(RequestMapping.class)
+);
+```
+
+반환된 Method에는 @RequestMapping으로 이미 필터링 되었기 때문에,
+1)번과 달리  별도의 null 검증이 필요없다. 
+
+```java
+for (Method method : methods) {
+    RequestMapping requestMapping =
+            method.getAnnotation(RequestMapping.class);
+
+    // HandlerExecution 등록
+}
+```
+
+3. HandlerMapping
+HandlerMappingRegistry를 통해서 manualHandlerMapping과 annotationHandlerMapping을 동일하게 조회할 수 있게 되었다.
+handlerMappingRegistry.getHandler()를 하면, 등록된 두 방식 중 하나로 하나로 처리된다.
+
+4. HandlerAdapter
+
+이전에는 DispatcherServlet이 컨트롤러가 반환한 뷰 이름을 사용해 직접 JspView를 생성했다. 
+또한 항상 빈 모델을 전달해 렌더링했다.
+```
+final JspView jspView = new JspView(viewName);
+jspView.render(Map.of(), request, response);
+```
+
+HandlerAdapter 적용 후에는 핸들러 실행 결과를 ModelAndView로 통일한다. 
+DispatcherServlet은 ModelAndView가 가진 View와 모델 데이터를 사용해 렌더링한다.
+```
+mav.getView().render(mav.getModel(), request, response);
+```
+따라서 DispatcherServlet이 JspView, JsonView처럼 View 인터페이스를 구현한 다양한 View를 동일한 방식으로 처리할 수 있다.
+또한, 컨트롤러가 추가한 모델 데이터도 View에 전달할 수 있게 되었다. 
