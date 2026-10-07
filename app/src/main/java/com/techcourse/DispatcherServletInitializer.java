@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.HandlerAdaptorRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
@@ -11,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
@@ -23,11 +22,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
 
         final var handlerAdaptorRegistry = new HandlerAdaptorRegistry();
-        handlerAdaptorRegistry.addHandlerAdaptor(new SimpleControllerHandlerAdaptor());
         handlerAdaptorRegistry.addHandlerAdaptor(new AnnotationHandlerAdaptor());
 
         final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdaptorRegistry);
