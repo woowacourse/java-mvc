@@ -1,11 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -19,11 +26,53 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    public void initialize()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         log.info("Initialized AnnotationHandlerMapping!");
+
+        for (Object base : basePackage) {
+            final Reflections reflections = new Reflections(base);
+
+            final Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+            for (Class<?> controllerType : controllerTypes) {
+                final var controller = controllerType.getDeclaredConstructor().newInstance();
+
+                Method[] methods = controllerType.getDeclaredMethods();
+                for (Method method : methods) {
+                    if (!method.isAnnotationPresent(RequestMapping.class)) {
+                        continue;
+                    }
+                    final var handlerExecution = new HandlerExecution(controller, method);
+                    final var requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+
+                    RequestMethod[] supportedMethods = requestMapping.method();
+                    if (supportedMethods.length == 0) {
+                        supportedMethods = RequestMethod.values();
+                    }
+
+                    for (RequestMethod supportedMethod : supportedMethods) {
+                        final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethod);
+
+                        handlerExecutions.put(handlerKey, handlerExecution);
+                        log.info("Request {} {} -> Mapped to {}#{} on instance={}",
+                                supportedMethod, requestMapping.value(),
+                                controllerType.getSimpleName(), method.getName(),
+                                handlerExecution
+                        );
+                    }
+                }
+            }
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        // TODO: getRequestURL은 StringBuffer를 리턴하고, getRequestURI는 String을 리턴한다. 그 차이는?
+        final var handlerExecution = handlerExecutions.get(new HandlerKey(
+                request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod())
+        ));
+        log.info("Find handler for {} {}", request.getMethod(), request.getRequestURI());
+        log.info("Found handler={}", handlerExecution);
+        return handlerExecution;
     }
 }

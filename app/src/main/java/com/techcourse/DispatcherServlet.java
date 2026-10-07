@@ -1,12 +1,14 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
+
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -30,22 +32,16 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
+            // 1. 핸들러를 찾는다
             final var controller = manualHandlerMapping.getHandler(requestURI);
+            // 2. 핸들러를 실행한다
             final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            // 3. 결과 뷰를 그린다
+            final var jspView = new JspView(viewName);
+            jspView.render(Map.of(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
