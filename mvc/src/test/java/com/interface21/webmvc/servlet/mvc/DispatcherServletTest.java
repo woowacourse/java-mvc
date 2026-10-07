@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.mvc.exception.AdapterNotFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.RequestMappingHandlerAdapter;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,8 +32,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerAdapter(new RequestMappingHandlerAdapter());
+        dispatcherServlet = new DispatcherServlet("samples");
         dispatcherServlet.addHandlerAdapter(new TestHandlerAdapter());
 
         request = mock(HttpServletRequest.class);
@@ -72,6 +70,25 @@ class DispatcherServletTest {
         when(request.getAttribute("id")).thenReturn("gugu");
 
         dispatcherServlet.service(request, response);
+
+        verify(request).setAttribute("id", "gugu");
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 패키지를_지정하지_않고_생성하면_예외가_발생한다() {
+        assertThatThrownBy(DispatcherServlet::new)
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 생성자로_받은_패키지의_어노테이션_컨트롤러를_별도_등록_없이_실행한다() throws Exception {
+        final DispatcherServlet servlet = new DispatcherServlet("samples");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getAttribute("id")).thenReturn("gugu");
+
+        servlet.service(request, response);
 
         verify(request).setAttribute("id", "gugu");
         verify(requestDispatcher).forward(request, response);

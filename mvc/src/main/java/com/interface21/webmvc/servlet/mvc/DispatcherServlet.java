@@ -1,6 +1,8 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.RequestMappingHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,12 +16,29 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
+    public DispatcherServlet(String... basePackage) {
+        validateBasePackage(basePackage);
+        registerHandlers(basePackage);
+    }
+
+    private void validateBasePackage(String[] basePackage) {
+        if (basePackage.length == 0) {
+            throw new IllegalArgumentException("루트 패키지를 지정해주세요");
+        }
+    }
+
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    private void registerHandlers(String... basePackage) {
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        addHandlerMapping(annotationHandlerMapping);
+        addHandlerAdapter(new RequestMappingHandlerAdapter());
     }
 
     @Override
