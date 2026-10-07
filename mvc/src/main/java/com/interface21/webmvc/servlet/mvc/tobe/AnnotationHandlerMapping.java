@@ -43,8 +43,14 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(
+        HandlerExecution handlerExecution = handlerExecutions.get(
             new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+
+        if (handlerExecution == null) {
+            return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.ANY));
+        }
+
+        return handlerExecution;
     }
 
     private void putHandlerExecutions(Object controller, Method[] controllerDeclaredMethods) {
@@ -55,11 +61,23 @@ public class AnnotationHandlerMapping {
 
             RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
 
+            if (!existsRequestMethod(requestMapping)) {
+                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), RequestMethod.ANY);
+                HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
+                handlerExecutions.put(handlerKey, handlerExecution);
+                continue;
+            }
+
             for (RequestMethod requestMethod : requestMapping.method()) {
                 HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                handlerExecutions.put(handlerKey, new HandlerExecution(controller, controllerMethod));
+                HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
+                handlerExecutions.put(handlerKey, handlerExecution);
             }
         }
+    }
+
+    private boolean existsRequestMethod(final RequestMapping requestMapping) {
+        return requestMapping.method().length != 0;
     }
 
 }
