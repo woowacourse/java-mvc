@@ -57,21 +57,35 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return;
         }
 
+        validateHandlerMethod(method);
+        registerHandlerExecution(controller, method, requestMapping);
+    }
+
+    private void validateHandlerMethod(final Method method) {
         if (!Arrays.equals(method.getParameterTypes(),
                 new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class})) {
             throw new IllegalStateException("Handler must accept request and response: " + method);
         }
+    }
 
+    private void registerHandlerExecution(final Object controller, final Method method,
+                                          final RequestMapping requestMapping) {
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        final boolean isFallbackMapping = requestMapping.method().length == 0;
         for (RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            if (isFallbackMapping && handlerExecutions.containsKey(handlerKey)) {
-                continue;
-            }
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(), method.getName());
+            registerHandlerMethod(handlerExecution, requestMapping, requestMethod);
         }
+    }
+
+    private void registerHandlerMethod(final HandlerExecution handlerExecution, final RequestMapping requestMapping,
+                                       final RequestMethod requestMethod) {
+        final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+        final boolean isFallbackMapping = requestMapping.method().length == 0;
+        if (isFallbackMapping && handlerExecutions.containsKey(handlerKey)) {
+            return;
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
+        log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(),
+                handlerExecution.getHandlerMethod().getName());
     }
 
     private RequestMethod[] resolveRequestMethods(final RequestMapping requestMapping) {
