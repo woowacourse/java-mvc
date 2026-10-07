@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class HandlerAdapterRegistry {
@@ -16,14 +15,9 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handler) {
-        Optional<HandlerAdapter> found = handlerAdapters.stream()
+    public Optional<HandlerAdapter> getHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findAny();
-
-        if (found.isEmpty()) {
-            throw new NoSuchElementException("요청을 처리할 핸들러 어댑터가 없습니다.");
-        }
-        return found.get();
     }
 }

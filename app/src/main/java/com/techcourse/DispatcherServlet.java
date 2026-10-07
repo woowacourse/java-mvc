@@ -48,9 +48,13 @@ public class DispatcherServlet extends HttpServlet {
             if (handler.isEmpty()) {
                 throw new NoSuchElementException("요청을 처리할 핸들러가 없습니다");
             }
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+            Optional<HandlerAdapter> handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
 
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
+            if (handlerAdapter.isEmpty()) {
+                throw new NoSuchElementException("요청을 처리할 핸들러 어댑터가 없습니다.");
+            }
+
+            ModelAndView modelAndView = handlerAdapter.get().handle(request, response, handler.get());
 
             render(modelAndView, request, response);
         } catch (Throwable e) {
