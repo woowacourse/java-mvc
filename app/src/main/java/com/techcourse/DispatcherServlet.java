@@ -6,46 +6,75 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.LegacyHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+
+import java.io.IOException;
+import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping.initialize();
+
+        final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+
+        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        handlerAdapters = List.of(new AnnotationHandlerAdapter(), new LegacyHandlerAdapter());
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final Object handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private Object getHandler(final HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
         }
+        return null;
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("지원하지 않는 핸들러입니다: " + handler.getClass()));
     }
 }
