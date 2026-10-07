@@ -23,11 +23,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Class<?>[] HANDLER_PARAMETER_TYPES = {HttpServletRequest.class, HttpServletResponse.class};
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
     }
 
     @Override
