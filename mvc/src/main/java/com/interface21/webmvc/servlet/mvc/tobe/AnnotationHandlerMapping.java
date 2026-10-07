@@ -5,6 +5,7 @@ import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
@@ -18,7 +19,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -30,6 +31,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -120,6 +122,7 @@ public class AnnotationHandlerMapping {
         return requestMapping.method();
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(
                 new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
