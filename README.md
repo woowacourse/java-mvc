@@ -30,6 +30,6 @@
     - [x] URL을 컨트롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등)도 매핑 조건에 포함
     - [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원
   - [x] Controller 인터페이스는 그대로 두고 미션 진행
-- [ ] JspView 클래스를 구현한다
-  - [ ] DispatcherServlet 클래스의 service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악
-  - [ ] 뷰에 대한 처리를 하는 부분을 JspView 클래스로 옮긴다
+- [x] JspView 클래스를 구현한다
+  - [x] DispatcherServlet 클래스의 service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악
+  - [x] 뷰에 대한 처리를 하는 부분을 JspView 클래스로 옮긴다
