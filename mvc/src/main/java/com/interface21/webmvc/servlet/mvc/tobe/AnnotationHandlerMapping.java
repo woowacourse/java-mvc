@@ -36,6 +36,6 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
 
 //        TODO request 에 알맞은 핸들러를 반환해야 한다.
-        return null;
+        return new HandlerExecution();
     }
 }
