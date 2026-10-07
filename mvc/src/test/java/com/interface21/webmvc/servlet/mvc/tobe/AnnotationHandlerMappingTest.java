@@ -5,8 +5,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.annotation.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,5 +71,18 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("메서드가 지정되었다면, 해당 HTTP METHOD만을 지원해야 한다.")
+    @Test
+    void shouldSupportOnlySpecifiedHttpMethod() {
+        final var request = mock(HttpServletRequest.class);
+        final String NOT_SUPPORT_METHOD = "GET";
+
+        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getMethod()).thenReturn(NOT_SUPPORT_METHOD);
+
+        Object handler = handlerMapping.getHandler(request);
+        Assertions.assertNull(handler);
     }
 }
