@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -201,5 +202,17 @@ class ApplicationRoutingTest {
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).contains("\"account\":\"gugu\"");
+    }
+
+    @Test
+    void 없는_계정으로_사용자를_조회하면_404를_응답하고_JSON을_렌더링하지_않는다() throws Exception {
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("nobody");
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).setContentType(anyString());
     }
 }

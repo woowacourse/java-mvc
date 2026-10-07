@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
@@ -23,9 +25,14 @@ public class UserController {
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+        final Optional<User> foundUser = InMemoryUserRepository.findByAccount(account);
 
+        if (foundUser.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+
+        final User user = foundUser.get();
         modelAndView.addObject("user", user);
         return modelAndView;
     }
