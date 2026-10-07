@@ -1,18 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
-import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,16 +23,9 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final var controllerTypes = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
-        for (final var controllerType : controllerTypes) {
-            final Object controller;
-            try {
-                controller = ReflectionUtils.accessibleConstructor(controllerType).newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("Failed to create controller: " + controllerType.getName(), e);
-            }
-
-            for (final var method : controllerType.getMethods()) {
+        final var controllers = new ControllerScanner(basePackage).getControllers();
+        for (final var controller : controllers.entrySet()) {
+            for (final var method : controller.getKey().getMethods()) {
                 if (!method.isAnnotationPresent(RequestMapping.class)) {
                     continue;
                 }
@@ -42,7 +33,7 @@ public class AnnotationHandlerMapping {
                 final var requestMapping = method.getAnnotation(RequestMapping.class);
                 final var requestMethods = requestMapping.method().length == 0
                         ? RequestMethod.values() : requestMapping.method();
-                final var handlerExecution = new HandlerExecution(controller, method);
+                final var handlerExecution = new HandlerExecution(controller.getValue(), method);
                 for (final var requestMethod : requestMethods) {
                     final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
                     if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
@@ -54,6 +45,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
