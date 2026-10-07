@@ -31,9 +31,9 @@ public class ControllerScanner {
                 final Object controller = constructor.newInstance();
                 instances.put(clazz, controller);
             } catch (NoSuchMethodException e) {
-                throw new IllegalStateException("컨트롤러 생성자 생성 실패: " + clazz.getName(), e.getCause());
+                throw new IllegalStateException("컨트롤러 생성자 생성 실패: " + clazz.getName(), e);
             } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 생성 실패: " + clazz.getName(), e.getCause());
+                throw new IllegalStateException("컨트롤러 생성 실패: " + clazz.getName(), e);
             }
         }
         return instances;
