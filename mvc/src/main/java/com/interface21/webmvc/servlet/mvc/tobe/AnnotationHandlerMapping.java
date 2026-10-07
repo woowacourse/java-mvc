@@ -61,11 +61,19 @@ public class AnnotationHandlerMapping {
         }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            registerUniqueHandler(handlerKey, handlerExecution);
         }
     }
 
     private List<RequestMethod> resolveRequestMethods() {
         return Arrays.stream(RequestMethod.values()).toList();
+    }
+
+    private void registerUniqueHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 URL과 HTTP 메서드가 등록될 수 없습니다: " + handlerKey.toString());
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 }

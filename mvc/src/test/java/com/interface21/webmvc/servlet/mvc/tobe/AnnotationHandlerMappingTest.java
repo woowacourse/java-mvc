@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,5 +72,14 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndViewByGet.getObject("method")).isEqualTo("GET");
         assertThat(modelAndViewByPost.getObject("method")).isEqualTo("POST");
+    }
+
+    @Test
+    @DisplayName("중복된 URL과 HTTP 메서드가 등록되면 초기화에 실패한다")
+    void initialize_DuplicateHandlerKeys_ThrowsException() {
+        AnnotationHandlerMapping duplicateHandlerMapping = new AnnotationHandlerMapping("duplicates");
+
+        assertThatThrownBy(duplicateHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class);
     }
 }
