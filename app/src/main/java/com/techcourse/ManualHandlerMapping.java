@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.util.UrlPathHelper;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,8 +32,8 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Controller getHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        final String lookupPath = UrlPathHelper.getPathWithinApplication(request);
+        log.debug("Lookup Path : {}", lookupPath);
+        return controllers.get(lookupPath);
     }
 }

@@ -28,6 +28,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
@@ -43,6 +44,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
@@ -57,6 +59,7 @@ class AnnotationHandlerMappingTest {
     void method를_지정하지_않으면_모든_HTTP_메서드를_매핑한다(final RequestMethod requestMethod) {
         final var request = mock(HttpServletRequest.class);
 
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/all-test");
         when(request.getMethod()).thenReturn(requestMethod.name());
 
@@ -67,6 +70,7 @@ class AnnotationHandlerMappingTest {
     void HTTP_메서드가_일치하지_않으면_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("POST");
 
@@ -77,9 +81,21 @@ class AnnotationHandlerMappingTest {
     void 지원하지_않는_HTTP_메서드면_예외_없이_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
+        when(request.getContextPath()).thenReturn("");
         when(request.getRequestURI()).thenReturn("/all-test");
         when(request.getMethod()).thenReturn("CONNECT");
 
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 컨텍스트_경로를_제외한_경로로_핸들러를_찾는다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getContextPath()).thenReturn("/app");
+        when(request.getRequestURI()).thenReturn("/app/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNotNull();
     }
 }

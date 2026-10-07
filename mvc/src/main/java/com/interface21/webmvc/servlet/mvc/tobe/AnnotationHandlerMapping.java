@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.web.util.UrlPathHelper;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +39,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
+        final String lookupPath = UrlPathHelper.getPathWithinApplication(request);
         return RequestMethod.findByName(request.getMethod())
                 .map(requestMethod ->
-                        handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod)))
+                        handlerExecutions.get(new HandlerKey(lookupPath, requestMethod)))
                 .orElse(null);
     }
 
