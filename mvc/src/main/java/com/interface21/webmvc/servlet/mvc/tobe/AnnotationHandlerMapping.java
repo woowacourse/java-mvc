@@ -1,7 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +45,35 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerControllers(Class<?> controllerClass, Object controller) {
+        Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerHandler(controller, method));
+    }
+
+    private void registerHandler(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+        Arrays.stream(getSupportedMethods(requestMapping))
+                .forEach(requestMethods -> {
+                    registerRequestHandlerOrThrow(requestMethods, requestMapping, handlerExecution);
+                });
+    }
+
+    private void registerRequestHandlerOrThrow(RequestMethod requestMethods, RequestMapping requestMapping,
+                                               HandlerExecution handlerExecution) {
+        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethods);
+        if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+            throw new IllegalStateException("Duplicate handler key: " + handlerKey);
+        }
+    }
+
+    private RequestMethod[] getSupportedMethods(RequestMapping requestMapping) {
+        RequestMethod[] method = requestMapping.method();
+        if (method.length == 0) {
+            return RequestMethod.values();
+        }
+        return method;
     }
 
     private Map<Class<?>, Object> generateControllers(Set<Class<?>> controllers) {
@@ -66,7 +99,6 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-//        TODO request 에 알맞은 핸들러를 반환해야 한다.
-        return new HandlerExecution();
+        return new HandlerExecution(null, null);
     }
 }
