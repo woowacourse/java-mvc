@@ -38,13 +38,13 @@ public class AnnotationHandlerMapping {
         // 컨트롤러 클래스를 순회
         for (Class<?> controllerClass : controllerClasses) {
             // 해당하는 컨트롤러를 등록함
-            registerController(controllerClass);
+            registerRequestMappingHandler(controllerClass);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerController(final Class<?> controllerClass) {
+    private void registerRequestMappingHandler(final Class<?> controllerClass) {
         // 컨트롤러에 직접 선언된 메서드 중 @RequestMapping이 붙은 메서드만 고른다
         final List<Method> handlerMethods = Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
