@@ -1,9 +1,15 @@
 package com.techcourse;
 
+import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +23,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = createDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +35,33 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet createDispatcherServlet() {
+        HandlerMappingRegistry handlerMappingRegistry = createHandlerMappingRegistry();
+        HandlerAdapterRegistry handlerAdapterRegistry = createHandlerAdapterRegistry();
+
+        return new DispatcherServlet(handlerMappingRegistry, new HandlerExecutor(handlerAdapterRegistry));
+    }
+
+    private HandlerMappingRegistry createHandlerMappingRegistry() {
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+
+        return handlerMappingRegistry;
+    }
+
+    private HandlerAdapterRegistry createHandlerAdapterRegistry() {
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        return handlerAdapterRegistry;
     }
 }
