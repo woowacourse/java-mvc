@@ -1,11 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +51,99 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("같은 URL이라도 HTTP 메서드가 다르면 핸들러를 찾지 못한다")
+    void doesNotFindHandlerWhenHttpMethodDiffers() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        // when
+        final var handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isNull();
+    }
+
+    @Test
+    @DisplayName("HTTP 메서드를 지정하지 않으면 모든 HTTP 메서드가 해당 핸들러에 매핑된다")
+    void findsHandlerForEveryHttpMethodWhenMethodIsOmitted() throws NoSuchMethodException {
+        final var expectedMethod = TestController.class.getDeclaredMethod(
+                "handleAllMethods", HttpServletRequest.class, HttpServletResponse.class);
+
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            // given
+            final var request = mock(HttpServletRequest.class);
+            when(request.getRequestURI()).thenReturn("/all-methods");
+            when(request.getMethod()).thenReturn(requestMethod.name());
+
+            // when
+            final var handler = (HandlerExecution) handlerMapping.getHandler(request);
+
+            // then
+            assertThat(handler).isNotNull();
+            assertThat(handler.getHandlerMethod()).isEqualTo(expectedMethod);
+        }
+    }
+
+    @Test
+    @DisplayName("같은 URL이라도 HTTP 메서드에 따라 다른 핸들러를 실행한다")
+    void invokesDifferentHandlersForSameUrl() throws Exception {
+        // given
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(getRequest.getRequestURI()).thenReturn("/same-url");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/same-url");
+        when(postRequest.getMethod()).thenReturn("POST");
+
+        // when
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+
+        // then
+        assertThat(getHandler.handle(getRequest, response).getObject("handler")).isEqualTo("GET");
+        assertThat(postHandler.handle(postRequest, response).getObject("handler")).isEqualTo("POST");
+    }
+
+    @Test
+    @DisplayName("같은 URL에서는 HTTP 메서드를 명시한 매핑이 공통 매핑보다 우선한다")
+    void prefersExplicitMethodsToMappingWithoutMethod() throws Exception {
+        // given
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var putRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(getRequest.getRequestURI()).thenReturn("/overlapping");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/overlapping");
+        when(postRequest.getMethod()).thenReturn("POST");
+        when(putRequest.getRequestURI()).thenReturn("/overlapping");
+        when(putRequest.getMethod()).thenReturn("PUT");
+
+        // when
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+        final var putHandler = (HandlerExecution) handlerMapping.getHandler(putRequest);
+
+        // then
+        assertThat(getHandler.handle(getRequest, response).getObject("handler")).isEqualTo("명시적");
+        assertThat(postHandler.handle(postRequest, response).getObject("handler")).isEqualTo("명시적");
+        assertThat(putHandler.handle(putRequest, response).getObject("handler")).isEqualTo("공통");
+    }
+
+    @Test
+    @DisplayName("응답 매개변수가 빠진 핸들러는 초기화 단계에서 거부한다")
+    void rejectsHandlerWhenResponseParameterIsMissing() {
+        // given
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("fixtures");
+
+        // when & then
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class);
     }
 }
