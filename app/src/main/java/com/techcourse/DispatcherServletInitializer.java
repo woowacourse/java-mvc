@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.HandlerAdaptorRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
@@ -10,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
- * servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a
+ * {@link DispatcherServlet} in the servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
@@ -27,7 +28,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         final var handlerAdaptorRegistry = new HandlerAdaptorRegistry();
         handlerAdaptorRegistry.addHandlerAdaptor(new AnnotationHandlerAdaptor());
 
-        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdaptorRegistry);
+        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry,
+                handlerAdaptorRegistry);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
