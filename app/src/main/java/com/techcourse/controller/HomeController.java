@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class RegisterViewController {
+public class HomeController {
 
-    @RequestMapping("/register/view")
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @RequestMapping("/")
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

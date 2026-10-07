@@ -1,6 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,17 +16,17 @@ import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet servlet;
+    private HttpServlet servlet;
 
     @BeforeEach
-    void setUp() {
-        servlet = new DispatcherServlet();
+    void setUp() throws Exception {
+        servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
     }
 
     @Test
-    @DisplayName("어노테이션 매핑과 함께 등록해도 기존 회원가입 화면을 처리한다")
-    void handlesLegacyController() throws Exception {
+    @DisplayName("어노테이션 방식으로 전환한 회원가입 화면을 처리한다")
+    void handlesRegisterViewController() throws Exception {
         HttpServletRequest request = request("GET", "/register/view");
         HttpServletResponse response = mock(HttpServletResponse.class);
         RequestDispatcher view = mock(RequestDispatcher.class);
@@ -63,7 +65,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("두 매핑 모두에서 핸들러를 찾지 못하면 404를 응답한다")
+    @DisplayName("요청에 맞는 핸들러를 찾지 못하면 404를 응답한다")
     void returnsNotFoundWhenNoHandlerMatches() throws Exception {
         HttpServletRequest request = request("GET", "/test/missing");
         HttpServletResponse response = mock(HttpServletResponse.class);
