@@ -82,4 +82,15 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(duplicateHandlerMapping::initialize)
                 .isInstanceOf(IllegalStateException.class);
     }
+
+    @Test
+    @DisplayName("일치하는 요청 매핑이 없으면 null을 반환한다")
+    void getHandler_NoMatchingMapping_ReturnsNull() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/null-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }

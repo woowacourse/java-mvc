@@ -39,11 +39,7 @@ public class AnnotationHandlerMapping {
         String requestUri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new IllegalArgumentException();
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 
     private void registerController(Class<?> controller) {
