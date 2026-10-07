@@ -1,9 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class HandlerMappingRegistry {
@@ -16,7 +17,7 @@ public class HandlerMappingRegistry {
     public Optional<Object> getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(handler -> handler != null)
+                .filter(Objects::nonNull)
                 .findFirst();
     }
 }

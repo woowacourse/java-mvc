@@ -1,11 +1,11 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -49,5 +49,23 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"private", "protected", "package-private"})
+    void handlesNonPublicRequestMappingMethods(String visibility) throws Exception {
+        final var mapping = new AnnotationHandlerMapping("nonpublicmethods");
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/" + visibility + "-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) mapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("visibility")).isEqualTo(visibility);
     }
 }
