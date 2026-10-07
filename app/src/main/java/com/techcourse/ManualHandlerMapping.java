@@ -23,7 +23,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
@@ -32,11 +31,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Controller getHandler(final HttpServletRequest request) {
-        return getHandler(request.getRequestURI());
-    }
-
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        log.debug("Request Mapping Uri : {}", request.getRequestURI());
+        return controllers.get(request.getRequestURI());
     }
 }
