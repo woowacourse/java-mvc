@@ -19,6 +19,24 @@ class ManualHandlerMappingTest {
         mapping.initialize();
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getContextPath()).thenReturn("");
+
+        // when
+        final var handler = mapping.getHandler(request);
+
+        // then
+        assertThat(handler).isInstanceOf(LogoutController.class);
+    }
+
+    @Test
+    @DisplayName("컨텍스트 경로를 제외한 요청 경로로 기존 컨트롤러를 찾는다")
+    void findsLegacyControllerWithinContextPath() {
+        // given
+        final var mapping = new ManualHandlerMapping();
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/mvc/logout");
+        when(request.getContextPath()).thenReturn("/mvc");
 
         // when
         final var handler = mapping.getHandler(request);
