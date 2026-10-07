@@ -1,18 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
-import com.interface21.core.util.ReflectionUtils;
+import static org.reflections.util.ReflectionUtilsPredicates.withAnnotation;
+
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,22 +17,19 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
         this.handlerExecutions = new HashMap<>();
+        this.controllerScanner = controllerScanner;
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Class<?> controller : controllers) {
-            registerControllerHandlers(controller);
+        for (Map.Entry<Class<?>, Object> entry : controllerScanner.getControllers().entrySet()) {
+            registerControllerHandlers(entry);
         }
     }
 
@@ -45,13 +39,11 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void registerControllerHandlers(Class<?> controller)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .toList();
+    private void registerControllerHandlers(Map.Entry<Class<?>, Object> entry) {
+        Set<Method> methods = ReflectionUtils.getAllMethods(entry.getKey(),
+                withAnnotation(RequestMapping.class));
 
-        Object instance = ReflectionUtils.accessibleConstructor(controller).newInstance();
+        Object instance = entry.getValue();
         for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             String value = requestMapping.value();
@@ -69,8 +61,15 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+            validateDuplicated(handlerKey);
             HandlerExecution handlerExecution = new HandlerExecution(instance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private void validateDuplicated(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("RequestMapping이 중복되어 특정할 수 없습니다.: " + handlerKey);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +19,8 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        ControllerScanner controllerScanner = new ControllerScanner("samples");
+        handlerMapping = new AnnotationHandlerMapping(controllerScanner);
         handlerMapping.initialize();
     }
 
@@ -67,5 +69,15 @@ class AnnotationHandlerMappingTest {
 
             assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
         }
+    }
+
+    @Test
+    void duplicatedMappingRegisterExceptionTest()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        ControllerScanner controllerScanner = new ControllerScanner("fixtures.duplicated");
+        handlerMapping = new AnnotationHandlerMapping(controllerScanner);
+
+        assertThatThrownBy(() -> handlerMapping.initialize())
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
