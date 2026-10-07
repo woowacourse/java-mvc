@@ -1,10 +1,7 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,13 +17,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry(new ArrayList<>());
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
     }
 
     @Override
     public void init() {
+        initHandlerMappingRegistry();
+        initHandlerAdapterRegistry();
+    }
+
+    private void initHandlerMappingRegistry() {
         final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
 
@@ -39,6 +42,14 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
+    private void initHandlerAdapterRegistry() {
+        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
+        final var handlerExecutionAdapter = new HandlerExecutionAdapter();
+
+        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerExecutionAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
@@ -46,20 +57,11 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "등록된 핸들러가 없습니다: " + request.getRequestURI()
-                    ));
+                    .orElseThrow(() -> new IllegalStateException("등록된 핸들러가 없습니다: " + request.getRequestURI()));
 
-            // handler 변수의 객체가 Controller 타입이라면, Controller 타입으로 형변환하여 반환
-            if (!(handler instanceof Controller controller)) {
-                throw new IllegalStateException(
-                        "아직 실행할 수 없는 핸들러입니다: " + handler.getClass().getName()
-                );
-            }
-
-            final String viewName = controller.execute(request, response);
-            final JspView jspView = new JspView(viewName);
-            jspView.render(Map.of(), request, response);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView mav = handlerAdapter.handle(handler, request, response);
+            mav.getView().render(mav.getModel(), request, response);
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
