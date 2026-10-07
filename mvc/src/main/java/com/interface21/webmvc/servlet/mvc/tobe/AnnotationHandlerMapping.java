@@ -5,6 +5,8 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -33,7 +35,9 @@ public class AnnotationHandlerMapping {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
+        // 컨트롤러 클래스를 순회
         for (Class<?> controllerClass : controllerClasses) {
+            // 해당하는 컨트롤러를 등록함
             registerController(controllerClass);
         }
 
@@ -41,42 +45,40 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerController(final Class<?> controllerClass) {
-        final Object controller = createInstance(controllerClass);
+        // 컨트롤러에 직접 선언된 메서드 중 @RequestMapping이 붙은 메서드만 고른다
+        final List<Method> handlerMethods = Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
 
-        // 컨트롤러에 직접 선언된 메서드 중 @RequestMapping이 붙은 메서드만 등록한다
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                registerHandler(controller, method);
-            }
+        // 등록할 핸들러가 없으면 인스턴스를 만들지 않는다
+        if (handlerMethods.isEmpty()) {
+            return;
         }
-    }
 
-    private Object createInstance(final Class<?> controllerClass) {
+        // 조건을 통과한 컨트롤러만 한 번 생성해서 모든 핸들러가 공유한다
+        final Object controller;
         try {
-            return controllerClass.getDeclaredConstructor().newInstance();
+            controller = controllerClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controllerClass.getName(), e);
         }
-    }
 
-    private void registerHandler(final Object controller, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        for (Method method : handlerMethods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
-        for (RequestMethod requestMethod : findRequestMethods(requestMapping)) {
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("Mapped {} -> {}", handlerKey, method.getName());
+            // method 설정이 없으면 모든 HTTP 메서드를 지원한다
+            RequestMethod[] requestMethods = requestMapping.method();
+            if (requestMethods.length == 0) {
+                requestMethods = RequestMethod.values();
+            }
+
+            for (RequestMethod requestMethod : requestMethods) {
+                final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                handlerExecutions.put(handlerKey, handlerExecution);
+                log.info("Mapped {} -> {}", handlerKey, method.getName());
+            }
         }
-    }
-
-    // method 설정이 없으면 모든 HTTP 메서드를 지원한다
-    private RequestMethod[] findRequestMethods(final RequestMapping requestMapping) {
-        final RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
-            return RequestMethod.values();
-        }
-        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
