@@ -2,15 +2,10 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,32 +15,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-
-    public DispatcherServlet() {
-    }
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
-        this.handlerMappings.addAll(handlerMappings);
-        this.handlerAdapters.addAll(handlerAdapters);
-    }
-
-    @Override
-    public void init() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        final var controllerScanner = new ControllerScanner("com.techcourse.controller");
-
-        final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
-        annotationHandlerMapping.initialize();
-
-        handlerMappings.add(manualHandlerMapping);
-        handlerMappings.add(annotationHandlerMapping);
-
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionAdapter());
+        this.handlerMappings = List.copyOf(handlerMappings);
+        this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
     @Override

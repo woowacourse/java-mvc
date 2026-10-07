@@ -2,6 +2,8 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -11,21 +13,37 @@ import static org.mockito.Mockito.when;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 class DispatcherServletTest {
 
     private DispatcherServlet dispatcherServlet;
 
     @BeforeEach
-    void setUp() {
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+    void setUp() throws ServletException {
+        final var servletContext = mock(ServletContext.class);
+        final var registration = mock(ServletRegistration.Dynamic.class);
+        when(servletContext.addServlet(eq("dispatcher"), any(DispatcherServlet.class)))
+                .thenReturn(registration);
+
+        new DispatcherServletInitializer().onStartup(servletContext);
+
+        final var dispatcherServletCaptor = ArgumentCaptor.forClass(DispatcherServlet.class);
+        verify(servletContext).addServlet(eq("dispatcher"), dispatcherServletCaptor.capture());
+        verify(registration).setLoadOnStartup(1);
+        verify(registration).addMapping("/");
+
+        dispatcherServlet = dispatcherServletCaptor.getValue();
+        dispatcherServlet.init(mock(ServletConfig.class));
     }
 
     @Test
