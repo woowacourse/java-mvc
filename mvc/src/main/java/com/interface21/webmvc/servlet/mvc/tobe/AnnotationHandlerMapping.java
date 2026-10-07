@@ -7,6 +7,7 @@ import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +48,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerController(final Class<?> controller, final Object instance) {
-        for (final Method method : controller.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                registerHandler(method, instance);
-            }
+        for (final Method method : ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class))) {
+            registerHandler(method, instance);
         }
     }
 
