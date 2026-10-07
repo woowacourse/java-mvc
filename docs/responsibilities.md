@@ -8,6 +8,7 @@ HTTP 요청에 대응하는 Handler를 어노테이션을 기반으로 등록하
 
 - [x] `@Controller`가 선언된 클래스를 Handler 등록 대상으로 사용한다.
 - [x] `@RequestMapping`이 선언된 public 메서드를 Handler로 등록한다.
+- [x] 부모로부터 상속받은 public Handler 메서드도 등록한다.
 - [x] 요청 경로와 HTTP Method가 일치하는 Handler를 반환한다.
 - [x] `@RequestMapping`에 HTTP Method가 지정되지 않으면 모든 HTTP Method에 대응한다.
 - [x] 동일한 요청 경로와 HTTP Method의 Handler가 중복 등록되면 초기화에 실패한다.

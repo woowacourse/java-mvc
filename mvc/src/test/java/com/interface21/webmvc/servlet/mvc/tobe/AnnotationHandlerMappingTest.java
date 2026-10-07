@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +18,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping(
-                new ControllerScanner("samples")
-        );
+        handlerMapping = new AnnotationHandlerMapping(new ControllerScanner("samples"));
         handlerMapping.initialize();
     }
 
@@ -89,5 +88,21 @@ class AnnotationHandlerMappingTest {
         final var handler = handlerMapping.getHandler(request);
 
         assertThat(handler).isNull();
+    }
+
+    @Test
+    void givenInheritedRequestMappingMethod_whenFindsHandler_thenExecutesInheritedMethod() throws Exception {
+        final var handlerMapping = new AnnotationHandlerMapping(new ControllerScanner("inheritancesamples"));
+        handlerMapping.initialize();
+
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/inherited-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("source")).isEqualTo("parent");
     }
 }
