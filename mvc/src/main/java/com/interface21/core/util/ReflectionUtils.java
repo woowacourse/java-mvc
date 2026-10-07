@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -54,11 +53,15 @@ public abstract class ReflectionUtils {
         return method -> method.isAnnotationPresent(annotationType);
     }
 
-    public static Set<Method> getDeclaredMethods(Class<?> clazz, Predicate<Method> predicate) {
+    public static Set<Method> getAllMethods(Class<?> clazz, Predicate<Method> predicate) {
         final Set<Method> result = new LinkedHashSet<>();
-        Arrays.stream(clazz.getDeclaredMethods())
-                .filter(predicate)
-                .forEach(result::add);
+        for (Class<?> type = clazz; type != null && type != Object.class; type = type.getSuperclass()) {
+            for (Method method : type.getDeclaredMethods()) {
+                if (predicate.test(method)) {
+                    result.add(method);
+                }
+            }
+        }
         return result;
     }
 }

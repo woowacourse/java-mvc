@@ -34,7 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerHandlers(Class<?> clazz, Object controller) {
-        Set<Method> methods = ReflectionUtils.getDeclaredMethods(
+        Set<Method> methods = ReflectionUtils.getAllMethods(
                 clazz,
                 ReflectionUtils.withAnnotation(RequestMapping.class)
         );

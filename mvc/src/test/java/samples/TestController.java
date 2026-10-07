@@ -1,14 +1,14 @@
 package samples;
 
 import com.interface21.context.stereotype.Controller;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class TestController {
@@ -34,6 +34,30 @@ public class TestController {
     @RequestMapping(value = "/empty-test")
     public ModelAndView findUser(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller empty method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/overridden", method = RequestMethod.GET)
+    public ModelAndView overridden(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller overridden method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/package-private-test")
+    ModelAndView packagePrivateTest(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller package private method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/private-test")
+    private ModelAndView privateTest(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller private method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
