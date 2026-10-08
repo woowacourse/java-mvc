@@ -36,4 +36,15 @@ class JspViewTest {
         verify(requestDispatcher).forward(request, response);
         verifyNoInteractions(response);
     }
+
+    @Test
+    void render_WhenModelHasObject_ThenSetRequestAttribute() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(mock(RequestDispatcher.class));
+
+        new JspView("/index.jsp").render(Map.of("user", "gugu"), request, response);
+
+        verify(request).setAttribute("user", "gugu");
+    }
 }

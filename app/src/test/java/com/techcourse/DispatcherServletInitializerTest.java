@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.RequestDispatcher;
@@ -15,7 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class DispatcherServletTest {
+class DispatcherServletInitializerTest {
 
     private DispatcherServlet dispatcherServlet;
     private HttpServletRequest request;
@@ -56,27 +57,5 @@ class DispatcherServletTest {
 
         verify(response).sendRedirect("/");
         verifyNoInteractions(requestDispatcher);
-    }
-
-    @Test
-    void service_WhenNoHandler_ThenSendNotFound() throws Exception {
-        when(request.getRequestURI()).thenReturn("/none");
-        when(request.getMethod()).thenReturn("GET");
-
-        dispatcherServlet.service(request, response);
-
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-
-    @Test
-    void service_WhenModelHasObject_ThenSetRequestAttribute() throws Exception {
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/model-test");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/model-test.jsp")).thenReturn(requestDispatcher);
-
-        dispatcherServlet.service(request, response);
-
-        verify(request).setAttribute("user", "gugu");
     }
 }

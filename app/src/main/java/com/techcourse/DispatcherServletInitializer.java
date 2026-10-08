@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link com.interface21.webmvc.servlet.DispatcherServlet} in the
  * servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
@@ -21,7 +21,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new com.interface21.webmvc.servlet.DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(APP_PACKAGE));
         dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
 
