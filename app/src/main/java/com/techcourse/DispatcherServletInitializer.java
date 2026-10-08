@@ -2,9 +2,6 @@ package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.RequestMappingHandlerAdapter;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +18,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        final DispatcherServlet dispatcherServlet =
+                new DispatcherServlet(DispatcherServletInitializer.class.getPackageName());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -33,17 +31,5 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
-        registerHandlers(dispatcherServlet);
-    }
-
-    private void registerHandlers(DispatcherServlet dispatcherServlet) {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-
-        dispatcherServlet.addHandlerMapping(manualHandlerMapping);
-        dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
-
-        dispatcherServlet.addHandlerAdapter(new RequestMappingHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
     }
 }

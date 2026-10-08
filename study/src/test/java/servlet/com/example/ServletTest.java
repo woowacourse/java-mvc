@@ -27,8 +27,9 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까? -> O
+        // Tip: Servlet의 인스턴스 변수는 Tomcat의 스레드가 모두 공유한다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -49,7 +50,8 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까? -> 3 X
+        // Tip: Servlet의 로컬 변수는 Tomcat의 스레드가 공유하지 않는다. --> 개별 비즈니스 로직 처리 상태는 로컬에 둘 것
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
