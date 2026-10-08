@@ -13,10 +13,12 @@ import org.junit.jupiter.api.Test;
 
 class JspViewTest {
 
+    private final HttpServletRequest request = mock(HttpServletRequest.class);
+    private final HttpServletResponse response = mock(HttpServletResponse.class);
+    private final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+
     @Test
     void render_WhenViewNameStartRedirect_ThenSendRedirect() throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
 
         new JspView("redirect:/index.jsp").render(Map.of(), request, response);
 
@@ -26,9 +28,6 @@ class JspViewTest {
 
     @Test
     void render_WhenViewNameHasNoRedirect_ThenForward() throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
 
