@@ -1,5 +1,6 @@
 package servlet.com.example;
 
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
 
@@ -20,7 +21,6 @@ class FilterTest {
         tomcatStarter.stop();
 
         assertThat(response.statusCode()).isEqualTo(200);
-
         // 테스트가 통과하도록 CharacterEncodingFilter 클래스를 수정해보자.
         assertThat(response.body()).isEqualTo(인코딩);
     }
