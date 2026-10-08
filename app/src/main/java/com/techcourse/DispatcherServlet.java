@@ -31,11 +31,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = List.of(new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse.controller"));
+        handlerMappings = List.of(new AnnotationHandlerMapping("com.techcourse.controller"),
+                new ManualHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);  // 각 HandlerMapping의 initialize()로 핸들러 등록
-        handlerAdapters = List.of(new SimpleControllerHandlerAdapter(),
-                new RequestMappingHandlerAdapter());
+        handlerAdapters = List.of(new RequestMappingHandlerAdapter(),
+                new SimpleControllerHandlerAdapter());
     }
 
     @Override
