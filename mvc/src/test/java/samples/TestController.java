@@ -38,28 +38,4 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
-
-    @RequestMapping(value = "/overridden", method = RequestMethod.GET)
-    public ModelAndView overridden(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller overridden method");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/package-private-test")
-    ModelAndView packagePrivateTest(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller package private method");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/private-test")
-    private ModelAndView privateTest(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller private method");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
-    }
 }
