@@ -68,6 +68,37 @@ class DispatcherServletTest {
         assertThat(output.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 
+    @Test
+    void 사용자_API에_account가_없으면_400으로_응답한다() throws Exception {
+        StringWriter output = responseWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+
+        dispatcherServlet.dispatch(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertThat(output.toString()).isEqualTo("{\"message\":\"account parameter is required\"}");
+    }
+
+    @Test
+    void 존재하지_않는_사용자를_조회하면_404로_응답한다() throws Exception {
+        StringWriter output = responseWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("unknown");
+
+        dispatcherServlet.dispatch(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        assertThat(output.toString()).isEqualTo("{\"message\":\"user not found\"}");
+    }
+
+    private StringWriter responseWriter() throws Exception {
+        StringWriter output = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+        return output;
+    }
+
     private static class TestDispatcherServlet extends DispatcherServlet {
 
         private TestDispatcherServlet() {
