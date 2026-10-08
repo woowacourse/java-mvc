@@ -18,6 +18,9 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
                                final Object handler) throws Exception {
         final var controller = (Controller) handler;
         final String viewName = controller.execute(request, response);
+        if (viewName == null) {
+            return null;
+        }
         return new ModelAndView(new JspView(viewName));
     }
 }
