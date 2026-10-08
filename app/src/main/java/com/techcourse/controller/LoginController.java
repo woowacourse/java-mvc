@@ -31,7 +31,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView loginUser(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
@@ -43,7 +43,7 @@ public class LoginController {
         }
 
         log.info("User: {}", user);
-        return login(req, user.get());
+        return loginUser(req, user.get());
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -53,7 +53,7 @@ public class LoginController {
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
-    private ModelAndView login(final HttpServletRequest request, final User user) {
+    private ModelAndView loginUser(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
