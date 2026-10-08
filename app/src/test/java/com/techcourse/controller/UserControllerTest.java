@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.DispatcherServlet;
-import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.ServletException;
