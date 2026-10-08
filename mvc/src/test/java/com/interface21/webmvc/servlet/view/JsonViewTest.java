@@ -5,11 +5,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -64,6 +66,18 @@ class JsonViewTest {
         new JsonView().render(Map.of(), request, response);
 
         assertThat(body.toString()).isEqualTo("{}");
+    }
+
+    @Test
+    @DisplayName("한글 값도 UTF-8로 인코딩되어 깨지지 않는다")
+    void writesKoreanAsUtf8() throws Exception {
+        final var mockResponse = new MockHttpServletResponse();
+
+        new JsonView().render(Map.of("name", "티온"), request, mockResponse);
+
+        assertThat(mockResponse.getCharacterEncoding()).isEqualTo("UTF-8");
+        assertThat(new String(mockResponse.getContentAsByteArray(), StandardCharsets.UTF_8))
+                .isEqualTo("\"티온\"");
     }
 
     public record Sample(String name, int age) {
