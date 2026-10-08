@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,17 +26,14 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (final Object packageName : basePackage) {
-            final Reflections reflections = new Reflections(String.valueOf(packageName));
-            final Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
-
-            for (final Class<?> controllerType : controllerTypes) {
-                registerController(controllerType);
-            }
+        final Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        for (final Map.Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            registerController(controller.getKey(), controller.getValue());
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod;
         try {
@@ -55,8 +50,7 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(new HandlerKey(lookupPath, requestMethod));
     }
 
-    private void registerController(final Class<?> controllerType) {
-        final Object controller = createController(controllerType);
+    private void registerController(final Class<?> controllerType, final Object controller) {
         final RequestMapping typeMapping = controllerType.getAnnotation(RequestMapping.class);
         final String typePath = typeMapping == null ? "" : typeMapping.value();
 
@@ -74,14 +68,6 @@ public class AnnotationHandlerMapping {
                     throw new IllegalStateException("Duplicate handler mapping: " + handlerKey);
                 }
             }
-        }
-    }
-
-    private Object createController(final Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (final ReflectiveOperationException exception) {
-            throw new IllegalStateException("Could not create controller: " + controllerType.getName(), exception);
         }
     }
 
