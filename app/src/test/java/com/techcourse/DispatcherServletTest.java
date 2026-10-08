@@ -49,4 +49,64 @@ class DispatcherServletTest {
         verify(response).sendRedirect("/");
         verify(request, never()).getRequestDispatcher(anyString());
     }
+
+    @Test
+    void handlesLegacyAndAnnotatedRequestsWithTheSameServlet() throws Exception {
+        final var legacyRequest = mock(HttpServletRequest.class);
+        final var legacyResponse = mock(HttpServletResponse.class);
+        final var indexDispatcher = mock(RequestDispatcher.class);
+        when(legacyRequest.getRequestURI()).thenReturn("/");
+        when(legacyRequest.getMethod()).thenReturn("GET");
+        when(legacyRequest.getRequestDispatcher("/index.jsp")).thenReturn(indexDispatcher);
+
+        final var annotatedRequest = mock(HttpServletRequest.class);
+        final var annotatedResponse = mock(HttpServletResponse.class);
+        final var profileDispatcher = mock(RequestDispatcher.class);
+        when(annotatedRequest.getRequestURI()).thenReturn("/annotation-test");
+        when(annotatedRequest.getMethod()).thenReturn("GET");
+        when(annotatedRequest.getParameter("id")).thenReturn("gugu");
+        when(annotatedRequest.getRequestDispatcher("/profile.jsp")).thenReturn(profileDispatcher);
+
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(legacyRequest, legacyResponse);
+        servlet.service(annotatedRequest, annotatedResponse);
+
+        verify(indexDispatcher).forward(legacyRequest, legacyResponse);
+        verify(annotatedRequest).setAttribute("id", "gugu");
+        verify(profileDispatcher).forward(annotatedRequest, annotatedResponse);
+        verify(annotatedResponse, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void selectsAnnotatedPostHandlerAndRedirects() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/annotation-test");
+        when(request.getMethod()).thenReturn("POST");
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/annotation-test");
+        verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void returnsNotFoundWhenNoMappingMatches() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/unregistered");
+        when(request.getMethod()).thenReturn("GET");
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(request, never()).getRequestDispatcher(anyString());
+        verify(response, never()).sendRedirect(anyString());
+    }
 }
