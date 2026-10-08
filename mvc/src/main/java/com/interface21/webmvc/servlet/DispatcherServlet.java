@@ -25,23 +25,30 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final Object[] basePackages;
+    private final String basePackage;
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet(final Object... basePackages) {
-        this.basePackages = basePackages;
+    public DispatcherServlet(final String basePackage) {
+        validateBasePackage(basePackage);
+        this.basePackage = basePackage;
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
 
         handlerAdapters.add(new HandlerExecutionAdapter());
+    }
+
+    private void validateBasePackage(final String basePackage) {
+        if (basePackage == null || basePackage.isBlank()) {
+            throw new IllegalArgumentException("스캔할 basePackage를 지정해야 합니다.");
+        }
     }
 
     @Override

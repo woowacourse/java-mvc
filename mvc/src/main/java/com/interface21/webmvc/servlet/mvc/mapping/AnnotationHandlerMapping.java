@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.UnknownHttpMethodException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +19,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         controllerScanner = new ControllerScanner(basePackage);
     }
@@ -31,6 +34,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         controllerScanner.getControllers()
                 .forEach(this::enrollController);
+
+        if (handlerExecutions.isEmpty()) {
+            log.warn("등록된 핸들러가 없습니다. basePackage={}", Arrays.toString(basePackage));
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
