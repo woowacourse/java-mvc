@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,16 +27,16 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> controller : controllers) {
-            Object controllerInstance = createController(controller);
-            for (Method method : controller.getDeclaredMethods()) {
+        for (Object controller : controllers.values()) {
+            Set<Method> allMethods = ReflectionUtils.getAllMethods(controller.getClass(), ReflectionUtils.withAnnotation(RequestMapping.class));
+            for (Method method : allMethods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping mapping = method.getDeclaredAnnotation(RequestMapping.class);
+                    RequestMapping mapping = method.getAnnotation(RequestMapping.class);
 
-                    HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+                    HandlerExecution handlerExecution = new HandlerExecution(controller, method);
                     String url = mapping.value();
                     RequestMethod[] methods = mapping.method().length == 0
                             ? RequestMethod.values()
@@ -49,14 +50,6 @@ public class AnnotationHandlerMapping {
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private Object createController(final Class<?> controller) {
-        try {
-            return controller.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Failed to create controller: " + controller.getName(), e);
-        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
