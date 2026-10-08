@@ -47,7 +47,12 @@ public class AnnotationHandlerMapping {
             return null;
         }
 
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
+        final String contextPath = request.getContextPath();
+        final String requestUri = request.getRequestURI();
+        final String lookupPath = contextPath == null || contextPath.isEmpty()
+                ? requestUri
+                : requestUri.substring(contextPath.length());
+        return handlerExecutions.get(new HandlerKey(lookupPath, requestMethod));
     }
 
     private void registerController(final Class<?> controllerType) {
@@ -64,7 +69,10 @@ public class AnnotationHandlerMapping {
             final String url = combinePaths(typePath, methodMapping.value());
             for (final RequestMethod requestMethod : resolveRequestMethods(typeMapping, methodMapping)) {
                 final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+                final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                    throw new IllegalStateException("Duplicate handler mapping: " + handlerKey);
+                }
             }
         }
     }
