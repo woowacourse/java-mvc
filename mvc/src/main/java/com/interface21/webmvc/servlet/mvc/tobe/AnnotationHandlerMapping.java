@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,32 +24,30 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers =  reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         controllers.forEach(this::registerController);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new IllegalArgumentException();
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 
-    private void registerController(Class<?> controller) {
+    private void registerController(Class<?> controller, Object instance) {
         Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> registerMappings(controller, method));
+                .forEach(method -> registerMappings(method, instance));
     }
 
-    private void registerMappings(Class<?> controller, Method method) {
+    private void registerMappings(Method method, Object instance) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
         List<RequestMethod> requestMethods = Arrays.stream(requestMapping.method()).toList();
@@ -61,11 +56,19 @@ public class AnnotationHandlerMapping {
         }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            registerUniqueHandler(handlerKey, handlerExecution);
         }
     }
 
     private List<RequestMethod> resolveRequestMethods() {
         return Arrays.stream(RequestMethod.values()).toList();
+    }
+
+    private void registerUniqueHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 URL과 HTTP 메서드가 등록될 수 없습니다: " + handlerKey.toString());
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 }
