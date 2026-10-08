@@ -1,10 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+import static org.reflections.ReflectionUtils.getAllMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
+
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,32 +27,23 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final var reflections = new Reflections(basePackage);
-        for (final var controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            final var controller = createController(controllerClass);
-            for (final var method : controllerClass.getDeclaredMethods()) {
-                registerHandler(controller, method);
+        final Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        for (final Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            for (final Method method : getAllMethods(entry.getKey(), withAnnotation(RequestMapping.class))) {
+                registerHandler(entry.getValue(), method);
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Object createController(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러를 생성할 수 없습니다: " + controllerClass.getName(), e);
-        }
-    }
-
     private void registerHandler(final Object controller, final Method method) {
-        final var requestMapping = method.getAnnotation(RequestMapping.class);
-        if (requestMapping == null) {
-            return;
-        }
-        final var handlerExecution = new HandlerExecution(controller, method);
-        for (final var requestMethod : getRequestMethods(requestMapping)) {
-            handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod), handlerExecution);
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        for (final RequestMethod requestMethod : getRequestMethods(requestMapping)) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                throw new IllegalStateException("중복된 요청 매핑입니다: " + requestMapping.value() + " " + requestMethod);
+            }
         }
     }
 
@@ -61,8 +54,9 @@ public class AnnotationHandlerMapping {
         return requestMapping.method();
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
-        final var requestMethod = RequestMethod.valueOf(request.getMethod());
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
     }
 }
