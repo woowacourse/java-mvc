@@ -1,7 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private ManualHandlerMapping manualHandlerMapping;
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -30,6 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         initManualHandlerMapping();
         handlerMappings = List.of(manualHandlerMapping, initAnnotationHandlerMapping());
+        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
     }
 
     private void initManualHandlerMapping() {
@@ -59,12 +64,20 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(final HttpServletRequest request) {
+    private Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
                         "요청을 처리할 핸들러를 찾을 수 없습니다: " + request.getMethod() + " " + request.getRequestURI()));
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "핸들러를 지원하는 어댑터를 찾을 수 없습니다: " + handler.getClass().getName()));
     }
 }
