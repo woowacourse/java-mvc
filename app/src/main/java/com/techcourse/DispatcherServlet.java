@@ -41,6 +41,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = findHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             HandlerAdapter adapter = findAdapter(handler);
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.getView()
@@ -58,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new IllegalArgumentException("핸들러를 찾을 수 없습니다. " + request.getRequestURI());
+        return null;
     }
 
     private HandlerAdapter findAdapter(Object handler) {
