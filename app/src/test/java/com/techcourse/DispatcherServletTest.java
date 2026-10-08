@@ -81,6 +81,20 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("GET /api/user 요청에 없는 계정을 보내면 404로 응답한다")
+    void unknownUserApiReturns404() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("nobody");
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "존재하지 않는 계정입니다: nobody");
+    }
+
+    @Test
     @DisplayName("레거시 매핑이 사라진 뒤에는 GET만 허용하는 URL에 다른 메서드로 요청하면 405로 응답한다")
     void unsupportedMethodOnViewPathReturns405() throws Exception {
         final var request = mock(HttpServletRequest.class);

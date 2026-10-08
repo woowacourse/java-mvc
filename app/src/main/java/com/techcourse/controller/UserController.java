@@ -3,6 +3,7 @@ package com.techcourse.controller;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.web.server.ResponseStatusException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JsonView;
 import com.techcourse.domain.User;
@@ -24,7 +25,8 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpServletResponse.SC_NOT_FOUND, "존재하지 않는 계정입니다: " + account));
 
         modelAndView.addObject("user", user);
         return modelAndView;

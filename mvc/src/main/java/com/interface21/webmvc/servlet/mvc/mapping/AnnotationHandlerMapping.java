@@ -5,6 +5,8 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.web.bind.annotation.UnknownHttpMethodException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -80,10 +82,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution execution = (request, response) ->
-                    (ModelAndView) method.invoke(controller, request, response);
+            HandlerExecution execution = (request, response) -> invoke(method, controller, request, response);
 
             put(handlerKey, execution);
+        }
+    }
+
+    private ModelAndView invoke(
+            final Method method,
+            final Object controller,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        try {
+            return (ModelAndView) method.invoke(controller, request, response);
+        } catch (InvocationTargetException e) {
+            final Throwable target = e.getTargetException();
+            if (target instanceof Exception exception) {
+                throw exception;
+            }
+            if (target instanceof Error error) {
+                throw error;
+            }
+            throw e;
         }
     }
 
