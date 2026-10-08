@@ -31,8 +31,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        // todo basePackage 초기화 관리
-        annotationHandlerMapping = new AnnotationHandlerMapping();
+        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
         handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
