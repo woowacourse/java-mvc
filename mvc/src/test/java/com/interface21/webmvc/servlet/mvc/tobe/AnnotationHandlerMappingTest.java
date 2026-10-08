@@ -103,6 +103,15 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 정의되지_않은_HTTP_메서드는_핸들러가_없다() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("PROPFIND");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
     void 지정한_HTTP_메서드만_지원한다() {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/multiple-methods-test");
