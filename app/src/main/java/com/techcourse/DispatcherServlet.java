@@ -1,11 +1,9 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
@@ -15,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -25,6 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     private ManualHandlerMapping manualHandlerMapping;
     private AnnotationHandlerMapping annotationHandlerMapping;
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -38,6 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         annotationHandlerMapping.initialize();
 
         handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter());
     }
 
     @Override
@@ -46,15 +45,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(request);
-            HandlerAdapter adapter;
-
-            if (handler instanceof Controller) {
-                adapter = new ControllerHandlerAdapter();
-            } else if (handler instanceof HandlerExecution) {
-                adapter = new HandlerExecutionAdapter();
-            } else {
-                throw new IllegalArgumentException("Invalid handler type");
-            }
+            HandlerAdapter adapter = getHandlerAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
@@ -64,6 +55,15 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        for (HandlerAdapter adapter : handlerAdapters) {
+            if (adapter.supports(handler)) {
+                return adapter;
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid handler type");
+    }
     private Object getHandler(final HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
@@ -72,14 +72,5 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         return null;
-    }
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
