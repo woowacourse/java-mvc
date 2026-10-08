@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.RequestDispatcher;
@@ -26,16 +25,14 @@ class DispatcherServletTest {
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
     }
 
     @Test
-    void service_WhenLegacyController_ThenForwardToViewName() throws Exception {
+    void service_WhenIndexRequest_ThenForwardToViewName() throws Exception {
         final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
@@ -47,7 +44,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void service_WhenLegacyController_ThenRedirectToViewName() throws Exception {
+    void service_WhenLogoutRequest_ThenRedirectToViewName() throws Exception {
         final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
         final HttpSession session = mock(HttpSession.class);
         when(request.getRequestURI()).thenReturn("/logout");
