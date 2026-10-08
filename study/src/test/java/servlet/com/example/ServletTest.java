@@ -28,7 +28,9 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 서블릿 인스턴스는 하나만 존재하는데 멤버 변수를 사용하기 때문에 서로 영향이 생긴다
+        // init() -> doFilter() -> service() -> doFilter() -> service() -> doFilter() -> service() -> destroy()
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +52,7 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // init() -> doFilter() -> service() -> doFilter() -> service() -> doFilter() -> service() -> destroy()
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
