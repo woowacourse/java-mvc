@@ -3,9 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +19,9 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerMapping> mappings;
     private final List<HandlerAdapter> adapters;
 
-    public DispatcherServlet() {
-        mappings = List.of(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping());
-        adapters = List.of(new HandlerExecutionAdapter(), new ControllerAdapter());
+    public DispatcherServlet(final List<HandlerMapping> mappings, final List<HandlerAdapter> adapters) {
+        this.mappings = List.copyOf(mappings);
+        this.adapters = List.copyOf(adapters);
     }
 
     @Override
