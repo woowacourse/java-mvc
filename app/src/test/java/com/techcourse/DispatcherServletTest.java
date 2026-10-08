@@ -1,8 +1,16 @@
 package com.techcourse;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.HandlerAdaptorRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.techcourse.controller.UserSession;
@@ -16,14 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class DispatcherServletTest {
 
     private DispatcherServlet servlet;
@@ -33,11 +33,9 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         final var handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
 
         final var handlerAdaptorRegistry = new HandlerAdaptorRegistry();
-        handlerAdaptorRegistry.addHandlerAdaptor(new SimpleControllerHandlerAdaptor());
         handlerAdaptorRegistry.addHandlerAdaptor(new AnnotationHandlerAdaptor());
 
         servlet = new DispatcherServlet(handlerMappingRegistry, handlerAdaptorRegistry);
@@ -48,7 +46,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("홈 요청을 처리한 뒤 index.jsp로 포워드한다")
+    @DisplayName("애노테이션 기반 홈 요청을 처리한 뒤 index.jsp로 포워드한다")
     void forward() throws Exception {
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestURI()).thenReturn("/");

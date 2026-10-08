@@ -45,7 +45,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void registerHandler(Object controller, Method declaredMethod) {
         RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
-        String value = annotation.value();
+        String[] value = annotation.value();
         RequestMethod[] method = annotation.method();
 
         if (method.length == 0) {
@@ -54,8 +54,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerExecution execution = new HandlerExecution(controller, declaredMethod);
 
         for (RequestMethod requestMethod : method) {
-            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-            handlerExecutions.put(handlerKey, execution);
+            for (String requestValue : value) {
+                HandlerKey handlerKey = new HandlerKey(requestValue, requestMethod);
+                handlerExecutions.put(handlerKey, execution);
+            }
         }
     }
 
