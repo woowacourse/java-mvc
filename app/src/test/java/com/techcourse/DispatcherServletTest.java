@@ -46,6 +46,21 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("HEAD 요청은 같은 URL의 GET 핸들러로 처리한다")
+    void headFallsBackToGetHandler() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("HEAD");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
     @DisplayName("GET /register/view 요청은 가입 화면으로 포워드한다")
     void registrationViewForwardsToRegisterPage() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -104,7 +119,7 @@ class DispatcherServletTest {
 
         servlet.service(request, response);
 
-        verify(response).setHeader("Allow", "GET");
+        verify(response).setHeader("Allow", "GET, HEAD");
         verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 
@@ -144,7 +159,7 @@ class DispatcherServletTest {
 
         servlet.service(request, response);
 
-        verify(response).setHeader("Allow", "GET, POST");
+        verify(response).setHeader("Allow", "GET, HEAD, POST");
         verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 
@@ -158,7 +173,7 @@ class DispatcherServletTest {
 
         servlet.service(request, response);
 
-        verify(response).setHeader("Allow", "GET, POST");
+        verify(response).setHeader("Allow", "GET, HEAD, POST");
         verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 

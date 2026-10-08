@@ -51,8 +51,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return null;
         }
 
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        HandlerExecution execution = handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+        if (execution == null && requestMethod == RequestMethod.HEAD) {
+            return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.GET));
+        }
+        return execution;
     }
 
     @Override
@@ -62,6 +65,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             if (handlerKey.getUrl().equals(requestURI)) {
                 allowedMethods.add(handlerKey.getRequestMethod());
             }
+        }
+        if (allowedMethods.contains(RequestMethod.GET)) {
+            allowedMethods.add(RequestMethod.HEAD);
         }
         return allowedMethods;
     }
