@@ -10,13 +10,14 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     public JsonView() {
         this(new ObjectMapper());
     }
 
     public JsonView(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
