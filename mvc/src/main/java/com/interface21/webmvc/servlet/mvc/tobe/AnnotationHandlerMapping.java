@@ -4,13 +4,10 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +15,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -30,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -65,44 +63,12 @@ public class AnnotationHandlerMapping {
 
     // @RequestMapping의 url과 method를 가지고, 어떤 요청(HandlerKey)을 어떤 HandlerExecution이 처리할지 HandlerExecution 등록
     private void registerHandler(final Method method, final Object controller) {
-        validateHandlerMethod(method);
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             validateDuplicatedHandlerKey(handlerKey);
             handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private static void validateHandlerMethod(final Method method) {
-        validateAccessModifier(method);
-        validateParameterType(method);
-        validateReturnType(method);
-    }
-
-    private static void validateReturnType(final Method method) {
-        if (method.getReturnType() != ModelAndView.class) {
-            throw new IllegalStateException(
-                    "[ERROR] @RequestMapping 메서드는 ModelAndView를 반환해야 합니다. method: " + method.getDeclaringClass()
-                            .getName() + "." + method.getName());
-        }
-    }
-
-    private static void validateAccessModifier(final Method method) {
-        if (!Modifier.isPublic(method.getModifiers())) {
-            throw new IllegalStateException(
-                    "[ERROR] @RequestMapping 메서드는 public이어야 합니다. method: " + method.getDeclaringClass().getName() + "."
-                            + method.getName());
-        }
-    }
-
-    private static void validateParameterType(final Method method) {
-        Class<?>[] expected = {HttpServletRequest.class, HttpServletResponse.class};
-        if (!Arrays.equals(method.getParameterTypes(), expected)) {
-            throw new IllegalStateException(
-                    "[ERROR] @RequestMapping 메서드의 파라미터는 (HttpServletRequest, HttpServletResponse)여야 합니다. method: "
-                            + method.getDeclaringClass().getName() + "." + method.getName());
         }
     }
 
@@ -120,6 +86,7 @@ public class AnnotationHandlerMapping {
         return requestMapping.method();
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(
                 new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
