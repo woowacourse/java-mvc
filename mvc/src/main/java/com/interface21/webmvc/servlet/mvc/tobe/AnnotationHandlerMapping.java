@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -29,8 +26,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers =  reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         controllers.forEach(this::registerController);
     }
@@ -42,13 +39,13 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void registerController(Class<?> controller) {
+    private void registerController(Class<?> controller, Object instance) {
         Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> registerMappings(controller, method));
+                .forEach(method -> registerMappings(method, instance));
     }
 
-    private void registerMappings(Class<?> controller, Method method) {
+    private void registerMappings(Method method, Object instance) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
         List<RequestMethod> requestMethods = Arrays.stream(requestMapping.method()).toList();
@@ -57,7 +54,7 @@ public class AnnotationHandlerMapping {
         }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
             registerUniqueHandler(handlerKey, handlerExecution);
         }
     }
