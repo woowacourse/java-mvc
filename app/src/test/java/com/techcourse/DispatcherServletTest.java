@@ -24,6 +24,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,6 +88,23 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void givenUserRequest_whenServices_thenRendersJsonResponse() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var responseBody = new StringWriter();
+
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(responseBody));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setContentType("application/json;charset=UTF-8");
+        assertThat(responseBody.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 
     @Test
