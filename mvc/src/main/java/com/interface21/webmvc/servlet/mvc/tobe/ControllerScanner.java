@@ -5,17 +5,23 @@ import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ControllerScanner {
 
-    public Map<Class<?>, Object> scan(final Object... basePackage) {
-        final Map<Class<?>, Object> controllers = new HashMap<>();
-        if (basePackage.length == 0) {
-            return controllers;
-        }
+    private final Set<Class<?>> controllerClasses;
 
-        final Reflections reflections = new Reflections(basePackage);
-        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+    public ControllerScanner(final Object... basePackage) {
+        if (basePackage.length == 0) {
+            this.controllerClasses = Set.of();
+            return;
+        }
+        this.controllerClasses = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
+    }
+
+    public Map<Class<?>, Object> scan() {
+        final Map<Class<?>, Object> controllers = new HashMap<>();
+        for (Class<?> controllerClass : controllerClasses) {
             controllers.put(controllerClass, createController(controllerClass));
         }
         return controllers;
