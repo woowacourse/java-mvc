@@ -37,4 +37,9 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/exception-test", method = RequestMethod.GET)
+    public ModelAndView fail(final HttpServletRequest request, final HttpServletResponse response) {
+        throw new IllegalStateException("controller failed");
+    }
 }

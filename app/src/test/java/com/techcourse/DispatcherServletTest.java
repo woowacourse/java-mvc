@@ -1,10 +1,14 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.interface21.web.http.MediaType;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,13 +26,13 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
+        servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
     }
 
     @Test
-    @DisplayName("기존 Controller 요청도 계속 처리한다")
-    void legacyControllerStillWorks() throws Exception {
+    @DisplayName("GET / 요청은 메인 화면으로 포워드한다")
+    void rootForwardsToIndex() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
@@ -42,8 +46,23 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("기존 가입 화면 Controller도 계속 처리한다")
-    void legacyRegistrationViewStillWorks() throws Exception {
+    @DisplayName("HEAD 요청은 같은 URL의 GET 핸들러로 처리한다")
+    void headFallsBackToGetHandler() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("HEAD");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    @DisplayName("GET /register/view 요청은 가입 화면으로 포워드한다")
+    void registrationViewForwardsToRegisterPage() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
@@ -57,33 +76,51 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("지원하는 HTTP 메서드는 기존 URL 기반 컨트롤러에서도 처리한다")
-    void supportedHttpMethodStillReachesLegacyController() throws Exception {
+    @DisplayName("GET /api/user 요청은 회원 정보를 JSON으로 응답한다")
+    void userApiRespondsWithJson() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn("PATCH");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+        final var body = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
 
         servlet.service(request, response);
 
-        verify(dispatcher).forward(request, response);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString())
+                .contains("\"account\":\"gugu\"")
+                .contains("\"email\":\"hkkang@woowahan.com\"")
+                .doesNotContain("password");
     }
 
     @Test
-    @DisplayName("열거형에 없는 HTTP 메서드도 기존 컨트롤러까지 전달된다")
-    void extensionHttpMethodReachesLegacyController() throws Exception {
+    @DisplayName("GET /api/user 요청에 없는 계정을 보내면 404로 응답한다")
+    void unknownUserApiReturns404() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn("BREW");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("nobody");
 
         servlet.service(request, response);
 
-        verify(dispatcher).forward(request, response);
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "존재하지 않는 계정입니다: nobody");
+    }
+
+    @Test
+    @DisplayName("레거시 매핑이 사라진 뒤에는 GET만 허용하는 URL에 다른 메서드로 요청하면 405로 응답한다")
+    void unsupportedMethodOnViewPathReturns405() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("PATCH");
+
+        servlet.service(request, response);
+
+        verify(response).setHeader("Allow", "GET, HEAD");
+        verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 
     @Test
@@ -122,7 +159,7 @@ class DispatcherServletTest {
 
         servlet.service(request, response);
 
-        verify(response).setHeader("Allow", "GET, POST");
+        verify(response).setHeader("Allow", "GET, HEAD, POST");
         verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 
@@ -136,7 +173,7 @@ class DispatcherServletTest {
 
         servlet.service(request, response);
 
-        verify(response).setHeader("Allow", "GET, POST");
+        verify(response).setHeader("Allow", "GET, HEAD, POST");
         verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 

@@ -1,13 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.exception.ResponseStatusExceptionResolver;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
-import com.techcourse.mapping.ManualHandlerMapping;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -28,27 +26,34 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerExceptionResolver> handlerExceptionResolvers;
 
-
-    public DispatcherServlet() {
+    public DispatcherServlet(final String basePackage) {
+        validateBasePackage(basePackage);
+        this.basePackage = basePackage;
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
+        this.handlerExceptionResolvers = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
 
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionAdapter());
+
+        handlerExceptionResolvers.add(new ResponseStatusExceptionResolver());
+    }
+
+    private void validateBasePackage(final String basePackage) {
+        if (basePackage == null || basePackage.isBlank()) {
+            throw new IllegalArgumentException("스캔할 basePackage를 지정해야 합니다.");
+        }
     }
 
     @Override
@@ -66,12 +71,48 @@ public class DispatcherServlet extends HttpServlet {
         try {
             HandlerAdapter adapter = getHandlerAdapter(request, handler);
 
-            ModelAndView modelAndView = adapter.handle(handler, request, response);
+            ModelAndView modelAndView = handle(adapter, handler, request, response);
+            if (modelAndView == null) {
+                return;
+            }
             modelAndView.getView().render(modelAndView.getModel(), request, response);
+        } catch (ServletException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
+    }
+
+    private ModelAndView handle(
+            final HandlerAdapter adapter,
+            final Object handler,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        try {
+            return adapter.handle(handler, request, response);
+        } catch (Exception e) {
+            if (resolveException(request, response, handler, e)) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    private boolean resolveException(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Object handler,
+            final Exception exception
+    ) throws Exception {
+        for (HandlerExceptionResolver resolver : handlerExceptionResolvers) {
+            if (resolver.resolveException(request, response, handler, exception)) {
+                log.debug("Resolved exception : {}", exception.getMessage());
+                return true;
+            }
+        }
+        return false;
     }
 
     private void sendNoHandlerResponse(final String requestURI, final HttpServletResponse response)

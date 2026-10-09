@@ -102,4 +102,19 @@ class AnnotationHandlerMappingTest {
 
         assertThat(handlerMapping.getHandler(request)).isNull();
     }
+
+    @DisplayName("컨트롤러에서 발생한 예외는 InvocationTargetException으로 감싸지 않고 그대로 던진다")
+    @Test
+    void unwrapsControllerException() {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/exception-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThatThrownBy(() -> handlerExecution.handle(request, response))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("controller failed");
+    }
 }

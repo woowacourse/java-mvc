@@ -5,7 +5,10 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.web.bind.annotation.UnknownHttpMethodException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +21,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         controllerScanner = new ControllerScanner(basePackage);
     }
@@ -31,6 +36,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         controllerScanner.getControllers()
                 .forEach(this::enrollController);
+
+        if (handlerExecutions.isEmpty()) {
+            log.warn("등록된 핸들러가 없습니다. basePackage={}", Arrays.toString(basePackage));
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -42,8 +51,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return null;
         }
 
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        HandlerExecution execution = handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+        if (execution == null && requestMethod == RequestMethod.HEAD) {
+            return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.GET));
+        }
+        return execution;
     }
 
     @Override
@@ -53,6 +65,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             if (handlerKey.getUrl().equals(requestURI)) {
                 allowedMethods.add(handlerKey.getRequestMethod());
             }
+        }
+        if (allowedMethods.contains(RequestMethod.GET)) {
+            allowedMethods.add(RequestMethod.HEAD);
         }
         return allowedMethods;
     }
@@ -73,10 +88,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution execution = (request, response) ->
-                    (ModelAndView) method.invoke(controller, request, response);
+            HandlerExecution execution = (request, response) -> invoke(method, controller, request, response);
 
             put(handlerKey, execution);
+        }
+    }
+
+    private ModelAndView invoke(
+            final Method method,
+            final Object controller,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        try {
+            return (ModelAndView) method.invoke(controller, request, response);
+        } catch (InvocationTargetException e) {
+            final Throwable target = e.getTargetException();
+            if (target instanceof Exception exception) {
+                throw exception;
+            }
+            if (target instanceof Error error) {
+                throw error;
+            }
+            throw e;
         }
     }
 

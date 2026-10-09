@@ -13,6 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView view(final HttpServletRequest req, final HttpServletResponse res) {
+        return new ModelAndView(new JspView("/register.jsp"));
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
