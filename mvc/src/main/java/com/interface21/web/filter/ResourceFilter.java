@@ -1,4 +1,4 @@
-package com.techcourse.support.web.filter;
+package com.interface21.web.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
