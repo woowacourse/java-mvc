@@ -2,11 +2,11 @@
 
 ## 1. JsonView 구현
 
-- [ ] HTML 이외에 JSON으로 응답할 수 있다.
-    - [ ] `JsonView`를 구현한다.
-    - [ ] 응답 Content-Type을 `application/json;charset=UTF-8`로 설정한다.
-    - [ ] model에 데이터가 1개면 값을 그대로 JSON으로 변환한다.
-    - [ ] model에 데이터가 2개 이상이면 Map 형태 그대로 JSON으로 변환한다.
+- [x] HTML 이외에 JSON으로 응답할 수 있다.
+    - [x] `JsonView`를 구현한다.
+    - [x] 응답 Content-Type을 `application/json;charset=UTF-8`로 설정한다.
+    - [x] model에 데이터가 1개면 값을 그대로 JSON으로 변환한다.
+    - [x] model에 데이터가 2개 이상이면 Map 형태 그대로 JSON으로 변환한다.
 
 ## 2. Legacy MVC 제거
 
