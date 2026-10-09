@@ -22,7 +22,7 @@ class DispatcherServletTest {
         final var dispatcherServlet = new DispatcherServlet(handlerMapping);
 
         when(request.getRequestURI()).thenReturn("/test");
-        when(handlerMapping.getHandler("/test")).thenReturn(controller);
+        when(handlerMapping.getHandler(request)).thenReturn(controller);
         when(controller.execute(request, response)).thenReturn("/test.jsp");
         when(request.getRequestDispatcher("/test.jsp")).thenReturn(requestDispatcher);
 

@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -13,12 +14,13 @@ import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
+        final var mapping = new AnnotationHandlerMapping("samples");
+        mapping.initialize();
+        handlerMapping = mapping;
     }
 
     @Test
@@ -72,5 +74,23 @@ class AnnotationHandlerMappingTest {
                 .hasMessageContaining("Duplicate handler mapping")
                 .hasMessageContaining("/duplicate")
                 .hasMessageContaining("GET");
+    }
+
+    @Test
+    void returnsNullForUnmappedRequest() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/unmapped");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void returnsNullWhenHttpMethodDoesNotMatch() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 }
