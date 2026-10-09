@@ -1,18 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,25 +23,16 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllerClasses) {
-            registerController(controllerClass);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            registerController(entry.getKey(), entry.getValue());
         }
     }
 
-    private void registerController(final Class<?> controllerClass) {
-        Object controller = createControllerInstance(controllerClass);
+    private void registerController(final Class<?> controllerClass, final Object controller) {
         for (Method method : controllerClass.getDeclaredMethods()) {
             registerHandlerMethod(controller, method);
-        }
-    }
-
-    private Object createControllerInstance(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 인스턴스를 생성할 수 없습니다: " + controllerClass.getName(), e);
         }
     }
 
@@ -77,6 +65,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
