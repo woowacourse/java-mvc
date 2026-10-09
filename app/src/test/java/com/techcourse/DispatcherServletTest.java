@@ -5,8 +5,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
@@ -16,14 +18,16 @@ import org.junit.jupiter.api.Test;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
+        dispatcherServlet.init();
+
+        servlet = dispatcherServlet;
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
     }
