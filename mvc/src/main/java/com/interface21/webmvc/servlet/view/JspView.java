@@ -14,7 +14,10 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
-    public JspView(final String viewName) {
+    private final String viewName;
+
+    public JspView(String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
@@ -23,13 +26,16 @@ public class JspView implements View {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        // todo
-
+        if(viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
+        }
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
         // todo
     }
 }
