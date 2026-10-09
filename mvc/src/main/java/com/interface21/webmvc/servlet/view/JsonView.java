@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(
@@ -32,9 +32,9 @@ public class JsonView implements View {
 
         if (model.size() == 1) {
             Object data = findFirstData(model);
-            writer.write(objectMapper.writeValueAsString(data));
+            writer.write(OBJECT_MAPPER.writeValueAsString(data));
         } else {
-            writer.write(objectMapper.writeValueAsString(model));
+            writer.write(OBJECT_MAPPER.writeValueAsString(model));
         }
     }
 
