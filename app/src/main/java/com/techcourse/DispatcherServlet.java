@@ -35,7 +35,7 @@ public final class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         addHandlerMapping(new ManualHandlerMapping());
-        addHandlerMapping(new AnnotationHandlerMapping());
+        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         addHandlerAdapter(new LegacyControllerHandlerAdapter());
         addHandlerAdapter(new AnnotationHandlerAdapter());
