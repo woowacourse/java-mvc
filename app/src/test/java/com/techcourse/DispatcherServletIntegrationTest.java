@@ -27,7 +27,7 @@ class DispatcherServletIntegrationTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final HttpSession session = mock(HttpSession.class);
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private ServletRegistration.Dynamic registration;
 
     @BeforeEach
@@ -40,7 +40,7 @@ class DispatcherServletIntegrationTest {
 
         final ArgumentCaptor<Servlet> servletCaptor = ArgumentCaptor.forClass(Servlet.class);
         verify(servletContext).addServlet(eq("dispatcher"), servletCaptor.capture());
-        servlet = (DispatcherServlet) servletCaptor.getValue();
+        servlet = servletCaptor.getValue();
         when(request.getSession()).thenReturn(session);
     }
 
