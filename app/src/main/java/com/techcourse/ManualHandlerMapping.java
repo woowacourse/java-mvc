@@ -19,6 +19,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
@@ -31,6 +32,7 @@ public class ManualHandlerMapping implements HandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request.getRequestURI());
         return controllers.get(request.getRequestURI());

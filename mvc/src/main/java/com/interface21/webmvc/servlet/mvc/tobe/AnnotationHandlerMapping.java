@@ -25,6 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.controllerScanner = controllerScanner;
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
@@ -33,6 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
