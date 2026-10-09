@@ -18,7 +18,13 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model,
                        final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String responseBody = objectMapper.writeValueAsString(model);
+        Object target = model;
+        if (model.size() == 1) {
+            target = model.values().iterator().next();
+        }
+
+        final String responseBody = objectMapper.writeValueAsString(target);
+
         logger.debug("written = {}", responseBody);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
