@@ -1,19 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,27 +26,15 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         LOGGER.info("Initialized AnnotationHandlerMapping!");
 
-        Reflections classpathScanner = new Reflections(basePackages);
-        classpathScanner.getTypesAnnotatedWith(Controller.class)
+        new ControllerScanner(basePackages)
+                .getControllers()
                 .forEach(this::registerController);
     }
 
-    private void registerController(Class<?> controllerClass) {
-        Object controllerInstance = createControllerInstance(controllerClass);
+    private void registerController(Class<?> controllerClass, Object controllerInstance) {
         Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(handlerMethod -> handlerMethod.isAnnotationPresent(RequestMapping.class))
                 .forEach(handlerMethod -> registerHandlerMethod(controllerInstance, handlerMethod));
-    }
-
-    private Object createControllerInstance(Class<?> controllerClass) {
-        try {
-            return controllerClass.getConstructor().newInstance();
-        } catch (InstantiationException
-                 | IllegalAccessException
-                 | InvocationTargetException
-                 | NoSuchMethodException e) {
-            throw new IllegalStateException("Controller 객체 생성 실패. class: " + controllerClass.getSimpleName(), e);
-        }
     }
 
     private void registerHandlerMethod(Object controllerInstance, Method handlerMethod) {
@@ -77,19 +63,16 @@ public class AnnotationHandlerMapping {
         handlerExecutionByKey.put(handlerKey, handlerExecution);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String contextPath = request.getContextPath();
         String requestUri = request.getRequestURI();
-        if (contextPath != null && !contextPath.isEmpty()) {
+        if (contextPath != null && !contextPath.isEmpty() && requestUri.startsWith(contextPath)) {
             requestUri = requestUri.substring(contextPath.length());
         }
 
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-
-        if (!handlerExecutionByKey.containsKey(handlerKey)) {
-            throw new IllegalStateException("HandlerExecution가 존재하지 않음. handlerKey: " + handlerKey);
-        }
         return handlerExecutionByKey.get(handlerKey);
     }
 }
