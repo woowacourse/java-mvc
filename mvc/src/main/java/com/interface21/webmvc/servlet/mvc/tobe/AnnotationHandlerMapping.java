@@ -31,7 +31,7 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         Method[] handlerMethods;
         for (Class<?> controllerClass : controllerClasses) {
-            handlerMethods = Arrays.stream(controllerClass.getDeclaredMethods())
+            handlerMethods = Arrays.stream(controllerClass.getMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .toArray(Method[]::new);
             try {
