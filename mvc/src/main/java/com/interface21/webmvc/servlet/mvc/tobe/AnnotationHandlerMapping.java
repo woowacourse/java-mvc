@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -32,21 +33,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Arrays.stream(basePackage).forEach(pkg -> {
-            final var reflections = new Reflections(pkg.toString());
-
-            var controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-            controllers.forEach(clazz -> {
-                try {
-                    Object controller = clazz.getDeclaredConstructor().newInstance();
-                    Arrays.stream(clazz.getDeclaredMethods())
-                            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                            .forEach(method -> addHandler(controller, method));
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException(e);
-                }
+            List<Object> controllers = ControllerScanner.scan(pkg);
+            controllers.forEach(controller -> {
+                Arrays.stream(controller.getClass().getDeclaredMethods())
+                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                        .forEach(method -> addHandler(controller, method));
             });
-
             log.info("Controllers : {}", controllers);
         });
     }
