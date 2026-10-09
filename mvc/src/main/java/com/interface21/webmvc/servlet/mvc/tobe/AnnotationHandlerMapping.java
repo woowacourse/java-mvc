@@ -46,7 +46,7 @@ public final class AnnotationHandlerMapping implements HandlerMapping {
         for (final Method method : controller.getClass().getDeclaredMethods()) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             if (requestMapping == null) {
-                return;
+                continue;
             }
 
             final HandlerExecution execution = new HandlerExecution(controller, method);
