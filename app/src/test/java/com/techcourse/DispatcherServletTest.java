@@ -5,10 +5,13 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -74,6 +77,52 @@ class DispatcherServletTest {
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         verifyNoMoreInteractions(response);
+    }
+
+    @Test
+    @DisplayName("사용자 조회 요청을 매핑하고 JsonView로 사용자 정보와 JSON 헤더를 응답한다")
+    void handlesUserJsonResponse() throws Exception {
+        HttpServletRequest request = request("GET", "/api/user");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter output = new StringWriter();
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        assertThat(output.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        verify(response).setContentType("application/json;charset=UTF-8");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자를 조회하면 404와 JSON 오류를 응답한다")
+    void returnsNotFoundForUnknownUser() throws Exception {
+        HttpServletRequest request = request("GET", "/api/user");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter output = new StringWriter();
+        when(request.getParameter("account")).thenReturn("missing-json-test-user");
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response).setContentType("application/json;charset=UTF-8");
+        assertThat(output.toString()).isEqualTo("\"사용자를 찾을 수 없습니다.\"");
+    }
+
+    @Test
+    @DisplayName("사용자 조회에 account가 없으면 400과 JSON 오류를 응답한다")
+    void returnsBadRequestWithoutAccount() throws Exception {
+        HttpServletRequest request = request("GET", "/api/user");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter output = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(response).setContentType("application/json;charset=UTF-8");
+        assertThat(output.toString()).isEqualTo("\"account가 필요합니다.\"");
     }
 
     private HttpServletRequest request(String method, String uri) {
