@@ -1,15 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.scanner.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,18 +27,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        final Reflections reflections = new Reflections(basePackage);
+        final Map<Class<?>, Object> controllers = ControllerScanner.getControllers(basePackage);
 
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controllerClass : controllerClasses) {
-            try {
-                final Object controller = controllerClass.getDeclaredConstructor().newInstance();
-                final Method[] controllerDeclaredMethods = controllerClass.getDeclaredMethods();
-                putHandlerExecutions(controller, controllerDeclaredMethods);
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("Controller 초기화에 실패했습니다: " + controllerClass.getName(), e);
-            }
+        for (Map.Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
+            Method[] methods = controllerEntry.getKey().getDeclaredMethods();
+            putHandlerExecutions(controllerEntry.getValue(), methods);
         }
     }
 
@@ -62,21 +53,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 continue;
             }
 
-            RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+            final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
 
-            if (!existsRequestMethod(requestMapping)) {
-                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), RequestMethod.ANY);
-                HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
-                handlerExecutions.put(handlerKey, handlerExecution);
-                continue;
-            }
-
-            for (RequestMethod requestMethod : requestMapping.method()) {
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
+            for (RequestMethod requestMethod : requestMethodsOf(requestMapping)) {
                 HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
+
                 handlerExecutions.put(handlerKey, handlerExecution);
             }
         }
+    }
+
+    private RequestMethod[] requestMethodsOf(RequestMapping requestMapping) {
+        if (!existsRequestMethod(requestMapping)) {
+            return new RequestMethod[]{RequestMethod.ANY};
+        }
+
+        return requestMapping.method();
     }
 
     private boolean existsRequestMethod(final RequestMapping requestMapping) {
