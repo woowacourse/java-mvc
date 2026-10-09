@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class JspViewTest {
@@ -27,12 +28,13 @@ class JspViewTest {
     }
 
     @Test
-    void redirectsWithoutForwarding() throws Exception {
+    void redirectsWithoutAddingModelAttributesOrForwarding() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        new JspView("redirect:/login").render(Map.of(), request, response);
+        new JspView("redirect:/login").render(Map.of("id", "gugu"), request, response);
 
         verify(response).sendRedirect("/login");
+        verifyNoInteractions(request);
     }
 }
