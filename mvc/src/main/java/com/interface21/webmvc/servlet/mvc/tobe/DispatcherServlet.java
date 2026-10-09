@@ -1,15 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,11 +14,13 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackages;
     private HandlerMappingRegistry handlerMappingRegistry;
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
 
-    public DispatcherServlet() {
+    public DispatcherServlet(Object... basePackages) {
+        this.basePackages = basePackages;
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -39,19 +33,14 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         final AnnotationHandlerMapping annotationHandlerMapping =
-            new AnnotationHandlerMapping("com.techcourse.controller", "samples");
+            new AnnotationHandlerMapping(basePackages);
         annotationHandlerMapping.initialize();
 
         handlerMappingRegistry = HandlerMappingRegistry.empty();
-        addHandlerMapping(manualHandlerMapping);
         addHandlerMapping(annotationHandlerMapping);
 
         handlerAdapterRegistry = HandlerAdapterRegistry.empty();
-        addHandlerAdapter(new ControllerHandlerAdapter());
         addHandlerAdapter(new HandlerExecutionAdapter());
     }
 
