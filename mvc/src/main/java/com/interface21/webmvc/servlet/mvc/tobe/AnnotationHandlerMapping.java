@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -65,5 +67,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    public Set<String> getMappedPaths() {
+        return handlerExecutions.keySet().stream()
+                .map(HandlerKey::getUrl)
+                .collect(Collectors.toSet());
     }
 }

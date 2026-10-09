@@ -10,6 +10,7 @@ import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -32,6 +33,10 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Controller getHandler(final String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
+    }
+
+    public Set<String> getMappedPaths() {
+        return controllers.keySet();
     }
 
     @Override

@@ -9,7 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +35,23 @@ public class DispatcherServlet extends HttpServlet {
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
+        validateNoDuplicateMapping(manualHandlerMapping, annotationHandlerMapping);
+
         handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
         handlerAdapter = new SimpleHandlerAdapter();
+    }
+
+    // manualHandlerMapping이 handlerMappings에서 먼저 조회되기 때문에, 컨트롤러를 애노테이션 방식으로
+    // 전환하면서 기존 수동 등록을 지우지 않으면 새 핸들러 대신 예전 핸들러가 예외 없이 계속 호출된다.
+    // 이 상태를 그냥 넘어가지 않고 기동 시점에 바로 드러나도록 막는다.
+    private void validateNoDuplicateMapping(final ManualHandlerMapping manualHandlerMapping,
+                                             final AnnotationHandlerMapping annotationHandlerMapping) {
+        Set<String> duplicatedPaths = new HashSet<>(manualHandlerMapping.getMappedPaths());
+        duplicatedPaths.retainAll(annotationHandlerMapping.getMappedPaths());
+
+        if (!duplicatedPaths.isEmpty()) {
+            throw new IllegalStateException("수동 매핑과 애노테이션 매핑에 중복 등록된 경로가 있습니다: " + duplicatedPaths);
+        }
     }
 
     @Override
