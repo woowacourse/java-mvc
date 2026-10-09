@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -27,38 +28,49 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        Method[] handlerMethods;
-        for (Class<?> controllerClass : controllerClasses) {
-            handlerMethods = Arrays.stream(controllerClass.getMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .toArray(Method[]::new);
-            try {
-                Object controller = controllerClass.getConstructor().newInstance();
-                log.info(Arrays.toString(handlerMethods));
-                for (Method handlerMethod : handlerMethods) {
-                    RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
-                    String url = requestMapping.value();
-                    RequestMethod[] requestMethods = requestMapping.method();
-                    if (requestMethods.length == 0) {
-                        requestMethods = RequestMethod.values();
-                    }
-                    registerHandlerExecutions(url, requestMethods, handlerMethod, controller);
-                }
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("리플렉션 작업 중 예외 발생: " + controllerClass.getName(), e);
+        for (Class<?> controllerClass : scanControllerClasses()) {
+            Object controller = createController(controllerClass);
+            for (Method handlerMethod : findHandlerMethods(controllerClass)) {
+                registerHandlerMethod(controller, handlerMethod);
             }
         }
     }
 
-    private void registerHandlerExecutions(String url, RequestMethod[] requestMethods, Method handlerMethod,
-                                           Object controller) {
-        for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(new HandlerKey(url, requestMethod),
-                    new HandlerExecution(handlerMethod, controller));
+    private Set<Class<?>> scanControllerClasses() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private Object createController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("리플렉션 작업 중 예외 발생: " + controllerClass.getName(), e);
+        }
+    }
+
+    private List<Method> findHandlerMethods(Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    private void registerHandlerMethod(Object controller, Method handlerMethod) {
+        RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        HandlerExecution handlerExecution = new HandlerExecution(handlerMethod, controller);
+        for (RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
+            handlerExecutions.put(new HandlerKey(url, requestMethod), handlerExecution);
             log.info("{} {} -> {}", requestMethod, url, handlerMethod);
         }
+    }
+
+    private RequestMethod[] resolveRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
