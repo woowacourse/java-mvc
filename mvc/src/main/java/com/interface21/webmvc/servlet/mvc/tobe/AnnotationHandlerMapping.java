@@ -21,6 +21,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
@@ -28,6 +29,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
             registerController(entry.getKey(), entry.getValue());
         }
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+
+        RequestMethod requestMethod = null;
+        try {
+            requestMethod = RequestMethod.valueOf(request.getMethod());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 
     private void registerController(final Class<?> controllerClass, final Object controller) {
@@ -63,14 +79,5 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalStateException("이미 등록된 핸들러 매핑입니다: " + handlerKey);
         }
-    }
-
-    @Override
-    public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        return handlerExecutions.get(handlerKey);
     }
 }
