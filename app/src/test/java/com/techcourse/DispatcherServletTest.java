@@ -101,6 +101,57 @@ class DispatcherServletTest {
     }
 
     @Test
+    void prioritizesAnnotatedMethodWhilePreservingLegacyFallback() throws Exception {
+        final var postRequest = mock(HttpServletRequest.class);
+        final var postResponse = mock(HttpServletResponse.class);
+        final var profileDispatcher = mock(RequestDispatcher.class);
+        final var legacyPostDispatcher = mock(RequestDispatcher.class);
+        when(postRequest.getRequestURI()).thenReturn("/login/view");
+        when(postRequest.getMethod()).thenReturn("POST");
+        when(postRequest.getSession()).thenReturn(mock(HttpSession.class));
+        when(postRequest.getRequestDispatcher("/profile.jsp")).thenReturn(profileDispatcher);
+        when(postRequest.getRequestDispatcher("/login.jsp")).thenReturn(legacyPostDispatcher);
+
+        final var getRequest = mock(HttpServletRequest.class);
+        final var getResponse = mock(HttpServletResponse.class);
+        final var loginDispatcher = mock(RequestDispatcher.class);
+        when(getRequest.getRequestURI()).thenReturn("/login/view");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(getRequest.getSession()).thenReturn(mock(HttpSession.class));
+        when(getRequest.getRequestDispatcher("/login.jsp")).thenReturn(loginDispatcher);
+
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(postRequest, postResponse);
+        servlet.service(getRequest, getResponse);
+
+        verify(postRequest).setAttribute("route", "annotated-login");
+        verify(profileDispatcher).forward(postRequest, postResponse);
+        verify(legacyPostDispatcher, never()).forward(postRequest, postResponse);
+        verify(loginDispatcher).forward(getRequest, getResponse);
+        verify(postResponse, never()).sendRedirect(anyString());
+        verify(getResponse, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void preservesLegacyMappingForHttpMethodOutsideAnnotationSupport() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("PROPFIND");
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(response, never()).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
     void returnsNotFoundWhenNoMappingMatches() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

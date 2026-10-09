@@ -21,4 +21,10 @@ public class AnnotatedTestController {
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("redirect:/annotation-test"));
     }
+
+    @RequestMapping(value = "/login/view", method = RequestMethod.POST)
+    public ModelAndView showMigratedLogin(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/profile.jsp"))
+                .addObject("route", "annotated-login");
+    }
 }

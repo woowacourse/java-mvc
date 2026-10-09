@@ -40,9 +40,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        final var handlerKey = new HandlerKey(
-                request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
+        final RequestMethod requestMethod;
+        try {
+            requestMethod = RequestMethod.valueOf(request.getMethod());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
     }
 
     private Set<Class<?>> findControllerClasses() {
