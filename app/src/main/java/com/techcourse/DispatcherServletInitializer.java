@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
@@ -51,17 +50,12 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
         return handlerMappingRegistry;
     }
 
     private HandlerAdapterRegistry createHandlerAdapterRegistry() {
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
         return handlerAdapterRegistry;
     }
 }
