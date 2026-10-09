@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Optional<Controller> controller = manualHandlerMapping.getHandler(requestURI);
+            Optional<Controller> controller = manualHandlerMapping.getHandler(request);
 
             if (controller.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
