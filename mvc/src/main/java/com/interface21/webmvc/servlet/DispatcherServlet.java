@@ -1,12 +1,13 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,17 +16,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappingRegistry handlerMappingRegistry;
+    private final Object[] basePackages;
+
+    private HandlerMapping handlerMapping;
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackages) {
+        this.basePackages = basePackages;
     }
 
     @Override
     public void init() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.initialize();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerMapping = new AnnotationHandlerMapping(basePackages);
+        handlerMapping.initialize();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -34,21 +38,18 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            if (handler.isEmpty()) {
+            final Object handler = handlerMapping.getHandler(request);
+            if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-            final var modelAndView = handlerAdapter.handle(request, response, handler.get());
-            final var model = modelAndView.getModel();
-            final var view = modelAndView.getView();
-
-            view.render(model, request, response);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
     }
 }

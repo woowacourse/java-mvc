@@ -5,7 +5,6 @@ import java.util.List;
 public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters = List.of(
-            new ControllerHandlerAdapter(),
             new HandlerExecutionAdapter()
     );
 

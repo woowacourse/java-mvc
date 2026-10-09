@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package dispatcherfixtures;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -27,13 +27,5 @@ public class RegistryTestController {
     ) {
         return new ModelAndView(new JspView("/registry-post-test.jsp"))
                 .addObject("name", "post-gugu");
-    }
-
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView loginView(
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) {
-        return new ModelAndView(new JspView("/annotation-login.jsp"));
     }
 }

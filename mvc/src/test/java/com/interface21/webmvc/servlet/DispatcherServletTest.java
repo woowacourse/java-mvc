@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,34 +51,6 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("수동 핸들러로 등록한 루트 요청을 기존 JSP로 포워드한다")
-    void handlesManualRequest() throws Exception {
-        HttpServletRequest request = getRequest("/");
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
-        DispatcherServlet dispatcherServlet = initializedDispatcherServlet();
-
-        dispatcherServlet.service(request, response);
-
-        verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
-    @DisplayName("수동 핸들러와 어노테이션 핸들러가 겹치면 어노테이션 핸들러를 우선 실행한다")
-    void prioritizesAnnotationHandler() throws Exception {
-        HttpServletRequest request = getRequest("/login/view");
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/annotation-login.jsp")).thenReturn(requestDispatcher);
-        DispatcherServlet dispatcherServlet = initializedDispatcherServlet();
-
-        dispatcherServlet.service(request, response);
-
-        verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
     @DisplayName("아무 핸들러도 처리할 수 없는 요청이면 404 오류를 응답한다")
     void respondsNotFoundWhenNoHandlerCanHandle() throws Exception {
         HttpServletRequest request = getRequest("/unknown-get-uri");
@@ -91,7 +63,7 @@ class DispatcherServletTest {
     }
 
     private DispatcherServlet initializedDispatcherServlet() {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet("dispatcherfixtures");
         dispatcherServlet.init();
         return dispatcherServlet;
     }

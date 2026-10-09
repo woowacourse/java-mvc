@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,5 +87,29 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("/duplicate")
                 .hasMessageContaining("GET");
+    }
+
+    @Test
+    @DisplayName("어노테이션으로 등록한 요청을 HandlerExecution으로 핸들링한다")
+    void handlesAnnotationRequest() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/get-test");
+
+        final Object handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @Test
+    @DisplayName("아무 핸들러 매핑도 처리할 수 없는 요청이면 null을 반환한다")
+    void returnsEmptyWhenNoHandlerCanHandle() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/unknown-get-uri");
+
+        final Object handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isNull();
     }
 }
