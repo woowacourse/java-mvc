@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.view.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
@@ -58,14 +60,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private RequestMethod[] readRequestMethods(RequestMapping requestMapping) {
-        if(requestMapping.method().length == 0) {
-            return RequestMethod.values();
-        }
-
-        return requestMapping.method();
-    }
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         try {
@@ -74,5 +69,13 @@ public class AnnotationHandlerMapping {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    private RequestMethod[] readRequestMethods(RequestMapping requestMapping) {
+        if(requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+
+        return requestMapping.method();
     }
 }
