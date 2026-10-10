@@ -2,14 +2,16 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -49,7 +51,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             if (mapping == null) {
                 continue;
             }
+            validateHandlerMethod(method);
             addMapping(method, mapping, controller);
+        }
+    }
+
+    private static void validateHandlerMethod(final Method method) {
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        if (!Modifier.isPublic(method.getModifiers())
+                || method.getReturnType() != ModelAndView.class
+                || parameterTypes.length != 2
+                || parameterTypes[0] != HttpServletRequest.class
+                || parameterTypes[1] != HttpServletResponse.class) {
+            throw new IllegalStateException("Invalid @RequestMapping method: " + method);
         }
     }
 
@@ -59,7 +73,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (final RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                throw new IllegalStateException("Duplicate request mapping: " + handlerKey);
+            }
         }
     }
 

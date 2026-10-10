@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,6 +66,46 @@ class AnnotationHandlerMappingTest {
         final var postHandler = (HandlerExecution) handlerMapping.getHandler(request);
         final var postModelAndView = postHandler.handle(request, response);
         assertThat(postModelAndView.getObject("method")).isEqualTo("POST");
+    }
+
+    @Test
+    void rejectsDuplicateRequestMappingsDuringInitialization() {
+        final var duplicateMapping = new AnnotationHandlerMapping("duplicate");
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/duplicate")
+                .hasMessageContaining("GET");
+    }
+
+    @Test
+    void rejectsInvalidParametersDuringInitialization() {
+        final var invalidMapping = new AnnotationHandlerMapping("invalidparameters");
+
+        assertThatThrownBy(invalidMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Invalid @RequestMapping method")
+                .hasMessageContaining("InvalidParametersController.show");
+    }
+
+    @Test
+    void rejectsInvalidReturnTypeDuringInitialization() {
+        final var invalidMapping = new AnnotationHandlerMapping("invalidreturntype");
+
+        assertThatThrownBy(invalidMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Invalid @RequestMapping method")
+                .hasMessageContaining("InvalidReturnTypeController.show");
+    }
+
+    @Test
+    void rejectsPrivateMappingMethodDuringInitialization() {
+        final var invalidMapping = new AnnotationHandlerMapping("privatemapping");
+
+        assertThatThrownBy(invalidMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Invalid @RequestMapping method")
+                .hasMessageContaining("PrivateMappingController.show");
     }
 
     @Test
