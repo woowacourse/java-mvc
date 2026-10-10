@@ -1,13 +1,15 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.SimpleHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +21,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
-    private HandlerAdapter handlerAdapter;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
+    }
+
+    DispatcherServlet(final List<HandlerMapping> handlerMappings,
+                      final List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -32,8 +40,9 @@ public class DispatcherServlet extends HttpServlet {
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
-        handlerAdapter = new SimpleHandlerAdapter();
+        // @MVC 매핑을 먼저 조회해 같은 경로를 점진적으로 이전할 때 새 매핑이 우선하도록 한다.
+        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter());
     }
 
     @Override
@@ -43,11 +52,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            if (!handlerAdapter.supports(handler)) {
-                throw new IllegalStateException("Unsupported handler type: " + handler.getClass().getName());
-            }
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
-            final var modelAndView = handlerAdapter.handle(handler, request, response);
+            final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -63,5 +70,14 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new IllegalStateException("No handler found for " + request.getMethod() + " " + request.getRequestURI());
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        for (final HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new IllegalStateException("No handler adapter found for " + handler.getClass().getName());
     }
 }
