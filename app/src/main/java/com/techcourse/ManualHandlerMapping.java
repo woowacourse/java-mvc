@@ -1,12 +1,12 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.controller.Controller;
+import com.interface21.webmvc.servlet.mvc.controller.ForwardController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +17,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
