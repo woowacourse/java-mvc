@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
 
-
     @Override
     public boolean supports(Object handler) {
         return (handler instanceof Controller);
