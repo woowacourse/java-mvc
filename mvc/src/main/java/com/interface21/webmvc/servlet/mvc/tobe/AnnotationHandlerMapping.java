@@ -42,9 +42,6 @@ public class AnnotationHandlerMapping {
     private void createHandlerExecutions(Class<?> controllerClass, Object instance) {
         for (Method method : controllerClass.getDeclaredMethods()) {
             RequestMapping mapping = getRequestMapping(method);
-            if (mapping == null) {
-                continue;
-            }
 
             RequestMethod[] methods = mapping.method();
             if (methods.length == 0) {
