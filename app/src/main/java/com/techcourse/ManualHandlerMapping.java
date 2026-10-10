@@ -35,6 +35,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
 
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);    }
-
+        return controllers.get(requestURI);
+    }
 }
