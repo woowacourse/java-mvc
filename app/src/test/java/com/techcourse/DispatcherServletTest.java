@@ -5,18 +5,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.ModelAndView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.techcourse.controller.UserSession;
+import com.techcourse.domain.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
@@ -24,21 +22,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 class DispatcherServletTest {
-
-    private DispatcherServlet dispatcherServlet;
-
-    @BeforeEach
-    void setUp() throws ServletException {
-        dispatcherServlet = registerDispatcherServlet();
-    }
 
     private DispatcherServlet registerDispatcherServlet() throws ServletException {
         final var servletContext = mock(ServletContext.class);
@@ -59,7 +50,8 @@ class DispatcherServletTest {
     }
 
     @Test
-    void givenLegacyControllerRequest_whenServices_thenRendersView() throws Exception {
+    void givenRootRequest_whenServices_thenRendersIndexView() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
@@ -76,6 +68,7 @@ class DispatcherServletTest {
 
     @Test
     void givenAnnotationControllerRequest_whenServices_thenRendersView() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
@@ -92,6 +85,7 @@ class DispatcherServletTest {
 
     @Test
     void givenUserRequest_whenServices_thenRendersJsonResponse() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var responseBody = new StringWriter();
@@ -104,32 +98,108 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         verify(response).setContentType("application/json;charset=UTF-8");
-        assertThat(responseBody.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        final var json = new ObjectMapper().readTree(responseBody.toString());
+        assertThat(json.get("account").asText()).isEqualTo("gugu");
     }
 
     @Test
-    void givenBothMappingsHandleSameUri_whenServices_thenUsesAnnotationHandlerFirst() throws Exception {
+    void givenValidLoginRequest_whenServices_thenStoresUserAndRedirects() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var annotationRequestDispatcher = mock(RequestDispatcher.class);
-        final var legacyRequestDispatcher = mock(RequestDispatcher.class);
-        final var handlerExecution = mock(HandlerExecution.class);
-        when(request.getRequestURI()).thenReturn("/");
+        final var session = mock(HttpSession.class);
+
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("password");
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service(request, response);
+
+        final var userCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(session).setAttribute(
+                eq(UserSession.SESSION_KEY),
+                userCaptor.capture()
+        );
+
+        assertThat(userCaptor.getValue().getAccount())
+                .isEqualTo("gugu");
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void givenInvalidPassword_whenServicesLoginRequest_thenRedirectsToUnauthorizedView() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account"))
+                .thenReturn("gugu");
+        when(request.getParameter("password"))
+                .thenReturn("wrong-password");
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+        verify(session, never())
+                .setAttribute(eq(UserSession.SESSION_KEY), any());
+    }
+
+    @Test
+    void givenUnauthenticatedLoginViewRequest_whenServices_thenRendersLoginView() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/annotation.jsp")).thenReturn(annotationRequestDispatcher);
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(legacyRequestDispatcher);
-        when(handlerExecution.handle(request, response))
-                .thenReturn(new ModelAndView(new JspView("/annotation.jsp")));
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
 
-        try (var ignored = mockConstruction(
-                AnnotationHandlerMapping.class,
-                (mapping, context) -> when(mapping.getHandler(request)).thenReturn(handlerExecution)
-        )) {
-            registerDispatcherServlet().service(request, response);
-        }
+        dispatcherServlet.service(request, response);
 
-        verify(annotationRequestDispatcher).forward(request, response);
-        verify(legacyRequestDispatcher, never()).forward(request, response);
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void givenAuthenticatedLoginViewRequest_whenServices_thenRedirectsToIndex() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        final var user = mock(User.class);
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void givenLogoutRequest_whenServices_thenRemovesUserAndRedirects() throws Exception {
+        final var dispatcherServlet = registerDispatcherServlet();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service(request, response);
+
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
     }
 
     @Test
