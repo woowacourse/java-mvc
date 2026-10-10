@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class DispatcherServletTest {
+class DispatcherServletIntegrationTest {
 
     @Test
     void storesUserSessionAfterSuccessfulLogin() throws Exception {
         final var request = loginRequest("gugu", "password");
         final var response = mock(HttpServletResponse.class);
         final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -44,7 +44,7 @@ class DispatcherServletTest {
     void rejectsLoginWithIncorrectPassword() throws Exception {
         final var request = loginRequest("gugu", "wrong-password");
         final var response = mock(HttpServletResponse.class);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -57,7 +57,7 @@ class DispatcherServletTest {
     void rejectsLoginWithUnknownAccount() throws Exception {
         final var request = loginRequest(UUID.randomUUID().toString(), "password");
         final var response = mock(HttpServletResponse.class);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -72,7 +72,7 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
         when(request.getSession().getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -87,7 +87,7 @@ class DispatcherServletTest {
         final var request = loginRequest("gugu", "password");
         when(request.getMethod()).thenReturn("GET");
         final var response = mock(HttpServletResponse.class);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -116,7 +116,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getParameter("account")).thenReturn("gugu");
         when(response.getWriter()).thenReturn(new PrintWriter(body));
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -136,7 +136,7 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/api/user");
         when(request.getMethod()).thenReturn("POST");
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -153,7 +153,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -170,7 +170,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/logout");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -197,7 +197,7 @@ class DispatcherServletTest {
         when(annotatedRequest.getParameter("id")).thenReturn("gugu");
         when(annotatedRequest.getRequestDispatcher("/profile.jsp")).thenReturn(profileDispatcher);
 
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(rootRequest, rootResponse);
@@ -215,7 +215,7 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/annotation-test");
         when(request.getMethod()).thenReturn("POST");
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -233,7 +233,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(mock(HttpSession.class));
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -252,7 +252,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
         when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -272,7 +272,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(mock(HttpSession.class));
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -287,7 +287,7 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("PROPFIND");
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -303,7 +303,7 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/unregistered");
         when(request.getMethod()).thenReturn("GET");
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -323,7 +323,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getParameter("account")).thenReturn(account);
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -343,7 +343,7 @@ class DispatcherServletTest {
         when(request.getParameter("account")).thenReturn(account);
         when(request.getParameter("password")).thenReturn("password");
         when(request.getParameter("email")).thenReturn("test@example.com");
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -363,7 +363,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/register/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
@@ -380,7 +380,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("PUT");
         when(request.getParameter("account")).thenReturn(account);
-        final var servlet = new DispatcherServlet();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
 
         servlet.service(request, response);
