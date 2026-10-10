@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
