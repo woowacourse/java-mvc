@@ -45,39 +45,41 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = null;
-
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                handler = handlerMapping.getHandler(request);
-                if (handler != null) {
-                    break;
-                }
-            }
-
-            if (handler == null) {
-                throw new RuntimeException("실행할 수 있는 핸들러가 없습니다.");
-            }
-
-            ModelAndView modelAndView = null;
-
-            for (HandlerAdapter handlerAdapter : handlerAdapters) {
-                if (!handlerAdapter.support(handler)) {
-                    continue;
-                }
-                modelAndView = handlerAdapter.handle(request, response, handler);
-                break;
-            }
-
-            if (modelAndView == null) {
-                throw new RuntimeException("실행할 수 있는 Adapter가 없습니다.");
-            }
+            final Object handler = getHandler(request);
+            final ModelAndView modelAndView = getModelAndView(request, response, handler);
 
             final var view = modelAndView.getView();
             final var model = modelAndView.getModel();
+
             view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+
+        throw new RuntimeException("실행할 수 있는 핸들러가 없습니다.");
+    }
+
+    private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        try {
+            for (HandlerAdapter handlerAdapter : handlerAdapters) {
+                if (handlerAdapter.support(handler)) {
+                    return handlerAdapter.handle(request, response, handler);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("ModelAndView 생성 중 실패했습니다.", e);
+        }
+
+        throw new RuntimeException("실행할 수 있는 Adapter가 없습니다.");
     }
 }
