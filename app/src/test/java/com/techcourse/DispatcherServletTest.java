@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -24,6 +25,125 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
+
+    @Test
+    void storesUserSessionAfterSuccessfulLogin() throws Exception {
+        final var request = loginRequest("gugu", "password");
+        final var response = mock(HttpServletResponse.class);
+        final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(request.getSession()).setAttribute(UserSession.SESSION_KEY, user);
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void rejectsLoginWithIncorrectPassword() throws Exception {
+        final var request = loginRequest("gugu", "wrong-password");
+        final var response = mock(HttpServletResponse.class);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(request.getSession(), never()).setAttribute(anyString(), any());
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void rejectsLoginWithUnknownAccount() throws Exception {
+        final var request = loginRequest(UUID.randomUUID().toString(), "password");
+        final var response = mock(HttpServletResponse.class);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(request.getSession(), never()).setAttribute(anyString(), any());
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void preservesExistingSessionWithoutReadingLoginCredentials() throws Exception {
+        final var request = loginRequest("gugu", "wrong-password");
+        final var response = mock(HttpServletResponse.class);
+        final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+        when(request.getSession().getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(request, never()).getParameter(anyString());
+        verify(request.getSession(), never()).setAttribute(anyString(), any());
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void preservesLoginGetRequest() throws Exception {
+        final var request = loginRequest("gugu", "password");
+        when(request.getMethod()).thenReturn("GET");
+        final var response = mock(HttpServletResponse.class);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(request.getSession()).setAttribute(UserSession.SESSION_KEY,
+                InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    private HttpServletRequest loginRequest(final String account, final String password) {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn(account);
+        when(request.getParameter("password")).thenReturn(password);
+        return request;
+    }
+
+    @Test
+    void returnsUserAsJson() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        assertEquals("{\"account\":\"gugu\"}", body.toString());
+        final var order = inOrder(response);
+        order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        order.verify(response).getWriter();
+        verify(response, never()).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).sendRedirect(anyString());
+        verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void returnsNotFoundForUnsupportedUserApiMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("POST");
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).getWriter();
+    }
 
     @Test
     void forwardsRootRequestToIndex() throws Exception {
@@ -61,13 +181,13 @@ class DispatcherServletTest {
     }
 
     @Test
-    void handlesLegacyAndAnnotatedRequestsWithTheSameServlet() throws Exception {
-        final var legacyRequest = mock(HttpServletRequest.class);
-        final var legacyResponse = mock(HttpServletResponse.class);
+    void handlesRootAndModelRequestsWithTheSameServlet() throws Exception {
+        final var rootRequest = mock(HttpServletRequest.class);
+        final var rootResponse = mock(HttpServletResponse.class);
         final var indexDispatcher = mock(RequestDispatcher.class);
-        when(legacyRequest.getRequestURI()).thenReturn("/");
-        when(legacyRequest.getMethod()).thenReturn("GET");
-        when(legacyRequest.getRequestDispatcher("/index.jsp")).thenReturn(indexDispatcher);
+        when(rootRequest.getRequestURI()).thenReturn("/");
+        when(rootRequest.getMethod()).thenReturn("GET");
+        when(rootRequest.getRequestDispatcher("/index.jsp")).thenReturn(indexDispatcher);
 
         final var annotatedRequest = mock(HttpServletRequest.class);
         final var annotatedResponse = mock(HttpServletResponse.class);
@@ -80,10 +200,10 @@ class DispatcherServletTest {
         final var servlet = new DispatcherServlet();
         servlet.init();
 
-        servlet.service(legacyRequest, legacyResponse);
+        servlet.service(rootRequest, rootResponse);
         servlet.service(annotatedRequest, annotatedResponse);
 
-        verify(indexDispatcher).forward(legacyRequest, legacyResponse);
+        verify(indexDispatcher).forward(rootRequest, rootResponse);
         verify(annotatedRequest).setAttribute("id", "gugu");
         verify(profileDispatcher).forward(annotatedRequest, annotatedResponse);
         verify(annotatedResponse, never()).sendRedirect(anyString());
@@ -105,54 +225,76 @@ class DispatcherServletTest {
     }
 
     @Test
-    void prioritizesAnnotatedMethodWhilePreservingLegacyFallback() throws Exception {
-        final var postRequest = mock(HttpServletRequest.class);
-        final var postResponse = mock(HttpServletResponse.class);
-        final var profileDispatcher = mock(RequestDispatcher.class);
-        final var legacyPostDispatcher = mock(RequestDispatcher.class);
-        when(postRequest.getRequestURI()).thenReturn("/login/view");
-        when(postRequest.getMethod()).thenReturn("POST");
-        when(postRequest.getSession()).thenReturn(mock(HttpSession.class));
-        when(postRequest.getRequestDispatcher("/profile.jsp")).thenReturn(profileDispatcher);
-        when(postRequest.getRequestDispatcher("/login.jsp")).thenReturn(legacyPostDispatcher);
-
-        final var getRequest = mock(HttpServletRequest.class);
-        final var getResponse = mock(HttpServletResponse.class);
-        final var loginDispatcher = mock(RequestDispatcher.class);
-        when(getRequest.getRequestURI()).thenReturn("/login/view");
-        when(getRequest.getMethod()).thenReturn("GET");
-        when(getRequest.getSession()).thenReturn(mock(HttpSession.class));
-        when(getRequest.getRequestDispatcher("/login.jsp")).thenReturn(loginDispatcher);
-
-        final var servlet = new DispatcherServlet();
-        servlet.init();
-
-        servlet.service(postRequest, postResponse);
-        servlet.service(getRequest, getResponse);
-
-        verify(postRequest).setAttribute("route", "annotated-login");
-        verify(profileDispatcher).forward(postRequest, postResponse);
-        verify(legacyPostDispatcher, never()).forward(postRequest, postResponse);
-        verify(loginDispatcher).forward(getRequest, getResponse);
-        verify(postResponse, never()).sendRedirect(anyString());
-        verify(getResponse, never()).sendRedirect(anyString());
-    }
-
-    @Test
-    void preservesLegacyMappingForHttpMethodOutsideAnnotationSupport() throws Exception {
+    void forwardsLoginViewForAnonymousUser() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("PROPFIND");
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
         final var servlet = new DispatcherServlet();
         servlet.init();
 
         servlet.service(request, response);
 
         verify(dispatcher).forward(request, response);
-        verify(response, never()).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void redirectsLoginViewForLoggedInUser() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+        verify(request, never()).getRequestDispatcher(anyString());
+        verify(session, never()).setAttribute(anyString(), any());
+        verify(session, never()).removeAttribute(anyString());
+    }
+
+    @Test
+    void preservesLoginViewPostRequest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void returnsNotFoundForHttpMethodOutsideAnnotationSupport() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("PROPFIND");
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(request, never()).getRequestDispatcher(anyString());
+        verify(response, never()).sendRedirect(anyString());
     }
 
     @Test
@@ -247,43 +389,5 @@ class DispatcherServletTest {
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         verify(response, never()).sendRedirect(anyString());
         verify(request, never()).getRequestDispatcher(anyString());
-    }
-
-    @Test
-    void returnsUserAsJson() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var body = new StringWriter();
-        when(request.getRequestURI()).thenReturn("/api/user");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getParameter("account")).thenReturn("gugu");
-        when(response.getWriter()).thenReturn(new PrintWriter(body));
-        final var servlet = new DispatcherServlet();
-        servlet.init();
-
-        servlet.service(request, response);
-
-        assertEquals("{\"account\":\"gugu\"}", body.toString());
-        final var order = inOrder(response);
-        order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        order.verify(response).getWriter();
-        verify(response, never()).sendError(HttpServletResponse.SC_NOT_FOUND);
-        verify(response, never()).sendRedirect(anyString());
-        verify(request, never()).getRequestDispatcher(anyString());
-    }
-
-    @Test
-    void returnsNotFoundForUnsupportedUserApiMethod() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        when(request.getRequestURI()).thenReturn("/api/user");
-        when(request.getMethod()).thenReturn("POST");
-        final var servlet = new DispatcherServlet();
-        servlet.init();
-
-        servlet.service(request, response);
-
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
-        verify(response, never()).getWriter();
     }
 }
