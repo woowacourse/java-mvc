@@ -1,19 +1,24 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,66 +33,67 @@ public class AnnotationHandlerMapping {
     public void initialize()
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        // 1. basePackage에서 Controller 어노테이션 붙은 모든 클래스 가져오기
-        for (Class<?> controllerClass : controllerClasses) {
-            // 2. 컨트롤러 객체 생성
-            Object controller = controllerClass
-                    .getDeclaredConstructor()
-                    .newInstance();
-
-            // 3. 컨트롤러 내 Method 배열 반복
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                // 4. RequestMapping 어노테이션에 사용된 값 객체 생성
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-                // 5-1. RequestMapping 어노테이션이 붙은 Method가 없다면 넘어가기
-                if (requestMapping == null) {
-                    continue;
-                }
-
-                // 5-2. RequestMapping에 requestMethod가 없다면 모든 HTTP method 넣어주기
-                if (requestMapping.method().length == 0) {
-                    addAllMethod(requestMapping, controller, method);
-                    continue;
-                }
-
-                // 5-3. RequestMapping의 method부분에 맞는 값들 넣어주기
-                for (final RequestMethod requestMethod : requestMapping.method()) {
-                    HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-                    // 이미 같은 URL과 Method 조합이 존재하는지 검사
-                    validateDuplicate(key);
-                    HandlerExecution execution = new HandlerExecution(controller, method);
-
-                    handlerExecutions.put(key, execution);
-                }
-            }
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Set<Method> methodSet = getRequestMappingMethods(controllers.keySet());
+        for (Method method : methodSet) {
+            // RequestMapping 어노테이션에 사용된 값 객체 생성
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
         }
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(url, method));
     }
 
-    private void addAllMethod(RequestMapping requestMapping, Object controller, Method method) {
-        for (RequestMethod requestMethod : RequestMethod.values()) {
-            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            validateDuplicate(key);
-            HandlerExecution execution = new HandlerExecution(controller, method);
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
+        Class<?> controllerClass = method.getDeclaringClass();
+        Object controller = controllers.get(controllerClass);
+        HandlerExecution execution = new HandlerExecution(controller, method);
+        List<HandlerKey> keys = mapHandlerKeys(
+                requestMapping.value(),
+                getRequestMethods(requestMapping)
+        );
 
-            handlerExecutions.put(key, execution);
+        for (HandlerKey key : keys) {
+            // 이미 같은 URL과 Method 조합이 존재하는지 검사
+            putHandlerExecution(key, execution);
         }
     }
 
-    private void validateDuplicate(HandlerKey key) {
-        if (handlerExecutions.containsKey(key)) {
-            throw new IllegalStateException(
-                    "Ambiguous mapping 에러! 이미 등록된 매핑입니다: [" + key + "]"
-            );
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(url, requestMethod);
+            handlerKeys.add(key);
         }
+        return handlerKeys;
+    }
+
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllerClasses) {
+        return controllerClasses.stream()
+                .flatMap(type -> Arrays.stream(type.getDeclaredMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
+    private void putHandlerExecution(HandlerKey key, HandlerExecution execution) {
+        if (handlerExecutions.putIfAbsent(key, execution) != null) {
+            throw new IllegalStateException("Ambiguous mapping 에러! 이미 등록된 매핑입니다: [" + key + "]");
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        // RequestMapping에 requestMethod가 없다면 모든 HTTP method 넣어주기
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
     }
 }
