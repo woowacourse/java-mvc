@@ -9,7 +9,7 @@ import org.reflections.Reflections;
 public class ControllerScanner {
     private final Reflections reflections;
 
-    public static ControllerScanner from(Object[] basePackage) {
+    public static ControllerScanner from(Object... basePackage) {
         return new ControllerScanner(new Reflections(basePackage));
     }
 

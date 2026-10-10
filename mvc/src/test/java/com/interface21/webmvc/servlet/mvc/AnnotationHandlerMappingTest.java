@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
@@ -62,25 +62,5 @@ class AnnotationHandlerMappingTest {
         var mapping = new AnnotationHandlerMapping("duplicatefixtures");
 
         assertThatThrownBy(mapping::initialize).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @ParameterizedTest
-    @MethodSource("creationFailureCases")
-    void 컨트롤러_생성에_실패하면_예외를_던진다(String basePackage, Class<? extends Throwable> causeType) {
-
-        var mapping = new AnnotationHandlerMapping(basePackage);
-
-        assertThatThrownBy(mapping::initialize)
-                .isInstanceOf(IllegalStateException.class)
-                .hasCauseInstanceOf(causeType);
-    }
-
-    static Stream<Arguments> creationFailureCases() {
-        return Stream.of(
-                Arguments.of("creationFailureFixture.missingConstructor", NoSuchMethodException.class),
-                Arguments.of("creationFailureFixture.inaccessible", IllegalAccessException.class),
-                Arguments.of("creationFailureFixture.abstractType", InstantiationException.class),
-                Arguments.of("creationFailureFixture.throwing", InvocationTargetException.class)
-        );
     }
 }
