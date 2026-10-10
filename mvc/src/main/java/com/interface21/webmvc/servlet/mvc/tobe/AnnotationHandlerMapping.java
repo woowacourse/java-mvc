@@ -1,11 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +24,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
+        final ControllerScanner scanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        for (final Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            final Object controller = createControllerInstance(controllerClass);
-            registerRequestMappings(controllerClass, controller);
+        for (final Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            registerRequestMappings(entry.getKey(), entry.getValue());
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
@@ -53,16 +51,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             }
             addMapping(method, mapping, controller);
         }
-    }
-
-    private static Object createControllerInstance(final Class<?> controllerClass) {
-        final Object controller;
-        try {
-            controller = controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Cannot instantiate controller: " + controllerClass, e);
-        }
-        return controller;
     }
 
     private void addMapping(final Method method, final RequestMapping mapping, final Object controller) {
