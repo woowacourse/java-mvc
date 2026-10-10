@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.RequestMappingHandlerAdapter;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -31,11 +30,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = List.of(new AnnotationHandlerMapping("com.techcourse.controller"),
-                new ManualHandlerMapping());
+        handlerMappings = List.of(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.forEach(HandlerMapping::initialize);  // 각 HandlerMapping의 initialize()로 핸들러 등록
-        handlerAdapters = List.of(new RequestMappingHandlerAdapter(),
-                new SimpleControllerHandlerAdapter());
+        handlerAdapters = List.of(new RequestMappingHandlerAdapter());
     }
 
     @Override
