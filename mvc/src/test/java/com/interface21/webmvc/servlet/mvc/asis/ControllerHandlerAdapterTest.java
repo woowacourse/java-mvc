@@ -6,6 +6,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -15,6 +16,7 @@ class ControllerHandlerAdapterTest {
     private final HandlerAdapter adapter = new ControllerHandlerAdapter();
 
     @Test
+    @DisplayName("레거시 Controller 타입만 지원한다")
     void supportsOnlyLegacyControllers() {
         assertThat(adapter.supports(mock(Controller.class))).isTrue();
         assertThat(adapter.supports(mock(HandlerExecution.class))).isFalse();
@@ -22,6 +24,7 @@ class ControllerHandlerAdapterTest {
     }
 
     @Test
+    @DisplayName("컨트롤러의 뷰 이름을 렌더링 가능한 ModelAndView로 변환한다")
     void convertsControllerViewNameToRenderableModelAndView() throws Exception {
         final var controller = mock(Controller.class);
         final var request = mock(HttpServletRequest.class);
@@ -40,6 +43,7 @@ class ControllerHandlerAdapterTest {
     }
 
     @Test
+    @DisplayName("컨트롤러가 반환한 리다이렉트 경로를 유지한다")
     void preservesRedirectViewName() throws Exception {
         final var controller = mock(Controller.class);
         final var request = mock(HttpServletRequest.class);

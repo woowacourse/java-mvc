@@ -15,6 +15,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 class DispatcherServletTest {
 
     @Test
+    @DisplayName("레거시 컨트롤러가 반환한 뷰를 렌더링한다")
     void rendersViewReturnedByController() throws Exception {
         final var handlerMapping = mock(ManualHandlerMapping.class);
         final var controller = mock(Controller.class);
@@ -43,6 +45,7 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("첫 매핑에 핸들러가 없으면 다음 매핑을 조회하고 모델을 렌더링한다")
     void usesNextMappingAndRendersAnnotationHandlerModel() throws Exception {
         final var firstMapping = mock(HandlerMapping.class);
         final var secondMapping = mock(HandlerMapping.class);
@@ -64,6 +67,7 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("첫 번째로 일치하는 핸들러를 실행하고 이후 매핑은 조회하지 않는다")
     void selectsFirstMatchingMapping() throws Exception {
         final var firstMapping = mock(HandlerMapping.class);
         final var secondMapping = mock(HandlerMapping.class);
@@ -82,6 +86,7 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("일치하는 핸들러가 없으면 404를 반환한다")
     void sendsNotFoundWhenNoHandlerMatches() throws Exception {
         final var mapping = mock(HandlerMapping.class);
         final var request = mock(HttpServletRequest.class);
@@ -94,6 +99,7 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("핸들러를 지원하는 어댑터가 없으면 원인을 포함한 예외를 던진다")
     void failsWhenNoAdapterSupportsHandler() {
         final var mapping = mock(HandlerMapping.class);
         final var request = mock(HttpServletRequest.class);
@@ -109,6 +115,7 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("기본 매핑을 초기화하면 레거시 홈 화면을 처리한다")
     void initializesDefaultMappingsAndServesLegacyHome() throws Exception {
         final var servlet = new DispatcherServlet();
         final var request = mock(HttpServletRequest.class);
