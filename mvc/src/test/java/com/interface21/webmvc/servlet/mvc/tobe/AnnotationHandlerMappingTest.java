@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -115,5 +116,16 @@ class AnnotationHandlerMappingTest {
 
         // 검증: postSameUrl()이 실행되었는지 확인한다.
         assertThat(modelAndView.getObject("handler")).isEqualTo("post");
+    }
+
+    @Test
+    void rejectsDuplicateMappingsDuringInitialization() {
+        final var duplicateMapping = new AnnotationHandlerMapping("duplicatemapping");
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("중복된 요청 매핑")
+                .hasMessageContaining("/duplicate-test")
+                .hasMessageContaining("GET");
     }
 }
