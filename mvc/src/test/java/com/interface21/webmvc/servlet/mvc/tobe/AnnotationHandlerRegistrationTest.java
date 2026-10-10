@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -21,7 +23,7 @@ class AnnotationHandlerRegistrationTest {
     }
 
     @Test
-    void registersDifferentHandlersForSameUrl() throws Exception {
+    void 같은_URL도_HTTP_메서드가_다르면_각각_등록한다() throws Exception {
         final var getHandler = getHandler("/same", RequestMethod.GET);
         final var postHandler = getHandler("/same", RequestMethod.POST);
 
@@ -34,7 +36,7 @@ class AnnotationHandlerRegistrationTest {
     }
 
     @Test
-    void registersAllSpecifiedMethods() throws Exception {
+    void 지정한_HTTP_메서드를_모두_등록한다() throws Exception {
         final var getHandler = getHandler("/multiple", RequestMethod.GET);
         final var postHandler = getHandler("/multiple", RequestMethod.POST);
 
@@ -45,7 +47,7 @@ class AnnotationHandlerRegistrationTest {
     }
 
     @Test
-    void registersAllMethodsWhenMethodIsOmitted() throws Exception {
+    void HTTP_메서드를_생략하면_지원하는_모든_메서드를_등록한다() throws Exception {
         for (RequestMethod requestMethod : RequestMethod.values()) {
             final var handler = getHandler("/all", requestMethod);
 
@@ -56,10 +58,18 @@ class AnnotationHandlerRegistrationTest {
     }
 
     @Test
-    void excludesMethodsWithoutRequestMapping() {
+    void RequestMapping이_없는_메서드는_등록하지_않는다() {
         for (RequestMethod requestMethod : RequestMethod.values()) {
             assertThat(getHandler("", requestMethod)).isNull();
             assertThat(getHandler("/unmapped", requestMethod)).isNull();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/private", "/protected", "/package-private"})
+    void public이_아닌_메서드는_등록하지_않는다(final String url) {
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            assertThat(getHandler(url, requestMethod)).isNull();
         }
     }
 
