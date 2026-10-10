@@ -10,11 +10,25 @@ public class HandlerExecutionStorage {
 
     public void add(final HandlerExecution handlerExecution, final List<HandlerKey> handlerKeys) {
         for (HandlerKey handlerKey : handlerKeys) {
-            values.put(handlerKey, handlerExecution);
+            put(handlerKey, handlerExecution);
+        }
+    }
+
+    public void addAll(final List<HandlerRegistration> registrations) {
+        for (HandlerRegistration registration : registrations) {
+            put(registration.handlerKey(), registration.handlerExecution());
         }
     }
 
     public HandlerExecution get(final HandlerKey handlerKey) {
         return values.get(handlerKey);
+    }
+
+    private void put(final HandlerKey handlerKey, final HandlerExecution handlerExecution) {
+        final HandlerExecution existing = values.putIfAbsent(handlerKey, handlerExecution);
+        if (existing != null) {
+            throw new IllegalStateException(
+                    "중복된 핸들러 매핑입니다: " + handlerKey + " -> " + existing + ", " + handlerExecution);
+        }
     }
 }

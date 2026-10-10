@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import java.util.Arrays;
@@ -67,5 +68,32 @@ class HandlerExecutionStorageTest {
 
         // then
         assertNull(found);
+    }
+
+    @Test
+    @DisplayName("핸들러를 일괄 등록할 수 있다")
+    void addAll() {
+        // given
+        HandlerKey handlerKey = new HandlerKey(TEST_URI, RequestMethod.GET);
+
+        // when
+        storage.addAll(List.of(new HandlerRegistration(handlerKey, handlerExecution)));
+
+        // then
+        assertSame(handlerExecution, storage.get(handlerKey));
+    }
+
+    @Test
+    @DisplayName("이미 등록된 키로 핸들러를 등록하면 예외가 발생한다")
+    void addAll_withDuplicatedKey() {
+        // given
+        HandlerKey handlerKey = new HandlerKey(TEST_URI, RequestMethod.GET);
+        List<HandlerRegistration> registrations = List.of(
+                new HandlerRegistration(handlerKey, handlerExecution),
+                new HandlerRegistration(handlerKey, handlerExecution)
+        );
+
+        // when & then
+        assertThrows(IllegalStateException.class, () -> storage.addAll(registrations));
     }
 }
