@@ -1,15 +1,17 @@
 package reflection;
 
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -19,34 +21,49 @@ class ReflectionTest {
     void givenObject_whenGetsClassName_thenCorrect() {
         final Class<Question> clazz = Question.class;
 
-        assertThat(clazz.getSimpleName()).isEqualTo("");
-        assertThat(clazz.getName()).isEqualTo("");
-        assertThat(clazz.getCanonicalName()).isEqualTo("");
+        System.out.println(clazz.getSimpleName());  // Question
+        System.out.println(clazz.getName()); // reflection.Question
+        System.out.println(clazz.getCanonicalName()); // reflection.Question
+
+        assertThat(clazz.getSimpleName()).isEqualTo("Question");
+        assertThat(clazz.getName()).isEqualTo("reflection.Question");
+        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
     }
 
     @Test
     void givenClassName_whenCreatesObject_thenCorrect() throws ClassNotFoundException {
+        // 런타임에 클래스를 이름으로 찾는 법. 코드의 타입을 적을 수 없을 때 효과적이다.
         final Class<?> clazz = Class.forName("reflection.Question");
 
-        assertThat(clazz.getSimpleName()).isEqualTo("");
-        assertThat(clazz.getName()).isEqualTo("");
-        assertThat(clazz.getCanonicalName()).isEqualTo("");
+        assertThat(clazz.getSimpleName()).isEqualTo("Question");
+        assertThat(clazz.getName()).isEqualTo("reflection.Question");
+        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
     }
 
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
+        // getClass()는 변수에 적힌 타입이 아니라 실제로 만들어진 객체의 타입을 런타임에 알려준다.
         final Object student = new Student();
-        final Field[] fields = null;
-        final List<String> actualFieldNames = null;
-
+        System.out.println(student);
+        final Field[] fields = student.getClass().getDeclaredFields();
+        System.out.println(Arrays.toString(fields));
+        final List<String> actualFieldNames = Arrays.stream(fields)
+                .map(Field::getName)
+                .toList();
         assertThat(actualFieldNames).contains("name", "age");
     }
 
     @Test
     void givenClass_whenGetsMethods_thenCorrect() {
+        // 런타임때, 클래스에서 필드 가져오기
         final Class<?> animalClass = Student.class;
-        final Method[] methods = null;
-        final List<String> actualMethods = null;
+        System.out.println(animalClass);
+        final Method[] methods = animalClass.getDeclaredMethods();
+        System.out.println(Arrays.toString(methods));
+        final List<String> actualMethods = Arrays.stream(methods)
+                .map(Method::getName)
+                .toList();
+        System.out.println(actualMethods);
 
         assertThat(actualMethods)
                 .hasSize(3)
@@ -56,20 +73,28 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsAllConstructors_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Constructor<?>[] constructors = null;
+        final Constructor<?>[] constructors = questionClass.getConstructors();
+        System.out.println(Arrays.toString(constructors));
 
         assertThat(constructors).hasSize(2);
     }
 
     @Test
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
+        // 클래스에서 생성자가 여러개일 때, 파라미터로 구분하는 법
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = null;
-        final Constructor<?> secondConstructor = null;
+        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class,
+                String.class);
+        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructor(long.class, String.class,
+                String.class, String.class, Date.class, int.class);
 
-        final Question firstQuestion = null;
-        final Question secondQuestion = null;
+        System.out.println(firstConstructor);
+        System.out.println(secondConstructor);
+
+        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2",
+                Date.from(Instant.now()), 1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -82,15 +107,16 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = null;
+        final Field[] fields = questionClass.getFields();
 
         assertThat(fields).hasSize(0);
     }
 
     @Test
     void givenClass_whenGetsDeclaredFields_thenCorrect() {
+        // getDeclaredFields는 순서가 보장되지 않는다.
         final Class<?> questionClass = Question.class;
-        final Field[] fields = null;
+        final Field[] fields = questionClass.getDeclaredFields();
 
         assertThat(fields).hasSize(6);
         assertThat(fields[0].getName()).isEqualTo("questionId");
@@ -99,7 +125,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsFieldsByName_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
-        final Field field = null;
+        final Field field = questionClass.getDeclaredField("questionId");
 
         assertThat(field.getName()).isEqualTo("questionId");
     }
@@ -107,7 +133,9 @@ class ReflectionTest {
     @Test
     void givenClassField_whenGetsType_thenCorrect() throws Exception {
         final Field field = Question.class.getDeclaredField("questionId");
-        final Class<?> fieldClass = null;
+        System.out.println(field);
+        final Class<?> fieldClass = field.getType();
+        System.out.println(fieldClass);
 
         assertThat(fieldClass.getSimpleName()).isEqualTo("long");
     }
@@ -115,15 +143,18 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = null;
-        final Field field = null;
+        final Student student = (Student) studentClass.getDeclaredConstructor().newInstance();
+        final Field field = student.getClass().getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
 
+        // 접근 제어자의 검사를 건너뛰게 한다. private 캡슐화를 밖에서 뚫게 한다.
+        field.setAccessible(true);
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
 
-        field.set(null, null);
+        // student 객체의 age에 99를 넣는다
+        field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
