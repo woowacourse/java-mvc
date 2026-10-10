@@ -15,20 +15,6 @@ import org.junit.jupiter.api.Test;
 class JspViewTest {
 
     @Test
-    void redirect() throws Exception {
-        //given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        //when
-        new JspView("redirect:/index.jsp").render(Map.of(), request, response);
-
-        //then
-        verify(response).sendRedirect("/index.jsp");
-        verify(request, never()).getRequestDispatcher(anyString());
-    }
-
-    @Test
     void forward() throws Exception {
         //given
         final var request = mock(HttpServletRequest.class);

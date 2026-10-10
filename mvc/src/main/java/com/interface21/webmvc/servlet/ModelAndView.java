@@ -6,11 +6,16 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private final Object view;
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
         this.view = view;
+        this.model = new HashMap<>();
+    }
+
+    public ModelAndView(final String viewName) {
+        this.view = viewName;
         this.model = new HashMap<>();
     }
 
@@ -27,7 +32,23 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
+    public boolean isReference() {
+        return view instanceof String;
+    }
+
+    public String getViewName() {
+        if (isReference()) {
+            return (String) view;
+        }
+
+        return null;
+    }
+
     public View getView() {
-        return view;
+        if (!isReference()) {
+            return  (View) view;
+        }
+
+        return null;
     }
 }
