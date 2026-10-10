@@ -52,8 +52,8 @@ public class JsonViewTest {
         jsonView.render(model, request, response);
 
         // then
-        String json = response.getContentAsString();                // 봉투에서 글자 꺼내기
-        Map<?, ?> result = new ObjectMapper().readValue(json, Map.class);  // 글자 → Map으로 되돌리기
+        String json = response.getContentAsString();
+        Map<?, ?> result = new ObjectMapper().readValue(json, Map.class);
         assertThat(result).isEqualTo(model);
     }
 }
