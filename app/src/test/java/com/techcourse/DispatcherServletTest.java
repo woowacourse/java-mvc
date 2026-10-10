@@ -22,7 +22,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void rendersForwardView() throws Exception {
+    void 홈_요청을_처리하고_시작_JSP로_전달한다() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
@@ -36,7 +36,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void rendersRedirectView() throws Exception {
+    void 로그아웃_요청을_처리하고_홈_주소로_이동한다() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
