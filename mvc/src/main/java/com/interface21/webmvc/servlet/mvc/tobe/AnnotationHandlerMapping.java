@@ -36,7 +36,14 @@ public class AnnotationHandlerMapping {
                 for (Method method : clazz.getDeclaredMethods()) {
                     if (method.isAnnotationPresent(RequestMapping.class)) {
                         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                        for (RequestMethod requestMethod : annotation.method()) {
+
+                        RequestMethod[] requestMethods = annotation.method();
+
+                        if (annotation.method().length == 0) {
+                            requestMethods = RequestMethod.values();
+                        }
+
+                        for (RequestMethod requestMethod : requestMethods) {
                             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
                             handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
                         }
