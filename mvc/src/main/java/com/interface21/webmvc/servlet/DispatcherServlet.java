@@ -1,12 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,28 +19,6 @@ public class DispatcherServlet extends HttpServlet {
                              HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdapterRegistry = handlerAdapterRegistry;
-    }
-
-    @Override
-    public void init() throws ServletException {
-        addHandlerMapping();
-        addHandlerAdapter();
-    }
-
-    public void addHandlerMapping() throws ServletException {
-        AnnotationHandlerMapping annotation =
-                new AnnotationHandlerMapping("com.techcourse.controller");
-        try {
-            annotation.initialize();
-        } catch (ReflectiveOperationException e) {
-            throw new ServletException("핸들러 매핑 초기화 실패", e);
-        }
-        handlerMappingRegistry.addHandlerMapping(annotation);
-    }
-
-    public void addHandlerAdapter() {
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionAdapter());
     }
 
     @Override
