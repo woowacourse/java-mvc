@@ -35,9 +35,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping() throws ServletException {
-        ManualHandlerMapping manual = new ManualHandlerMapping();
-        manual.initialize();
-
         AnnotationHandlerMapping annotation =
                 new AnnotationHandlerMapping("com.techcourse.controller");
         try {
@@ -45,7 +42,6 @@ public class DispatcherServlet extends HttpServlet {
         } catch (ReflectiveOperationException e) {
             throw new ServletException("핸들러 매핑 초기화 실패", e);
         }
-        handlerMappingRegistry.addHandlerMapping(manual);
         handlerMappingRegistry.addHandlerMapping(annotation);
     }
 
