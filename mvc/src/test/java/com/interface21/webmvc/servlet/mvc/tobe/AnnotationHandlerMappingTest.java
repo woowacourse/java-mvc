@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,5 +48,16 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void supportsAllHttpMethodsWhenMethodIsOmitted() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/all-test");
+
+        for (final RequestMethod method : RequestMethod.values()) {
+            when(request.getMethod()).thenReturn(method.name());
+            assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+        }
     }
 }
