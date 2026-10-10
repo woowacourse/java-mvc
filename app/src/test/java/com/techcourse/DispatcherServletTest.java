@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.techcourse.controller.UserSession;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,16 +67,19 @@ class DispatcherServletTest {
     void runsPostHandlerForRegister() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
+        final var account = "new-user-" + UUID.randomUUID();
 
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
-        when(request.getParameter("account")).thenReturn("new-user");
+        when(request.getParameter("account")).thenReturn(account);
         when(request.getParameter("password")).thenReturn("password");
         when(request.getParameter("email")).thenReturn("new-user@example.com");
 
         dispatcherServlet.service(request, response);
 
         verify(response).sendRedirect("/index.jsp");
+        assertThat(InMemoryUserRepository.findByAccount(account))
+                .hasValueSatisfying(user -> assertThat(user.checkPassword("password")).isTrue());
     }
 
     @Test
