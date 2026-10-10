@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -33,6 +34,15 @@ public class AnnotationHandlerMapping {
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        final String uri = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+
+        return handlerExecutions.get(handlerKey);
     }
 
     private void registerRequestMappings(final Class<?> controllerClass, final Object controller) {
@@ -71,13 +81,5 @@ public class AnnotationHandlerMapping {
             return RequestMethod.values();
         }
         return requestMethods;
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final String uri = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-        return handlerExecutions.get(handlerKey);
     }
 }
