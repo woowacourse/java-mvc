@@ -3,7 +3,7 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.techcourse.controller.LoginController;
-import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +33,11 @@ class ManualHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/login");
         assertThat(handlerMapping.getHandler(request)).isInstanceOf(LoginController.class);
 
+        when(request.getRequestURI()).thenReturn("/register/view");
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(RegisterViewController.class);
+
         when(request.getRequestURI()).thenReturn("/register");
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(RegisterController.class);
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 
     @Test
