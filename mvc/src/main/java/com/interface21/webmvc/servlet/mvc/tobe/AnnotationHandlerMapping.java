@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -21,6 +22,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutionStorage = new HandlerExecutionStorage();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
@@ -30,6 +32,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutionStorage.get(new HandlerKey(request));
     }
