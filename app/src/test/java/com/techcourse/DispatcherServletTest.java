@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -28,7 +29,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
         dispatcherServlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
