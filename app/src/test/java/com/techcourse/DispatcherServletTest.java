@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -8,12 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -243,5 +247,43 @@ class DispatcherServletTest {
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         verify(response, never()).sendRedirect(anyString());
         verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void returnsUserAsJson() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        assertEquals("{\"account\":\"gugu\"}", body.toString());
+        final var order = inOrder(response);
+        order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        order.verify(response).getWriter();
+        verify(response, never()).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).sendRedirect(anyString());
+        verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void returnsNotFoundForUnsupportedUserApiMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("POST");
+        final var servlet = new DispatcherServlet();
+        servlet.init();
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).getWriter();
     }
 }
