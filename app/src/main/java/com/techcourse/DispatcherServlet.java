@@ -1,29 +1,53 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
-
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        initHandlerMappingRegistry();
+        initHandlerAdapterRegistry();
+    }
+
+    private void initHandlerMappingRegistry() {
+        // 실제 controller가 있는 "com.techcourse" 전달
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        annotationHandlerMapping.initialize();
+
+        final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+
+
+    }
+
+    private void initHandlerAdapterRegistry() {
+        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
+        final var handlerExecutionAdapter = new HandlerExecutionAdapter();
+
+        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerExecutionAdapter);
     }
 
     @Override
@@ -32,14 +56,16 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            JspView jspView = new JspView(viewName);
-            jspView.render(Map.of(), request, response);
+            final Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new IllegalStateException("등록된 핸들러가 없습니다: " + request.getRequestURI()));
+
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView mav = handlerAdapter.handle(handler, request, response);
+            mav.getView().render(mav.getModel(), request, response);
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
     }
 }

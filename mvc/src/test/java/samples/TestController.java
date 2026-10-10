@@ -58,4 +58,24 @@ public class TestController {
         return new ModelAndView(new JspView(""))
                 .addObject("handler", handler);
     }
+
+    @Controller
+    public static class OverridingController extends ParentController {
+
+        @Override
+        @RequestMapping(value = "/overridden", method = RequestMethod.GET)
+        public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+            return new ModelAndView(new JspView(""))
+                    .addObject("handler", "child");
+        }
+    }
+
+    public static class ParentController {
+
+        @RequestMapping(value = "/overridden", method = RequestMethod.GET)
+        public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+            return new ModelAndView(new JspView(""))
+                    .addObject("handler", "parent");
+        }
+    }
 }

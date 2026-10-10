@@ -119,6 +119,28 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("RequestMapping이 없는 메서드는 핸들러로 등록하지 않는다")
+    void RequestMapping이_없는_메서드는_등록하지_않는다() {
+        final var request = request("/not-mapped", RequestMethod.GET);
+
+        final var handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isNull();
+    }
+
+    @Test
+    @DisplayName("오버라이드 관계에서는 가장 구체적인 자식 메서드를 등록한다")
+    void 가장_구체적인_자식_메서드를_등록한다() throws Exception {
+        final var request = request("/overridden", RequestMethod.GET);
+        final var response = mock(HttpServletResponse.class);
+
+        final var handler = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThat(handler.handle(request, response).getObject("handler"))
+                .isEqualTo("child");
+    }
+
+    @Test
     @DisplayName("여러 HTTP 메서드 매핑에 포함되지 않은 HTTP 메서드는 매핑하지 않는다")
     void 매핑되지_않은_HTTP_메서드를_제외한다() {
         final var request = request("/multiple-methods", RequestMethod.PUT);
