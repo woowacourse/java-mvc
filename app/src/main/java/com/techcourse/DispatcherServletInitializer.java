@@ -1,6 +1,12 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletContext;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.web.WebApplicationInitializer;
@@ -14,10 +20,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(createHandlerMappings(), createHandlerAdapters());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +36,19 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private List<HandlerMapping> createHandlerMappings() {
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
+        annotationHandlerMapping.initialize();
+
+        return List.of(manualHandlerMapping, annotationHandlerMapping);
+    }
+
+    private List<HandlerAdapter> createHandlerAdapters() {
+        return List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
     }
 }
