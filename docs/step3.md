@@ -14,4 +14,4 @@
 - [x] `asis` 패키지의 레거시 코드를 삭제해도 서비스가 정상 동작한다.
     - [x] `mvc.asis` 패키지를 제거한다.
     - [x] `ManualHandlerMapping`을 제거한다.
-- [ ] Legacy MVC를 제거한 뒤 `DispatcherServlet`을 mvc 패키지로 이동한다.
+- [x] Legacy MVC를 제거한 뒤 `DispatcherServlet`을 mvc 패키지로 이동한다.
