@@ -46,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            final ModelAndView modelAndView = getModelAndView(request, response, handler);
+            final ModelAndView modelAndView = executeHandler(request, response, handler);
 
             final var view = modelAndView.getView();
             final var model = modelAndView.getModel();
@@ -69,7 +69,7 @@ public class DispatcherServlet extends HttpServlet {
         throw new RuntimeException("실행할 수 있는 핸들러가 없습니다.");
     }
 
-    private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    private ModelAndView executeHandler(HttpServletRequest request, HttpServletResponse response, Object handler) {
         try {
             for (HandlerAdapter handlerAdapter : handlerAdapters) {
                 if (handlerAdapter.support(handler)) {
