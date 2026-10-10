@@ -51,6 +51,23 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void mapsSameUrlByHttpMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/same-url");
+
+        when(request.getMethod()).thenReturn("GET");
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(request);
+        final var getModelAndView = getHandler.handle(request, response);
+        assertThat(getModelAndView.getObject("method")).isEqualTo("GET");
+
+        when(request.getMethod()).thenReturn("POST");
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(request);
+        final var postModelAndView = postHandler.handle(request, response);
+        assertThat(postModelAndView.getObject("method")).isEqualTo("POST");
+    }
+
+    @Test
     void supportsAllHttpMethodsWhenMethodIsOmitted() {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/all-test");
