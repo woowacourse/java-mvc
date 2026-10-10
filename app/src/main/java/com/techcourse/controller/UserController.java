@@ -9,6 +9,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,17 +17,28 @@ import org.slf4j.LoggerFactory;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final JsonView jsonView = new JsonView();
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+        if (account == null || account.isBlank()) {
+            return error(response, HttpServletResponse.SC_BAD_REQUEST, "account parameter is required");
+        }
 
-        modelAndView.addObject("user", user);
-        return modelAndView;
+        return InMemoryUserRepository.findByAccount(account)
+                .map(this::userResponse)
+                .orElseGet(() -> error(response, HttpServletResponse.SC_NOT_FOUND, "user not found"));
+    }
+
+    private ModelAndView userResponse(final User user) {
+        return new ModelAndView(jsonView).addObject("user", user);
+    }
+
+    private ModelAndView error(final HttpServletResponse response, final int status, final String message) {
+        response.setStatus(status);
+        return new ModelAndView(jsonView).addObject("error", Map.of("message", message));
     }
 }

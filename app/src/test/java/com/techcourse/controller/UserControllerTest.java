@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,11 +67,29 @@ class UserControllerTest {
     }
 
     @Test
-    void 존재하지_않는_계정은_조회_예외를_발생시킨다() {
+    void 존재하지_않는_계정은_404와_JSON_오류를_응답한다() throws Exception {
         when(request.getParameter("account")).thenReturn("missing-user-" + UUID.randomUUID());
 
-        assertThatThrownBy(() -> new UserController().show(request, response))
-                .isInstanceOf(NoSuchElementException.class);
+        assertErrorResponse(HttpServletResponse.SC_NOT_FOUND, "user not found");
+    }
+
+    @Test
+    void 계정_파라미터가_없으면_400과_JSON_오류를_응답한다() throws Exception {
+        assertErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "account parameter is required");
+    }
+
+    @Test
+    void 계정이_빈_문자열이면_400과_JSON_오류를_응답한다() throws Exception {
+        when(request.getParameter("account")).thenReturn("");
+
+        assertErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "account parameter is required");
+    }
+
+    @Test
+    void 계정이_공백이면_400과_JSON_오류를_응답한다() throws Exception {
+        when(request.getParameter("account")).thenReturn(" \t ");
+
+        assertErrorResponse(HttpServletResponse.SC_BAD_REQUEST, "account parameter is required");
     }
 
     @Test
@@ -81,5 +98,19 @@ class UserControllerTest {
 
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
                 .isInstanceOf(RequestMethodNotSupportedException.class);
+    }
+
+    private void assertErrorResponse(final int status, final String message) throws Exception {
+        final StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        final ModelAndView modelAndView = new UserController().show(request, response);
+        final View view = modelAndView.getView();
+        final Map<String, Object> model = modelAndView.getModel();
+        view.render(model, request, response);
+
+        verify(response).setStatus(status);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"message\":\"" + message + "\"}");
     }
 }
