@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
     }
 
