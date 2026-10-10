@@ -31,4 +31,11 @@ public class User {
                 ", password='" + password + '\'' +
                 '}';
     }
+    public long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
