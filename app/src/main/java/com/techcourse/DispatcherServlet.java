@@ -1,11 +1,17 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +20,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private static final String BASE_PACKAGE = "com.techcourse";
+
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings.add(new AnnotationHandlerMapping(BASE_PACKAGE));
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.forEach(HandlerMapping::initialize);
+
+        handlerAdapters.add(new AnnotationHandlerAdapter());
+        handlerAdapters.add(new ManualHandlerAdapter());
     }
 
     @Override
@@ -32,15 +45,41 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final var view = new JspView(viewName);
-            // 기존 Controller는 뷰 이름만 반환하므로 전달할 모델이 없다.
-            // 어노테이션 기반 Controller와 통합할 때 ModelAndView의 model을 전달한다.
-            view.render(Map.of(), request, response);
+            final Object handler = getHandler(request);
+            final ModelAndView modelAndView = executeHandler(request, response, handler);
+
+            final var view = modelAndView.getView();
+            final var model = modelAndView.getModel();
+
+            view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+
+        throw new RuntimeException("실행할 수 있는 핸들러가 없습니다.");
+    }
+
+    private ModelAndView executeHandler(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        try {
+            for (HandlerAdapter handlerAdapter : handlerAdapters) {
+                if (handlerAdapter.support(handler)) {
+                    return handlerAdapter.handle(request, response, handler);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("ModelAndView 생성 중 실패했습니다.", e);
+        }
+
+        throw new RuntimeException("실행할 수 있는 Adapter가 없습니다.");
     }
 }
