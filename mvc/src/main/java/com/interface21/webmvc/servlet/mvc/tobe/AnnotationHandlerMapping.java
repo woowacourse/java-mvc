@@ -12,14 +12,18 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
+    private final Map<Class<?>, Object> controllers;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
+        this.controllers = new HashMap<>();
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
+        final var controllerScanner = new ControllerScanner(basePackage);
+        controllers.putAll(controllerScanner.getControllers());
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
