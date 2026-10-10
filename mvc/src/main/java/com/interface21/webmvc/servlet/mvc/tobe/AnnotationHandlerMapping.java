@@ -58,7 +58,12 @@ public class AnnotationHandlerMapping {
 
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(new HandlerKey(url, requestMethod), handlerExecution);
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            HandlerExecution existing = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+            if (existing != null) {
+                throw new IllegalStateException(String.format(
+                        "중복된 핸들러 매핑: %s %s [%s, %s]", requestMethod, url, existing, handlerExecution));
+            }
         }
     }
 
