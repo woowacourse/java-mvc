@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +25,7 @@ class RequestMappingHandlerAdapterTest {
     @DisplayName("HandlerExecution 타입이 아닌 핸들러는 지원하지 않는다.")
     @Test
     void notSupportsOtherHandler() {
-        final var handler = new ForwardController("/index.jsp");
+        final var handler = new Object();
 
         assertThat(adapter.supports(handler)).isFalse();
     }
