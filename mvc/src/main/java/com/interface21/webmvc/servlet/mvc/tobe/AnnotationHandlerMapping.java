@@ -1,19 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,17 +24,12 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        for (Class<?> controllerClass : typesAnnotatedWith) {
-            Object controller;
-
-            try {
-                controller = controllerClass.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 객체 생성에 실패했습니다.", e);
-            }
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Class<?> controllerClass = entry.getKey();
+            Object controller = entry.getValue();
 
             for (Method declaredMethod : controllerClass.getDeclaredMethods()) {
                 if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
@@ -61,10 +54,11 @@ public class AnnotationHandlerMapping {
                 }
             }
         }
-        
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Optional<HandlerExecution> getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
