@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,49 +10,42 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
         handlerExecutions.clear();
 
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> controllerClass : controllerClasses) {
-            registerController(controllerClass);
-        }
+        controllers.forEach(this::registerController);
 
         log.info("Initialized AnnotationHandlerMapping with {} handlers!", handlerExecutions.size());
     }
 
-    private void registerController(final Class<?> controllerClass) {
-        try {
-            final Object controller = controllerClass.getDeclaredConstructor().newInstance();
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-                if (!Modifier.isPublic(method.getModifiers())) {
-                    throw new IllegalStateException("요청 매핑 메서드는 public이어야 합니다: "
-                            + controllerClass.getName() + "#" + method.getName());
-                }
-                registerHandler(controller, method, requestMapping);
+    private void registerController(final Class<?> controllerClass, final Object controller) {
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+            if (requestMapping == null) {
+                continue;
             }
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 초기화에 실패했습니다: " + controllerClass.getName(), e);
+
+            if (!Modifier.isPublic(method.getModifiers())) {
+                throw new IllegalStateException("요청 매핑 메서드는 public이어야 합니다: "
+                        + controllerClass.getName() + "#" + method.getName());
+            }
+            registerHandler(controller, method, requestMapping);
         }
     }
 
