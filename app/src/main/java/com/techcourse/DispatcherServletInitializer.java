@@ -1,9 +1,11 @@
 package com.techcourse;
 
+import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.HandlerScanner;
 import jakarta.servlet.ServletContext;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -14,10 +16,13 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final List<String> HANDLER_BASE_PACKAGES = List.of("com.techcourse", "com.interface21");
+    private static final List<String> CONTROLLER_BASE_PACKAGES = List.of("com.techcourse.controller");
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var scanner = new HandlerScanner(HANDLER_BASE_PACKAGES, CONTROLLER_BASE_PACKAGES);
+        final var dispatcherServlet = new DispatcherServlet(scanner);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
