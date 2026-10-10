@@ -6,6 +6,7 @@ import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,9 +16,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -174,6 +178,26 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\",\"email\":\"hkkang@woowahan.com\"}");
+    }
+
+    @Test
+    @DisplayName("알 수 없는 계정으로 조회하면 원인 예외를 보존한다")
+    void userRequestPreservesCauseChain() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("unknown");
+
+        ServletException exception = assertThrows(
+                ServletException.class,
+                () -> servlet.service(request, response)
+        );
+
+        Throwable invocationException = exception.getCause();
+        assertThat(invocationException).isInstanceOf(InvocationTargetException.class);
+        assertThat(invocationException.getCause()).isInstanceOf(NoSuchElementException.class);
     }
 }
