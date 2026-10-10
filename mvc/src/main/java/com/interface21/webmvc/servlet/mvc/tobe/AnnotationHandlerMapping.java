@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class AnnotationHandlerMapping {
     private void registerHandlers(final Class<?> controllerClass, final Object controller) {
         for (Method method : controllerClass.getDeclaredMethods()) {
             final var requestMapping = method.getAnnotation(RequestMapping.class);
-            if (requestMapping != null) {
+            if (requestMapping != null && Modifier.isPublic(method.getModifiers())) {
                 registerHandler(controller, method, requestMapping);
             }
         }

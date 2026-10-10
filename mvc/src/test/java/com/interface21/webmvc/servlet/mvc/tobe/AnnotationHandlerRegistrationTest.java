@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -60,6 +62,14 @@ class AnnotationHandlerRegistrationTest {
         for (RequestMethod requestMethod : RequestMethod.values()) {
             assertThat(getHandler("", requestMethod)).isNull();
             assertThat(getHandler("/unmapped", requestMethod)).isNull();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/private", "/protected", "/package-private"})
+    void public이_아닌_메서드는_등록하지_않는다(final String url) {
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            assertThat(getHandler(url, requestMethod)).isNull();
         }
     }
 

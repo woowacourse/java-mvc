@@ -34,4 +34,19 @@ public class RegistrationController {
     public ModelAndView unmapped(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("")).addObject("method", "unmapped");
     }
+
+    @RequestMapping("/private")
+    private ModelAndView privateHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping("/protected")
+    protected ModelAndView protectedHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping("/package-private")
+    ModelAndView packagePrivateHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
 }
