@@ -1,16 +1,14 @@
 package com.interface21.webmvc.servlet.mvc;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,6 +53,27 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 요청_메서드를_지정하지_않으면_모든_메서드를_매핑한다() {
+        var mapping = new AnnotationHandlerMapping("allMethodsFixture");
+        mapping.initialize();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/all-methods");
+
+        List<Object> handlers = new ArrayList<>();
+        for (RequestMethod method : RequestMethod.values()) {
+            when(request.getMethod()).thenReturn(method.name());
+
+            Object handler = mapping.getHandler(request);
+            handlers.add(handler);
+        }
+
+        assertThat(handlers)
+                .hasSize(RequestMethod.values().length)
+                .doesNotContainNull();
     }
 
     @Test
