@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 -- 어노테이션을 읽어서 [경로] + [메서드] => [실행 대상] 관계를 등록/조회한다.
 -- 조회된 [실행 대상], 컨트롤러 메서드의 실행 자체는 HandlerExecution 의 책임.
  */
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -90,6 +90,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
 //        경로, 메서드, 인스턴스 객체, 핸들러를 등록의 역순으로 꺼낸다.
         RequestMethod requestMethod;
