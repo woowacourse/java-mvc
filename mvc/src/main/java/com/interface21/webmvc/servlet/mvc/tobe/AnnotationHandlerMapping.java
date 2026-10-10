@@ -44,12 +44,30 @@ public class AnnotationHandlerMapping implements HandlerMapping{
                 controllerClass,
                 ReflectionUtils.withAnnotation(RequestMapping.class)
         );
+        final Map<Method, RequestMapping> handlerMethods = new HashMap<>();
 
         for (Method method : methods) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-            registerMethod(method, requestMapping, controller);
+            final Method handlerMethod = getMostSpecificMethod(method, controllerClass);
+            final RequestMapping requestMapping = getRequestMapping(handlerMethod, method);
+            handlerMethods.put(handlerMethod, requestMapping);
         }
+
+        for (Map.Entry<Method, RequestMapping> entry : handlerMethods.entrySet()) {
+            registerMethod(entry.getKey(), entry.getValue(), controller);
+        }
+    }
+
+    private Method getMostSpecificMethod(Method method, Class<?> controllerClass) {
+        try {
+            return controllerClass.getMethod(method.getName(), method.getParameterTypes());
+        } catch (NoSuchMethodException e) {
+            return method;
+        }
+    }
+
+    private RequestMapping getRequestMapping(Method handlerMethod, Method method) {
+        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
+        return requestMapping != null ? requestMapping : method.getAnnotation(RequestMapping.class);
     }
 
     private void registerMethod(Method method, RequestMapping requestMapping, Object controller) {
