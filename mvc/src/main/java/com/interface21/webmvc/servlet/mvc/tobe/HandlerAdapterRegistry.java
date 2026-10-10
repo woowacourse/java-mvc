@@ -1,13 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapterRegistry {
-    private final List<HandlerAdapter> handlerAdapters;
-
-    public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
-    }
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);

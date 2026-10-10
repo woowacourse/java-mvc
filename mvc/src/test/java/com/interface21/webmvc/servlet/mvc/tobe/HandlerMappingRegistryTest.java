@@ -4,9 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,7 +18,7 @@ class HandlerMappingRegistryTest {
         final var handlerMapping = mock(HandlerMapping.class);
         when(handlerMapping.getHandler(request)).thenReturn(handler);
 
-        final var registry = new HandlerMappingRegistry(new ArrayList<>());
+        final var registry = new HandlerMappingRegistry();
         registry.addHandlerMapping(handlerMapping);
 
         assertThat(registry.getHandler(request)).contains(handler);
@@ -32,9 +29,8 @@ class HandlerMappingRegistryTest {
     void getEmptyHandler() {
         final var request = mock(HttpServletRequest.class);
         final var handlerMapping = mock(HandlerMapping.class);
-        final var registry = new HandlerMappingRegistry(
-                new ArrayList<>(List.of(handlerMapping))
-        );
+        final var registry = new HandlerMappingRegistry();
+        registry.addHandlerMapping(handlerMapping);
 
         assertThat(registry.getHandler(request)).isEmpty();
     }
