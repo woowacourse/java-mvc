@@ -1,11 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,29 +12,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final var controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controllerClass : controllerClasses) {
-            registerHandlers(controllerClass);
-        }
+        controllerScanner.instantiateControllers(controllerScanner.getControllers())
+                .values()
+                .forEach(this::registerHandlers);
 
         log.info("Initialized AnnotationHandlerMapping with {} handlers", handlerExecutions.size());
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod;
         try {
@@ -49,15 +45,8 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void registerHandlers(final Class<?> controllerClass) {
-        final Object controller;
-        try {
-            controller = controllerClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException exception) {
-            throw new IllegalStateException("Failed to register controller: " + controllerClass.getName(), exception);
-        }
-
-        for (Method method : controllerClass.getDeclaredMethods()) {
+    private void registerHandlers(final Object controller) {
+        for (Method method : controller.getClass().getDeclaredMethods()) {
             registerHandler(controller, method);
         }
     }
@@ -68,21 +57,35 @@ public class AnnotationHandlerMapping {
             return;
         }
 
+        validateHandlerMethod(method);
+        registerHandlerExecution(controller, method, requestMapping);
+    }
+
+    private void validateHandlerMethod(final Method method) {
         if (!Arrays.equals(method.getParameterTypes(),
                 new Class<?>[]{HttpServletRequest.class, HttpServletResponse.class})) {
             throw new IllegalStateException("Handler must accept request and response: " + method);
         }
+    }
 
+    private void registerHandlerExecution(final Object controller, final Method method,
+                                          final RequestMapping requestMapping) {
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        final boolean isFallbackMapping = requestMapping.method().length == 0;
         for (RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            if (isFallbackMapping && handlerExecutions.containsKey(handlerKey)) {
-                continue;
-            }
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(), method.getName());
+            registerHandlerMethod(handlerExecution, requestMapping, requestMethod);
         }
+    }
+
+    private void registerHandlerMethod(final HandlerExecution handlerExecution, final RequestMapping requestMapping,
+                                       final RequestMethod requestMethod) {
+        final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+        final boolean isFallbackMapping = requestMapping.method().length == 0;
+        if (isFallbackMapping && handlerExecutions.containsKey(handlerKey)) {
+            return;
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
+        log.debug("Mapped {} {} to {}", requestMethod, requestMapping.value(),
+                handlerExecution.getHandlerMethod().getName());
     }
 
     private RequestMethod[] resolveRequestMethods(final RequestMapping requestMapping) {
