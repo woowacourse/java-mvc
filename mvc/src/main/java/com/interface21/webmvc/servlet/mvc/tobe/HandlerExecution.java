@@ -12,6 +12,7 @@ public class HandlerExecution {
     private final Method method;
 
     public HandlerExecution(Object handler, Method method) {
+        validate(method);
         this.handler = handler;
         this.method = method;
     }
@@ -22,6 +23,18 @@ public class HandlerExecution {
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof Exception ex) throw ex;
             throw e;
+        }
+    }
+
+    private void validate(Method method) {
+        if (!ModelAndView.class.isAssignableFrom(method.getReturnType())) {
+            throw new IllegalStateException("핸들러 반환 타입은 ModelAndView여야 합니다: " + method);
+        }
+        Class<?>[] params = method.getParameterTypes();
+        if (params.length != 2
+            || !params[0].isAssignableFrom(HttpServletRequest.class)
+            || !params[1].isAssignableFrom(HttpServletResponse.class)) {
+            throw new IllegalStateException("핸들러 파라미터는 (HttpServletRequest, HttpServletResponse)여야 합니다: " + method);
         }
     }
 }
