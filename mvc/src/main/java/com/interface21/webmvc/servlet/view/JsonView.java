@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,8 +15,8 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 1. 응답 헤더 및 인코딩 설정 (JSON 응답 명시)
-        response.setContentType("application/json;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setCharacterEncoding(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         // 2. Model Map을 JSON 문자열로 변환
         String jsonResult = objectMapper.writeValueAsString(model);
