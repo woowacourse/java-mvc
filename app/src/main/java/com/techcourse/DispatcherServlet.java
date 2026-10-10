@@ -32,6 +32,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
@@ -46,8 +50,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(
-                        "요청을 처리할 핸들러를 찾을 수 없습니다: " + request.getMethod() + " " + request.getRequestURI()));
+                .orElse(null);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
