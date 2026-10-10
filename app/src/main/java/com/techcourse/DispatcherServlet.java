@@ -31,15 +31,17 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappingRegistry() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         // 실제 controller가 있는 "com.techcourse" 전달
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
 
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+        final var manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+
+
     }
 
     private void initHandlerAdapterRegistry() {
