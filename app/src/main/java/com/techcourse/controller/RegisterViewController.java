@@ -8,6 +8,6 @@ public class RegisterViewController implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "/register.jsp";
+        return "redirect:/register";
     }
 }
