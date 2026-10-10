@@ -5,6 +5,7 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.mock;
 class HandlerExecutionTest {
 
     @Test
+    @DisplayName("컨트롤러 메서드에 요청과 응답을 전달하여 실행한다")
     void invokesControllerMethodWithRequestAndResponse() throws Exception {
         final var controller = new TestController();
         final var method = TestController.class.getDeclaredMethod(
