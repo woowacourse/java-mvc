@@ -1,9 +1,9 @@
 package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletContext;
@@ -24,9 +24,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final List<HandlerMapping> mappings = List.of(
-                new AnnotationHandlerMapping("com.techcourse.controller"),
-                new ManualHandlerMapping());
-        final List<HandlerAdapter> adapters = List.of(new HandlerExecutionAdapter(), new ControllerAdapter());
+                new AnnotationHandlerMapping("com.techcourse.controller"));
+        final List<HandlerAdapter> adapters = List.of(new HandlerExecutionAdapter());
         final var dispatcherServlet = new DispatcherServlet(mappings, adapters);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
