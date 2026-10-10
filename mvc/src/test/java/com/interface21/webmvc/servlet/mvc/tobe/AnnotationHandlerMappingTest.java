@@ -113,4 +113,21 @@ class AnnotationHandlerMappingTest {
 
         assertThat(handlerMapping.getHandler(request)).isNull();
     }
+
+    @Test
+    void sharesOneControllerInstanceAcrossMappedMethods() throws Exception {
+        final var getRequest = mock(HttpServletRequest.class);
+        final var postRequest = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(getRequest.getRequestURI()).thenReturn("/shared-controller");
+        when(getRequest.getMethod()).thenReturn("GET");
+        when(postRequest.getRequestURI()).thenReturn("/shared-controller");
+        when(postRequest.getMethod()).thenReturn("POST");
+
+        final var getHandler = (HandlerExecution) handlerMapping.getHandler(getRequest);
+        final var postHandler = (HandlerExecution) handlerMapping.getHandler(postRequest);
+
+        assertThat(getHandler.handle(getRequest, response).getObject("count")).isEqualTo(1);
+        assertThat(postHandler.handle(postRequest, response).getObject("count")).isEqualTo(2);
+    }
 }
