@@ -63,6 +63,23 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("컨트롤러의 모델을 JSP 요청 속성으로 전달한다")
+    void passesModelToView() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+
+        when(request.getRequestURI()).thenReturn("/model-test");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/model-test.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(request).setAttribute("message", "hello");
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     @DisplayName("같은 URL의 POST 요청은 애노테이션 컨트롤러의 저장 메서드를 실행한다")
     void runsPostHandlerForRegister() throws Exception {
         final var request = mock(HttpServletRequest.class);
