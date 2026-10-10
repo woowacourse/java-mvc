@@ -46,8 +46,14 @@ public class AnnotationHandlerMapping {
                 continue;
             }
 
-            HandlerKey handlerKey = new HandlerKey(mapping.value(), mapping.method()[0]);
-            handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
+            RequestMethod[] methods = mapping.method();
+            if (methods.length == 0) {
+                methods = RequestMethod.values();
+            }
+            for (RequestMethod requestMethod : methods) {
+                HandlerKey handlerKey = new HandlerKey(mapping.value(), requestMethod);
+                handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
+            }
         }
     }
 
