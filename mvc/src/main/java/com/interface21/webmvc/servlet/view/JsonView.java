@@ -31,9 +31,8 @@ public class JsonView implements View {
         String jsonResult = objectMapper.writeValueAsString(jsonTarget);
 
         // 3. Response 출력 스트림을 얻어 클라이언트에 전송
-        try (PrintWriter writer = response.getWriter()) {
-            writer.write(jsonResult);
-            writer.flush(); // 버퍼 비우기
-        }
+        final PrintWriter writer = response.getWriter();
+        writer.write(jsonResult);
+        writer.flush();
     }
 }
