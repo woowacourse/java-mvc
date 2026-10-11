@@ -24,7 +24,6 @@ public class JsonView implements View {
         }
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         PrintWriter writer = response.getWriter();
         objectMapper.writeValue(writer, result);
     }
