@@ -1,10 +1,10 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.legacy.Controller;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.legacy.ControllerHandlerAdapter;
+
+import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
@@ -37,19 +37,19 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("레거시 컨트롤러가 반환한 뷰를 렌더링한다")
+    @DisplayName("어노테이션 핸들러가 반환한 JSP 뷰를 렌더링한다")
     void rendersViewReturnedByController() throws Exception {
         final var handlerMapping = mock(HandlerMapping.class);
-        final var controller = mock(Controller.class);
+        final var controller = mock(HandlerExecution.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
         final var dispatcherServlet = new DispatcherServlet(List.of(handlerMapping),
-                List.of(new HandlerExecutionAdapter(), new ControllerHandlerAdapter()));
+                List.of(new HandlerExecutionAdapter()));
 
         when(request.getRequestURI()).thenReturn("/test");
         when(handlerMapping.getHandler(request)).thenReturn(controller);
-        when(controller.execute(request, response)).thenReturn("/test.jsp");
+        when(controller.handle(request, response)).thenReturn(new ModelAndView(new JspView("/test.jsp")));
         when(request.getRequestDispatcher("/test.jsp")).thenReturn(requestDispatcher);
 
         dispatcherServlet.service(request, response);
@@ -70,7 +70,7 @@ class DispatcherServletTest {
         when(secondMapping.getHandler(request)).thenReturn(handler);
         when(handler.handle(request, response)).thenReturn(result);
         final var servlet = new DispatcherServlet(List.of(firstMapping, secondMapping),
-                List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
+                List.of(new HandlerExecutionAdapter()));
 
         servlet.service(request, response);
 
@@ -84,13 +84,13 @@ class DispatcherServletTest {
     void selectsFirstMatchingMapping() throws Exception {
         final var firstMapping = mock(HandlerMapping.class);
         final var secondMapping = mock(HandlerMapping.class);
-        final var controller = mock(Controller.class);
+        final var controller = mock(HandlerExecution.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         when(firstMapping.getHandler(request)).thenReturn(controller);
-        when(controller.execute(request, response)).thenReturn("redirect:/");
+        when(controller.handle(request, response)).thenReturn(new ModelAndView(new JspView("redirect:/")));
         final var servlet = new DispatcherServlet(List.of(firstMapping, secondMapping),
-                List.of(new ControllerHandlerAdapter()));
+                List.of(new HandlerExecutionAdapter()));
 
         servlet.service(request, response);
 
@@ -119,7 +119,7 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         when(mapping.getHandler(request)).thenReturn(new Object());
         final var servlet = new DispatcherServlet(List.of(mapping),
-                List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
+                List.of(new HandlerExecutionAdapter()));
 
         assertThatThrownBy(() -> servlet.service(request, response))
                 .isInstanceOf(ServletException.class)
@@ -127,20 +127,4 @@ class DispatcherServletTest {
                 .hasMessageContaining("No adapter for handler");
     }
 
-    @Test
-    @DisplayName("기본 매핑을 초기화하면 레거시 홈 화면을 처리한다")
-    void initializesDefaultMappingsAndServesLegacyHome() throws Exception {
-        final var servlet = new DispatcherServlet();
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
-
-        servlet.init();
-        servlet.service(request, response);
-
-        verify(dispatcher).forward(request, response);
-    }
 }

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.legacy.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecutionAdapter;
 
@@ -26,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         this(createHandlerMappings(),
-                List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
+                List.of(new HandlerExecutionAdapter()));
     }
 
     DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
