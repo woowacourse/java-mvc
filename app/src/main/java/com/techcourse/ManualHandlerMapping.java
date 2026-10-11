@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -34,6 +37,14 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Controller getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         return getHandler(requestURI);
+    }
+
+    @Override
+    public Set<RequestMethod> getAllowedMethods(final String path) {
+        if (!controllers.containsKey(path)) {
+            return Set.of();
+        }
+        return EnumSet.allOf(RequestMethod.class);
     }
 
     public Controller getHandler(final String requestURI) {

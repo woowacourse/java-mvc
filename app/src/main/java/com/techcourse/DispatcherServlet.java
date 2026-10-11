@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
@@ -12,8 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -40,22 +45,43 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
+        final Object handler = handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+        if (handler == null) {
+            sendUnmappedResponse(requestURI, response);
+            return;
+        }
+
         try {
-            final Object handler = handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("요청에 맞는 핸들러가 없습니다."));
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(handler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
+    }
+
+    private void sendUnmappedResponse(final String path, final HttpServletResponse response) throws IOException {
+        Set<RequestMethod> allowedMethods = handlerMappings.stream()
+                .flatMap(handlerMapping -> handlerMapping.getAllowedMethods(path).stream())
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(RequestMethod.class)));
+        if (allowedMethods.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String allowHeader = allowedMethods.stream()
+                .map(RequestMethod::name)
+                .collect(Collectors.joining(", "));
+        response.setHeader("Allow", allowHeader);
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 }

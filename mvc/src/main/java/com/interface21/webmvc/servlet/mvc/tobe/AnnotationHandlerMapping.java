@@ -8,9 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -39,6 +42,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    @Override
+    public Set<RequestMethod> getAllowedMethods(final String path) {
+        return Arrays.stream(RequestMethod.values())
+                .filter(method -> handlerExecutions.containsKey(new HandlerKey(path, method)))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(RequestMethod.class)));
     }
 
     private void registerController(Class<?> controller, Object instance) {

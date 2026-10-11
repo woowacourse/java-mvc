@@ -54,4 +54,29 @@ class DispatcherServletTest {
         assertThat(InMemoryUserRepository.findByAccount(account)).isPresent();
         verify(response).sendRedirect("/index.jsp");
     }
+
+    @Test
+    void service_UnknownPath_SendsNotFound() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/nope");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void service_UnsupportedMethod_SendsMethodNotAllowed() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/register");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setHeader("Allow", "POST");
+        verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+    }
 }
