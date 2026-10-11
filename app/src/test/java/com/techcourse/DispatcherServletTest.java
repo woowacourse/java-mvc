@@ -32,7 +32,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void rendersLegacyController() throws Exception {
+    void rendersLoginView() throws Exception {
         when(request.getRequestURI()).thenReturn("/login/view");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
@@ -52,15 +52,6 @@ class DispatcherServletTest {
 
         verify(request).setAttribute("message", "hello");
         verify(dispatcher).forward(request, response);
-    }
-
-    @Test
-    void prefersAnnotationMappingWhenBothMatch() throws Exception {
-        when(request.getRequestURI()).thenReturn("/logout");
-
-        servlet.service(request, response);
-
-        verify(response).sendRedirect("/integration");
     }
 
     @Test
@@ -105,7 +96,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void registersUserAndAllowsLegacyLogin() throws Exception {
+    void registersUserAndAllowsLogin() throws Exception {
         final var account = "registration-integration-user";
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
@@ -151,5 +142,75 @@ class DispatcherServletTest {
         final var order = inOrder(response);
         order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         order.verify(response).getWriter();
+    }
+
+    @Test
+    void rendersIndex() throws Exception {
+        when(request.getRequestURI()).thenReturn("/");
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void rejectsWrongPassword() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+        verify(request.getSession(), never()).setAttribute(anyString(), any());
+    }
+
+    @Test
+    void rejectsUnknownAccount() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("unknown-account");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+        verify(request.getSession(), never()).setAttribute(anyString(), any());
+    }
+
+    @Test
+    void redirectsLoggedInUserFromLoginView() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getSession().getAttribute(UserSession.SESSION_KEY))
+                .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void redirectsAlreadyLoggedInUserFromLogin() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession().getAttribute(UserSession.SESSION_KEY))
+                .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+        verify(request.getSession(), never()).setAttribute(anyString(), any());
+    }
+
+    @Test
+    void logsOutAndRedirectsHome() throws Exception {
+        when(request.getRequestURI()).thenReturn("/logout");
+
+        servlet.service(request, response);
+
+        verify(request.getSession()).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
     }
 }
