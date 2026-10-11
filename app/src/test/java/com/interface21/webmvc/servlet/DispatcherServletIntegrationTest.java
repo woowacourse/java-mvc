@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -126,6 +127,47 @@ class DispatcherServletIntegrationTest {
         order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         order.verify(response).getWriter();
         verify(response, never()).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).setStatus(anyInt());
+        verify(response, never()).sendRedirect(anyString());
+        verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void returnsBadRequestJsonForMissingAccount() throws Exception {
+        assertUserApiError(null, HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void returnsBadRequestJsonForBlankAccount() throws Exception {
+        assertUserApiError("", HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+        assertUserApiError("   ", HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void returnsNotFoundJsonForUnknownAccount() throws Exception {
+        assertUserApiError(UUID.randomUUID().toString(), HttpServletResponse.SC_NOT_FOUND,
+                "사용자를 찾을 수 없습니다.");
+    }
+
+    private void assertUserApiError(final String account, final int status, final String message) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn(account);
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
+        servlet.init();
+
+        servlet.service(request, response);
+
+        assertEquals("{\"message\":\"" + message + "\"}", body.toString());
+        final var order = inOrder(response);
+        order.verify(response).setStatus(status);
+        order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        order.verify(response).getWriter();
+        verify(response, never()).sendError(anyInt());
         verify(response, never()).sendRedirect(anyString());
         verify(request, never()).getRequestDispatcher(anyString());
     }
