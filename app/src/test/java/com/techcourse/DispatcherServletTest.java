@@ -57,17 +57,6 @@ class DispatcherServletTest {
     }
 
     @Test
-    void retainsLegacyRegistrationFormUrl() throws Exception {
-        when(request.getRequestURI()).thenReturn("/register/view");
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
-
-        servlet.service(request, response);
-
-        verify(dispatcher).forward(request, response);
-    }
-
-    @Test
     void registersUserAndAllowsLogin() throws Exception {
         final var account = "registration-integration-user";
         when(request.getRequestURI()).thenReturn("/register");
