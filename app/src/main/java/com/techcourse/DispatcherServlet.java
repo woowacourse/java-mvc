@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
@@ -29,10 +28,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = List.of(new AnnotationHandlerMapping(BASE_PACKAGE),
-                new ManualHandlerMapping());
+        handlerMappings = List.of(new AnnotationHandlerMapping(BASE_PACKAGE));
         handlerMappings.forEach(HandlerMapping::initialize);
-        handlerAdapters = List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter());
+        handlerAdapters = List.of(new AnnotationHandlerAdapter());
     }
 
     @Override
