@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,10 +15,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final String basePackage;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String basePackage) {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.basePackage = basePackage;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappingRegistry() {
         // 실제 controller가 있는 "com.techcourse" 전달
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(this.basePackage);
         annotationHandlerMapping.initialize();
 
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
