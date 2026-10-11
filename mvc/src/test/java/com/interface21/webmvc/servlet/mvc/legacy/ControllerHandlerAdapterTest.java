@@ -1,7 +1,7 @@
-package com.interface21.webmvc.servlet.mvc.asis;
+package com.interface21.webmvc.servlet.mvc.legacy;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecution;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

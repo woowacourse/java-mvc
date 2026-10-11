@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.annotation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.legacy.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

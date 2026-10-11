@@ -1,12 +1,12 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.legacy.Controller;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.legacy.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
