@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,6 +36,36 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 어노테이션_컨트롤러로_GET_요청을_처리한다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 어노테이션_컨트롤러로_POST_요청을_처리한다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("aron");
+        when(request.getParameter("password")).thenReturn("password");
+        when(request.getParameter("email")).thenReturn("aron@email.com");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+        assertThat(InMemoryUserRepository.findByAccount("aron")).isPresent();
     }
 
     @Test
