@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,10 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
@@ -19,30 +17,27 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackage;
+
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        // 기존 Legacy MVC의 수동 매핑을 초기화한다.
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         // @Controller 기반의 새로운 MVC 매핑을 초기화한다.
         final AnnotationHandlerMapping annotationHandlerMapping =
-                new AnnotationHandlerMapping("com.techcourse.controller");
+                new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
 
         // 서로 다른 매핑 방식을 같은 HandlerMapping 타입으로 관리한다.
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+        handlerMappings = List.of(annotationHandlerMapping);
 
         // 서로 다른 Handler의 실행 방법을 Adapter로 분리한다.
         handlerAdapters = List.of(
-                // Legacy MVC Controller는 String viewName을 반환한다.
-                new ControllerHandlerAdapter(),
                 // 새로운 @MVC는 HandlerExecution이 ModelAndView를 반환한다.
                 new HandlerExecutionAdapter()
         );

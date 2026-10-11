@@ -4,6 +4,7 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +18,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        // 애플리케이션 Controller가 위치한 패키지를 프레임워크에 전달한다.
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
