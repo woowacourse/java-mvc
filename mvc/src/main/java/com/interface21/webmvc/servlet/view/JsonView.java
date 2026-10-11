@@ -9,11 +9,7 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper;
-
-    public JsonView() {
-        this.objectMapper = new ObjectMapper();
-    }
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(
@@ -22,7 +18,7 @@ public class JsonView implements View {
             HttpServletResponse response
     ) throws Exception {
         Object target = extractTarget(model);
-        String json = objectMapper.writeValueAsString(target);
+        String json = OBJECT_MAPPER.writeValueAsString(target);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(json);
     }
