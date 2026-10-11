@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        controllerScanner.getControllers().forEach(this::registerHandlers);
+        controllerScanner.createControllers().forEach(this::registerHandlers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 

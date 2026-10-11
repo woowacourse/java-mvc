@@ -16,7 +16,7 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Object> getControllers() {
+    public Map<Class<?>, Object> createControllers() {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         final Map<Class<?>, Object> controllers = new HashMap<>();
         for (final Class<?> controllerClass : controllerClasses) {

@@ -12,7 +12,7 @@ class ControllerScannerTest {
     void Controller_어노테이션이_붙은_클래스를_찾아_인스턴스를_생성한다() {
         final var controllerScanner = new ControllerScanner("samples");
 
-        final var controllers = controllerScanner.getControllers();
+        final var controllers = controllerScanner.createControllers();
 
         assertThat(controllers).containsOnlyKeys(TestController.class, AllMethodTestController.class);
         assertThat(controllers.get(TestController.class)).isInstanceOf(TestController.class);
