@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
@@ -13,27 +12,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String controllerBasePackage;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
+        this("com.techcourse.controller");
     }
 
-    DispatcherServlet(final List<HandlerMapping> handlerMappings,
-                      final List<HandlerAdapter> handlerAdapters) {
-        this.handlerMappings = handlerMappings;
-        this.handlerAdapters = handlerAdapters;
+    public DispatcherServlet(final String controllerBasePackage) {
+        this.controllerBasePackage = Objects.requireNonNull(controllerBasePackage);
     }
 
     @Override
     public void init() {
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerBasePackage);
         annotationHandlerMapping.initialize();
 
         handlerMappings = List.of(annotationHandlerMapping);

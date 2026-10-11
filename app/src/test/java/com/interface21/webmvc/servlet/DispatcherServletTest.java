@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.web.http.MediaType;
 import jakarta.servlet.RequestDispatcher;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class DispatcherServletTest {
 
     @Test
-    void dispatchesLegacyAndAnnotationControllersThroughTheSameServlet() throws Exception {
+    void dispatchesAnnotationControllersThroughTheServlet() throws Exception {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.init();
 
