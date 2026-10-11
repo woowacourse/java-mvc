@@ -30,4 +30,9 @@ public class HandlerExecution {
             throw new RuntimeException(cause);
         }
     }
+
+    @Override
+    public String toString() {
+        return method.getDeclaringClass().getSimpleName() + "#" + method.getName();
+    }
 }
