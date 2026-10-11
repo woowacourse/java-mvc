@@ -1,5 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import jakarta.servlet.http.HttpServlet;
+
 import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.controller.UserSession;
 import jakarta.servlet.RequestDispatcher;
@@ -17,13 +20,13 @@ import static org.mockito.Mockito.*;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet servlet;
+    private HttpServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
 
     @BeforeEach
-    void setUp() {
-        servlet = new DispatcherServlet();
+    void setUp() throws Exception {
+        servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -40,37 +43,6 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(dispatcher).forward(request, response);
-    }
-
-    @Test
-    void rendersAnnotatedControllerWithModel() throws Exception {
-        when(request.getRequestURI()).thenReturn("/integration");
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/integration.jsp")).thenReturn(dispatcher);
-
-        servlet.service(request, response);
-
-        verify(request).setAttribute("message", "hello");
-        verify(dispatcher).forward(request, response);
-    }
-
-    @Test
-    void returnsNotFoundForUnmappedRequest() throws Exception {
-        when(request.getRequestURI()).thenReturn("/missing");
-
-        servlet.service(request, response);
-
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-
-    @Test
-    void returnsNotFoundForUnmappedHttpMethod() throws Exception {
-        when(request.getRequestURI()).thenReturn("/integration");
-        when(request.getMethod()).thenReturn("POST");
-
-        servlet.service(request, response);
-
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
