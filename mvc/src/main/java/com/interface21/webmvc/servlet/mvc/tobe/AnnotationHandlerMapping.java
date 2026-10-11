@@ -1,20 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -31,12 +25,11 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controllerClass : typesAnnotatedWith) {
+        Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Class<?> controllerClass = entry.getKey();
             log.info("Controller Name {} ", controllerClass.getName());
-            Object controller = createController(controllerClass);
+            Object controller = entry.getValue();
 
             for (Method declaredMethod : controllerClass.getDeclaredMethods()) {
                 RequestMapping mapping = declaredMethod.getAnnotation(RequestMapping.class);
@@ -70,17 +63,5 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
-    }
-
-    private Object createController(Class<?> controllerClass) {
-        try {
-            Constructor<?> constructor = controllerClass.getDeclaredConstructor();
-
-            constructor.setAccessible(true);
-
-            return constructor.newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 객체 생성에 실패했습니다: " + controllerClass.getName(), e);
-        }
     }
 }
