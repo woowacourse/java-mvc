@@ -176,3 +176,7 @@ tomcat.*/**
 
 # IDE compile output (Eclipse/VSCode Java LS)
 **/bin/
+
+# Local learning notes and new study files
+/LEARNING.md
+/study/
