@@ -3,6 +3,9 @@ package com.techcourse;
 import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.controller.UserSession;
 import jakarta.servlet.RequestDispatcher;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import com.interface21.web.http.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpServletRequest;
@@ -132,5 +135,21 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void rendersUserApiAsJsonWithoutPassword() throws Exception {
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        final var output = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        assertThat(output.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        assertThat(output.toString()).doesNotContain("password");
+        final var order = inOrder(response);
+        order.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        order.verify(response).getWriter();
     }
 }
