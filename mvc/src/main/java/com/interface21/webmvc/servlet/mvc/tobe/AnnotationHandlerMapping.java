@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,27 +28,34 @@ public class AnnotationHandlerMapping {
 
         for (var entry : controllers.entrySet()) {
             log.info("Found controller: {}", entry.getKey().getName());
-
-            for (var method : entry.getKey().getDeclaredMethods()) {
-                final var requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-
-                var httpMethods = requestMapping.method();
-                if (httpMethods.length == 0) {
-                    httpMethods = RequestMethod.values();
-                }
-
-                final var execution = new HandlerExecution(entry.getValue(), method);
-                for (var httpMethod : httpMethods) {
-                    final var key = new HandlerKey(requestMapping.value(), httpMethod);
-                    handlerExecutions.put(key, execution);
-                }
-            }
+            registerHandlers(entry.getKey(), entry.getValue());
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerHandlers(final Class<?> controllerClass, final Object controller) {
+        for (var method : controllerClass.getDeclaredMethods()) {
+            final var requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping == null) {
+                continue;
+            }
+
+            registerHandler(controller, method, requestMapping);
+        }
+    }
+
+    private void registerHandler(final Object controller, final Method method, final RequestMapping requestMapping) {
+        var httpMethods = requestMapping.method();
+        if (httpMethods.length == 0) {
+            httpMethods = RequestMethod.values();
+        }
+
+        final var execution = new HandlerExecution(controller, method);
+        for (var httpMethod : httpMethods) {
+            final var key = new HandlerKey(requestMapping.value(), httpMethod);
+            handlerExecutions.put(key, execution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
