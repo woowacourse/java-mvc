@@ -33,20 +33,12 @@ public class DispatcherServlet extends HttpServlet {
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
 
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
-
     }
 
     private void initHandlerAdapterRegistry() {
-        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
         final var handlerExecutionAdapter = new HandlerExecutionAdapter();
 
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(handlerExecutionAdapter);
     }
 
