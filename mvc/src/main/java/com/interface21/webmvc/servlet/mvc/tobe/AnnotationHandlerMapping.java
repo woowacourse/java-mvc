@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +32,12 @@ public class AnnotationHandlerMapping {
             log.info("Controller Name {} ", controllerClass.getName());
             Object controller = entry.getValue();
 
-            for (Method declaredMethod : controllerClass.getDeclaredMethods()) {
-                RequestMapping mapping = declaredMethod.getAnnotation(RequestMapping.class);
-
-                if (mapping == null) {
-                    continue;
-                }
+            for (Method method : ReflectionUtils.getAllMethods(
+                    controllerClass,
+                    ReflectionUtils.withAnnotation(RequestMapping.class)
+            )) {
+                RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
                 String path = mapping.value();
 
@@ -54,7 +55,7 @@ public class AnnotationHandlerMapping {
                         );
                     }
 
-                    handlerExecutions.put(handlerKey, new HandlerExecution(controller, declaredMethod));
+                    handlerExecutions.put(handlerKey, handlerExecution);
                 }
             }
         }
