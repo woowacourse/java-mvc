@@ -30,4 +30,13 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/all-methods")
+    public ModelAndView handleWithoutMethodRestriction(
+            final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller without method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("method", request.getMethod());
+        return modelAndView;
+    }
 }
