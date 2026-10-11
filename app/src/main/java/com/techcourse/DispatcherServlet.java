@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.core.Ordered;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
 import java.util.List;
+import java.util.Comparator;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -23,18 +25,33 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this(List.of(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping()),
+        this(createHandlerMappings(),
                 List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
     }
 
     DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
-        this.handlerMappings = List.copyOf(handlerMappings);
+        // Stable sorting preserves registration order for equal priorities.
+        this.handlerMappings = handlerMappings.stream()
+                .sorted(Comparator.comparingInt(DispatcherServlet::getOrder))
+                .toList();
         this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
+    private static List<HandlerMapping> createHandlerMappings() {
+        final var annotation = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotation.setOrder(0);
+        final var manual = new ManualHandlerMapping();
+        manual.setOrder(100);
+        return List.of(annotation, manual);
+    }
+
+    private static int getOrder(final HandlerMapping mapping) {
+        return mapping instanceof Ordered ordered ? ordered.getOrder() : Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override
