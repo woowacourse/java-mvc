@@ -8,11 +8,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -20,6 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -37,6 +38,14 @@ public class DispatcherServlet extends HttpServlet {
 
         // 서로 다른 매핑 방식을 같은 HandlerMapping 타입으로 관리한다.
         handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+
+        // 서로 다른 Handler의 실행 방법을 Adapter로 분리한다.
+        handlerAdapters = List.of(
+                // Legacy MVC Controller는 String viewName을 반환한다.
+                new ControllerHandlerAdapter(),
+                // 새로운 @MVC는 HandlerExecution이 ModelAndView를 반환한다.
+                new HandlerExecutionAdapter()
+        );
     }
 
     @Override
@@ -48,8 +57,11 @@ public class DispatcherServlet extends HttpServlet {
             // 여러 HandlerMapping 중 현재 요청을 처리할 Handler를 찾는다.
             final Object handler = getHandler(request);
 
+            // Handler를 실행할 Adapter를 찾는다.
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+
             // Handler 종류에 따라 실행하고 ModelAndView로 통일한다.
-            final ModelAndView modelAndView = handle(handler, request, response);
+            final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
             // Controller 실행 이후 View에게 렌더링을 위임한다.
             modelAndView.getView().render(modelAndView.getModel(), request, response);
@@ -71,18 +83,13 @@ public class DispatcherServlet extends HttpServlet {
         throw new IllegalArgumentException("요청을 처리할 Handler가 없습니다: " + request.getRequestURI());
     }
 
-    private ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // Legacy MVC Controller는 String viewName을 반환한다.
-        if (handler instanceof Controller controller) {
-            final String viewName = controller.execute(request, response);
-            return new ModelAndView(new JspView(viewName));
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
         }
 
-        // 새로운 @MVC는 HandlerExecution이 ModelAndView를 반환한다.
-        if (handler instanceof HandlerExecution handlerExecution) {
-            return handlerExecution.handle(request, response);
-        }
-
-        throw new IllegalArgumentException("지원하지 않는 Handler입니다: " + handler.getClass().getName());
+        throw new IllegalArgumentException("Handler를 처리할 Adapter가 없습니다: " + handler.getClass().getName());
     }
 }
