@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,25 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         assertThat(body.toString()).isEqualTo("\"수민\"");
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    }
+
+    @Test
+    void responseMultipleModels() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        final Map<String, ?> model = Map.of("name", "수민", "age", 20);
+
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        JsonView jsonView = new JsonView();
+        jsonView.render(model, request, response);
+
+        final var objectMapper = new ObjectMapper();
+        assertThat(objectMapper.readTree(body.toString()))
+                .isEqualTo(objectMapper.readTree("""
+                        {"name": "수민", "age": 20}
+                        """));
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
