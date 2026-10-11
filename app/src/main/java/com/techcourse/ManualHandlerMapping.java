@@ -31,12 +31,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        // HandlerMapping 인터페이스에 맞춰 요청에서 URI를 꺼낸다.
-        return getHandler(request.getRequestURI());
-    }
-
-    // 기존 DispatcherServlet과의 호환을 위해 아직 유지한다.
-    public Controller getHandler(final String requestURI) {
+        final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
