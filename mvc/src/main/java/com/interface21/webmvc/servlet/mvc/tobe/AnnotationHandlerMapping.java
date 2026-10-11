@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerController(Class<?> controller, Object instance) {
-        Arrays.stream(controller.getDeclaredMethods())
+        Arrays.stream(controller.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(method -> registerMappings(method, instance));
     }
