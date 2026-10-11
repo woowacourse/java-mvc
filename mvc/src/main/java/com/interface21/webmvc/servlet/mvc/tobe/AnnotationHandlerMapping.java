@@ -24,17 +24,15 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        // 1. 지정된 패키지에서 @Controller가 붙은 클래스들을 찾는다.
+        // 지정된 패키지에서 @Controller가 붙은 클래스들을 찾는다.
         final var reflections = new Reflections(basePackage);
-        final var controllerClasses =
-                reflections.getTypesAnnotatedWith(Controller.class);
+        final var controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (final var controllerClass : controllerClasses) {
             try {
-                // 2. 컨트롤러 객체를 생성한다.
                 final var controller = controllerClass.getDeclaredConstructor().newInstance();
 
-                // 3. 컨트롤러 클래스의 메서드들을 확인한다.
+                // 컨트롤러 클래스의 메서드들을 확인한다.
                 for (final var method : controllerClass.getDeclaredMethods()) {
                     final var requestMapping = method.getAnnotation(RequestMapping.class);
 
@@ -43,22 +41,18 @@ public class AnnotationHandlerMapping {
                         continue;
                     }
 
-                    // 4. 어노테이션에서 URL과 HTTP 메서드를 읽는다.
                     final String url = requestMapping.value();
-                    RequestMethod[] requestMethods = requestMapping.method();
-
-                    // HTTP 메서드를 생략했으면 모든 메서드를 지원한다.
-                    if (requestMethods.length == 0) {
-                        requestMethods = RequestMethod.values();
-                    }
-
-                    // 5. 실행할 컨트롤러 객체와 메서드를 묶는다.
+                    final RequestMethod[] requestMethods = requestMapping.method();
                     final var execution = new HandlerExecution(controller, method);
 
-                    // 6. (URL, HTTP 메서드)를 키로 Map에 등록한다.
+                    // null은 HTTP 메서드 제한이 없다는 의미.
+                    if (requestMethods.length == 0) {
+                        register(new HandlerKey(url, null), execution);
+                        continue;
+                    }
+
                     for (final var requestMethod : requestMethods) {
-                        final var key = new HandlerKey(url, requestMethod);
-                        handlerExecutions.put(key, execution);
+                        register( new HandlerKey(url, requestMethod), execution);
                     }
                 }
             } catch (ReflectiveOperationException e) {
@@ -73,11 +67,28 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        final var key = new HandlerKey(
-                request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod())
-        );
+        final String url = request.getRequestURI();
+        final RequestMethod requestMethod =
+                RequestMethod.valueOf(request.getMethod());
 
-        return handlerExecutions.get(key);
+        // 명시적인 HTTP 메서드 매핑을 우선한다.
+        final var execution = handlerExecutions.get(new HandlerKey(url, requestMethod));
+
+        if (execution != null) {
+            return execution;
+        }
+
+        // 명시적인 매핑이 없으면 메서드를 생략한 매핑을 사용한다.
+        return handlerExecutions.get(new HandlerKey(url, null));
+    }
+
+
+    private void register(
+            final HandlerKey key,
+            final HandlerExecution execution
+    ) {
+        if (handlerExecutions.putIfAbsent(key, execution) != null) {
+            throw new IllegalStateException("중복 매핑: " + key);
+        }
     }
 }
