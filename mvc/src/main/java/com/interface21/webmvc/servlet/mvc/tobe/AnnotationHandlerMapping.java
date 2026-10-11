@@ -45,8 +45,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            validateNotDuplicated(handlerKey, method);
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Path : {}, Method : {}, Handler : {}", requestMapping.value(), requestMethod, method);
+        }
+    }
+
+    private void validateNotDuplicated(final HandlerKey handlerKey, final Method method) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("이미 등록된 요청 매핑입니다: " + handlerKey + ", Handler : " + method);
         }
     }
 
