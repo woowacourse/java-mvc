@@ -20,6 +20,13 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(model));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(toBody(model)));
+    }
+
+    private Object toBody(Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().iterator().next();
+        }
+        return model;
     }
 }
