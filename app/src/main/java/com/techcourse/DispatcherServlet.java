@@ -45,9 +45,7 @@ public class DispatcherServlet extends HttpServlet {
     private static List<HandlerMapping> createHandlerMappings() {
         final var annotation = new AnnotationHandlerMapping("com.techcourse.controller");
         annotation.setOrder(0);
-        final var manual = new ManualHandlerMapping();
-        manual.setOrder(100);
-        return List.of(annotation, manual);
+        return List.of(annotation);
     }
 
     private static int getOrder(final HandlerMapping mapping) {

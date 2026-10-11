@@ -77,8 +77,8 @@ class RegisterIntegrationTest {
     }
 
     @Test
-    @DisplayName("애노테이션 회원가입과 함께 레거시 홈 화면도 정상 동작한다")
-    void legacyHomeStillWorksAlongsideRegistration() throws Exception {
+    @DisplayName("홈 화면을 JSP로 포워드한다")
+    void homeForwardsToIndex() throws Exception {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
         final var dispatcher = mock(RequestDispatcher.class);
