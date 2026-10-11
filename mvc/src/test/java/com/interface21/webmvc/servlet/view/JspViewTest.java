@@ -4,6 +4,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.when;
 class JspViewTest {
 
     @Test
+    @DisplayName("모델을 요청 속성에 저장하고 JSP로 포워드한다")
     void forwardsToJspWithModelAttributes() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -30,6 +32,7 @@ class JspViewTest {
     }
 
     @Test
+    @DisplayName("redirect 접두사가 있으면 포워드하지 않고 리다이렉트한다")
     void redirectsWithoutForwarding() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
