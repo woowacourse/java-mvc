@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -30,6 +31,23 @@ class JspViewTest {
     void setUp() {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+    }
+
+    @Nested
+    @DisplayName("생성 시점")
+    class Construction {
+
+        @Test
+        @DisplayName("뷰 이름이 null이면 렌더링 전에 거부한다")
+        void rejectsNullViewName() {
+            // given
+            final String viewName = null;
+
+            // when & then
+            assertThatThrownBy(() -> new JspView(viewName))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessage("뷰 이름은 null일 수 없습니다.");
+        }
     }
 
     @Nested
