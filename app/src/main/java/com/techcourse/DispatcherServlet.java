@@ -19,11 +19,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter());
+        this(List.of(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping()),
+                List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
     }
 
     DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
@@ -33,14 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        if (handlerMappings != null) {
-            return;
-        }
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override

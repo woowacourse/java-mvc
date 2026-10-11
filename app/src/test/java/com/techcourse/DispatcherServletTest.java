@@ -24,6 +24,19 @@ import static org.mockito.Mockito.when;
 class DispatcherServletTest {
 
     @Test
+    @DisplayName("서블릿 초기화 시 주입된 모든 핸들러 매핑을 초기화한다")
+    void initializesAllInjectedHandlerMappings() {
+        final var firstMapping = mock(HandlerMapping.class);
+        final var secondMapping = mock(HandlerMapping.class);
+        final var servlet = new DispatcherServlet(List.of(firstMapping, secondMapping), List.of());
+
+        servlet.init();
+
+        verify(firstMapping).initialize();
+        verify(secondMapping).initialize();
+    }
+
+    @Test
     @DisplayName("레거시 컨트롤러가 반환한 뷰를 렌더링한다")
     void rendersViewReturnedByController() throws Exception {
         final var handlerMapping = mock(ManualHandlerMapping.class);
