@@ -1,20 +1,17 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.web.http.MediaType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +41,15 @@ class DispatcherServletTest {
 
         verify(registerView).forward(registerGetRequest, registerGetResponse);
 
+        final HttpServletRequest registerViewRequest = request("GET", "/register/view");
+        final HttpServletResponse registerViewResponse = mock(HttpServletResponse.class);
+        final RequestDispatcher registerViewAlias = mock(RequestDispatcher.class);
+        when(registerViewRequest.getRequestDispatcher("/register.jsp")).thenReturn(registerViewAlias);
+
+        dispatcherServlet.service(registerViewRequest, registerViewResponse);
+
+        verify(registerViewAlias).forward(registerViewRequest, registerViewResponse);
+
         final HttpServletRequest registerPostRequest = request("POST", "/register");
         when(registerPostRequest.getParameter("account")).thenReturn("review-feedback-test");
         when(registerPostRequest.getParameter("password")).thenReturn("password");
@@ -56,32 +62,20 @@ class DispatcherServletTest {
     }
 
     @Test
-    void prefersAnnotationMappingWhenBothMappingsMatchTheSamePath() throws Exception {
-        final AnnotationHandlerMapping annotationHandlerMapping =
-                new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
+    void rendersJsonForUserController() throws Exception {
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.init();
 
-        final HandlerMapping legacyMapping = request -> {
-            if ("/register".equals(request.getRequestURI())) {
-                return (Controller) (httpRequest, httpResponse) -> "/legacy-register.jsp";
-            }
-            return null;
-        };
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet(
-                List.of(annotationHandlerMapping, legacyMapping),
-                List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter()));
-
-        final HttpServletRequest request = request("GET", "/register");
+        final HttpServletRequest request = request("GET", "/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        final RequestDispatcher annotationView = mock(RequestDispatcher.class);
-        final RequestDispatcher legacyView = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(annotationView);
-        when(request.getRequestDispatcher("/legacy-register.jsp")).thenReturn(legacyView);
+        final StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
 
         dispatcherServlet.service(request, response);
 
-        verify(annotationView).forward(request, response);
-        verify(legacyView, never()).forward(request, response);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 
     private HttpServletRequest request(final String method, final String requestURI) {
