@@ -1,17 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -26,33 +23,22 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> controller : controllers) {
-            Object instance = createInstance(controller);
-
-            for (Method method : controller.getDeclaredMethods()) {
+        for (Map.Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            for (Method method : controller.getKey().getDeclaredMethods()) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
-                    register(method, instance);
+                    register(method, controller.getValue());
                 }
             }
-            log.info("찾은 컨트롤러: {}", controller.getName());
+            log.info("찾은 컨트롤러: {}", controller.getKey().getName());
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-
-    private static Object createInstance(Class<?> controller) {
-        try {
-            return controller.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("컨트롤러 인스턴스를 생성할 수 없습니다. : " + controller.getName(), e);
-        }
-    }
-
     private void register(Method method, Object instance) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
