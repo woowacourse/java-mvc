@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.core.Ordered;
 import jakarta.servlet.ServletException;
@@ -7,10 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecutionAdapter;
 
 import java.util.List;
 import java.util.Comparator;
@@ -23,12 +19,7 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
-        this(createHandlerMappings(),
-                List.of(new HandlerExecutionAdapter()));
-    }
-
-    DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
         // Stable sorting preserves registration order for equal priorities.
         this.handlerMappings = handlerMappings.stream()
                 .sorted(Comparator.comparingInt(DispatcherServlet::getOrder))
@@ -39,12 +30,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-    }
-
-    private static List<HandlerMapping> createHandlerMappings() {
-        final var annotation = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotation.setOrder(0);
-        return List.of(annotation);
     }
 
     private static int getOrder(final HandlerMapping mapping) {

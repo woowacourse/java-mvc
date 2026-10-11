@@ -1,5 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import jakarta.servlet.ServletRequest;
+
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -16,7 +19,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 class LoginIntegrationTest {
-    private final DispatcherServlet servlet = new DispatcherServlet();
+    private final DispatcherServlet servlet = DispatcherServletInitializer.createDispatcherServlet();
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final HttpSession session = mock(HttpSession.class);
@@ -111,6 +114,6 @@ class LoginIntegrationTest {
     private void perform(final String method, final String path) throws Exception {
         when(request.getMethod()).thenReturn(method);
         when(request.getRequestURI()).thenReturn(path);
-        servlet.service(request, response);
+        servlet.service((ServletRequest) request, response);
     }
 }

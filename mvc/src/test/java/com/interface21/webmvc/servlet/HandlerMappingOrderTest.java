@@ -1,7 +1,4 @@
-package com.techcourse;
-
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.core.Ordered;
 import com.interface21.webmvc.servlet.handler.AbstractHandlerMapping;

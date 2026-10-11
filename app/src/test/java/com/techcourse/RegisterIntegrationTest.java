@@ -1,5 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import jakarta.servlet.ServletRequest;
+
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 class RegisterIntegrationTest {
 
-    private final DispatcherServlet servlet = new DispatcherServlet();
+    private final DispatcherServlet servlet = DispatcherServletInitializer.createDispatcherServlet();
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final String account = "register-test-" + UUID.randomUUID();
@@ -34,7 +37,7 @@ class RegisterIntegrationTest {
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+        servlet.service((ServletRequest) request, response);
 
         verify(dispatcher).forward(request, response);
         assertThat(InMemoryUserRepository.findByAccount(account)).isEmpty();
@@ -45,7 +48,7 @@ class RegisterIntegrationTest {
     void postSavesUserAndRedirects() throws Exception {
         registrationRequest("POST");
 
-        servlet.service(request, response);
+        servlet.service((ServletRequest) request, response);
 
         assertThat(InMemoryUserRepository.findByAccount(account)).hasValueSatisfying(user -> {
             assertThat(user.getAccount()).isEqualTo(account);
@@ -59,7 +62,7 @@ class RegisterIntegrationTest {
     void putReturnsNotFoundWithoutSavingUser() throws Exception {
         registrationRequest("PUT");
 
-        servlet.service(request, response);
+        servlet.service((ServletRequest) request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         assertThat(InMemoryUserRepository.findByAccount(account)).isEmpty();
@@ -71,7 +74,7 @@ class RegisterIntegrationTest {
         when(request.getRequestURI()).thenReturn("/register/view");
         when(request.getMethod()).thenReturn("GET");
 
-        servlet.service(request, response);
+        servlet.service((ServletRequest) request, response);
 
         verify(response).sendRedirect("/register");
     }
@@ -84,7 +87,7 @@ class RegisterIntegrationTest {
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+        servlet.service((ServletRequest) request, response);
 
         verify(dispatcher).forward(request, response);
     }
