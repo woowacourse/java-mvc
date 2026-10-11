@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.HandlerScanner;
 import jakarta.servlet.ServletContext;
 import java.util.List;
@@ -16,7 +17,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
-    private static final List<String> HANDLER_BASE_PACKAGES = List.of("com.techcourse", "com.interface21");
+    private static final List<String> HANDLER_BASE_PACKAGES = List.of("com.interface21.webmvc");
     private static final List<String> CONTROLLER_BASE_PACKAGES = List.of("com.techcourse.controller");
 
     @Override
