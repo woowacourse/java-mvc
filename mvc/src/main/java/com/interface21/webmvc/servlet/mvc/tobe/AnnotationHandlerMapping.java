@@ -16,12 +16,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final HandlerExecutionStorage handlerExecutionStorage;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this(new ControllerScanner(), basePackage);
-    }
-
-    public AnnotationHandlerMapping(final ControllerScanner controllerScanner, final Object... basePackage) {
         this.basePackage = basePackage;
-        this.controllerScanner = controllerScanner;
+        this.controllerScanner = new ControllerScanner();
         this.handlerExecutionExtractor = new HandlerExecutionExtractor();
         this.handlerExecutionStorage = new HandlerExecutionStorage();
     }
