@@ -19,18 +19,18 @@ public class HandlerScanner {
         this.reflections = new Reflections(handlerPackages.toArray());
     }
 
-    public List<HandlerMapping> getHandlerMappings() {
-        final var handlerMappings = getHandlers(HandlerMapping.class, controllerBasePackages.toArray());
+    public List<HandlerMapping> createHandlerMappings() {
+        final var handlerMappings = createHandlers(HandlerMapping.class, controllerBasePackages.toArray());
         handlerMappings.forEach(HandlerMapping::initialize);
         handlerMappings.sort(Comparator.comparingInt(HandlerMapping::getOrder));
         return List.copyOf(handlerMappings);
     }
 
-    public List<HandlerAdapter> getHandlerAdapters() {
-        return List.copyOf(getHandlers(HandlerAdapter.class));
+    public List<HandlerAdapter> createHandlerAdapters() {
+        return List.copyOf(createHandlers(HandlerAdapter.class));
     }
 
-    private <T> List<T> getHandlers(final Class<T> handlerType, final Object... constructorArgs) {
+    private <T> List<T> createHandlers(final Class<T> handlerType, final Object... constructorArgs) {
         final List<T> handlers = new ArrayList<>();
         reflections.getSubTypesOf(handlerType)
                 .stream()

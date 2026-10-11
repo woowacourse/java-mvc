@@ -24,8 +24,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            handlerMappings = scanner.getHandlerMappings();
-            handlerAdapters = scanner.getHandlerAdapters();
+            handlerMappings = scanner.createHandlerMappings();
+            handlerAdapters = scanner.createHandlerAdapters();
         } catch (RuntimeException e) {
             throw new ServletException("핸들러 초기화에 실패했습니다.", e);
         }
