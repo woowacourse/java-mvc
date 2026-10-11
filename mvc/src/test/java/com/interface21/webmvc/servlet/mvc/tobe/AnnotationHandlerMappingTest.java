@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,5 +77,33 @@ class AnnotationHandlerMappingTest {
         final var handler = (HandlerExecution) handlerMapping.getHandler(request);
 
         assertThat(handler.handle(request, response).getObject("method")).isEqualTo(method.name());
+    }
+
+    @Test
+    void duplicateMappingFailsOnInitialization() {
+        final var duplicatedMapping = new AnnotationHandlerMapping("duplicatehandlers");
+
+        assertThatThrownBy(duplicatedMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/duplicate")
+                .hasMessageContaining("GET");
+    }
+
+    @Test
+    void unregisteredUrlReturnsNoHandler() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/not-registered");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void postToGetOnlyUrlReturnsNoHandler() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 }
