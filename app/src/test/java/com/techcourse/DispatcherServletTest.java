@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -111,5 +113,19 @@ class DispatcherServletTest {
 
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 요청_처리_중_예외가_발생하면_원인_예외를_담아_ServletException을_던진다() {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var cause = new IllegalStateException("세션 조회 실패");
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenThrow(cause);
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(ServletException.class)
+                .hasCause(cause);
     }
 }
