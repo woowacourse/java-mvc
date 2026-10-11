@@ -29,11 +29,19 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        handlerMappings = createHandlerMappings();
+        handlerAdapters = createHandlerAdapters();
+    }
+
+    private List<HandlerMapping> createHandlerMappings() {
         final var annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(annotationHandlerMapping);
-        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
+        return List.of(annotationHandlerMapping);
+    }
+
+    private List<HandlerAdapter> createHandlerAdapters() {
+        return List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
