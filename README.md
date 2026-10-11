@@ -45,8 +45,8 @@
 - [x] ManualHandlerMapping과 AnnotationHandlerMapping을 HandlerMapping으로 관리한다.
 - [x] HandlerAdapter: 실행 대상에 맞는 어댑터를 찾아 ModelAndView를 반환한다.
 - [x] DispatcherServlet에서 두 매핑을 초기화하고 조회·실행·뷰 응답을 연결한다.
-- [ ] RegisterController를 어노테이션 방식으로 바꾸고 기존 컨트롤러와 함께 동작하는지 확인한다.
-- [ ] 기존 방식과 어노테이션 방식의 요청 처리 및 GET/POST 구분을 테스트한다.
+- [x] RegisterController를 어노테이션 방식으로 바꾸고 기존 컨트롤러와 함께 동작하는지 확인한다.
+- [x] 기존 방식과 어노테이션 방식의 요청 처리 및 GET/POST 구분을 테스트한다.
 
 </details>
 
