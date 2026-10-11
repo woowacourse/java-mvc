@@ -26,10 +26,10 @@ public class JsonView implements View {
             Object object = model.values()
                     .iterator()
                     .next();
-            writer.append(objectMapper.writeValueAsString(object));
+            objectMapper.writeValue(writer, object);
             return;
         }
 
-        writer.append(objectMapper.writeValueAsString(model));
+        objectMapper.writeValue(writer, model);
     }
 }
