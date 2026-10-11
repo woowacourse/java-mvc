@@ -77,4 +77,14 @@ class AnnotationHandlerMappingTest {
 
         assertThat(handlerMapping.getHandler(request)).isNull();
     }
+
+    @Test
+    void 지원하지_않는_HTTP_메서드면_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("PROPFIND");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }

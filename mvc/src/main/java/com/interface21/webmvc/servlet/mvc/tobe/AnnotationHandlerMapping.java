@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -58,8 +60,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
-        return handlerExecutions.get(handlerKey);
+        return findRequestMethod(request.getMethod())
+                .map(requestMethod -> new HandlerKey(request.getRequestURI(), requestMethod))
+                .map(handlerExecutions::get)
+                .orElse(null);
+    }
+
+    private Optional<RequestMethod> findRequestMethod(final String method) {
+        return Arrays.stream(RequestMethod.values())
+                .filter(requestMethod -> requestMethod.name().equals(method))
+                .findFirst();
     }
 }

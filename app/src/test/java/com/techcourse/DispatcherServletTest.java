@@ -82,4 +82,34 @@ class DispatcherServletTest {
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         verify(requestDispatcher).forward(request, response);
     }
+
+    @Test
+    void 지원하지_않는_HTTP_메서드여도_레거시_컨트롤러로_요청을_처리한다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("PROPFIND");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 지원하지_않는_HTTP_메서드로_없는_경로를_요청하면_404_페이지를_보여준다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/not-found");
+        when(request.getMethod()).thenReturn("PROPFIND");
+        when(request.getRequestDispatcher("/404.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(requestDispatcher).forward(request, response);
+    }
 }
