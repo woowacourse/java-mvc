@@ -1,8 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
@@ -22,8 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = List.of(new ControllerHandlerAdapter(),
-            new HandlerExecutionHandlerAdapter());
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
@@ -32,9 +29,9 @@ public class DispatcherServlet extends HttpServlet {
     public void init() throws ServletException {
         try {
             ControllerScanner controllerScanner = new ControllerScanner("com.techcourse.controller");
-            handlerMappings.add(new ManualHandlerMapping());
             handlerMappings.add(new AnnotationHandlerMapping(controllerScanner));
             handlerMappings.forEach(HandlerMapping::initialize);
+            handlerAdapters.add(new HandlerExecutionHandlerAdapter());
 
         } catch (ReflectiveOperationException exception) {
             throw new ServletException("컨트롤러 초기화에 실패했습니다.", exception);
