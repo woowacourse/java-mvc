@@ -17,16 +17,19 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
-        if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+    @RequestMapping(value = "/api/login", method = RequestMethod.POST)
+    public ModelAndView login(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("redirect:/api/"));
         }
 
-        final String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final String viewName = InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return login(request, user);
                 })
                 .orElse("redirect:/401.jsp");
         return new ModelAndView(new JspView(viewName));
@@ -36,7 +39,7 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+            return "redirect:/api/";
         }
         return "redirect:/401.jsp";
     }

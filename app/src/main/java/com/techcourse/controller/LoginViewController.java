@@ -15,12 +15,15 @@ public class LoginViewController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        final String viewName = UserSession.getUserFrom(req.getSession())
+    @RequestMapping(value = "/api/login/view", method = RequestMethod.GET)
+    public ModelAndView show(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) {
+        final String viewName = UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
+                    return "redirect:/api/";
                 })
                 .orElse("/login.jsp");
         return new ModelAndView(new JspView(viewName));

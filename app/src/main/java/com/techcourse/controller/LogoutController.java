@@ -11,10 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class LogoutController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
-        final var session = req.getSession();
+    @RequestMapping(value = "/api/logout", method = RequestMethod.GET)
+    public ModelAndView logout(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) {
+        final var session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView("redirect:/api/"));
     }
 }
