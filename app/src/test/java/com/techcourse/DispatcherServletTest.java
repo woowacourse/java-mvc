@@ -31,8 +31,8 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("기존 인터페이스 기반 로그인 컨트롤러도 계속 실행한다")
-    void runsLegacyController() throws Exception {
+    @DisplayName("POST 로그인에 성공하면 사용자를 세션에 저장하고 홈으로 이동한다")
+    void logsInWithPostRequest() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
@@ -46,7 +46,41 @@ class DispatcherServletTest {
 
         dispatcherServlet.service(request, response);
 
+        verify(session).setAttribute(UserSession.SESSION_KEY,
+                InMemoryUserRepository.findByAccount("gugu").orElseThrow());
         verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    @DisplayName("비밀번호가 틀리면 오류 화면으로 이동한다")
+    void redirectsOnInvalidPassword() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    @DisplayName("GET /login은 POST 로그인 핸들러를 실행하지 않는다")
+    void doesNotLogInWithGetRequest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("GET");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
