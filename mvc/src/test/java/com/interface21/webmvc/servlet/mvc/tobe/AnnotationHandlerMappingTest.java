@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,5 +77,33 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 지원하지_않는_HTTP_메서드면_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("PROPFIND");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 같은_URL과_HTTP_메서드가_중복_매핑되면_예외가_발생한다() {
+        final var duplicateHandlerMapping = new AnnotationHandlerMapping("duplicate.exact");
+
+        assertThatThrownBy(duplicateHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/duplicate");
+    }
+
+    @Test
+    void method를_생략한_매핑과_지정한_매핑이_겹치면_예외가_발생한다() {
+        final var overlapHandlerMapping = new AnnotationHandlerMapping("duplicate.overlap");
+
+        assertThatThrownBy(overlapHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/overlap");
     }
 }
