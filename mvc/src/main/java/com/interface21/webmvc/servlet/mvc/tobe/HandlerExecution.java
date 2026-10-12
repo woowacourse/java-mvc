@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -17,6 +18,21 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(handler, request, response);
+        try {
+            return (ModelAndView) method.invoke(handler, request, response);
+        } catch (final InvocationTargetException e) {
+            throw unwrap(e);
+        }
+    }
+
+    private Exception unwrap(final InvocationTargetException e) {
+        final Throwable cause = e.getCause();
+        if (cause instanceof Error error) {
+            throw error;
+        }
+        if (cause instanceof Exception exception) {
+            return exception;
+        }
+        return e;
     }
 }
