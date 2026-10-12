@@ -1,6 +1,10 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.view.JsonViewResolver;
+import com.interface21.webmvc.servlet.view.JspViewResolver;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +22,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
+        final var dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionAdapter());
+        dispatcherServlet.addViewResolver(new JsonViewResolver());
+        dispatcherServlet.addViewResolver(new JspViewResolver());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

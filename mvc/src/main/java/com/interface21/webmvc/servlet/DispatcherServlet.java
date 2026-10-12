@@ -5,10 +5,8 @@ import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.view.JsonView;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.ViewResolver;
+import com.interface21.webmvc.servlet.view.ViewResolverRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,35 +21,28 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String JSON_VIEW_NAME = "json";
 
-    private final String[] basePackages;
-    private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final ViewResolverRegistry viewResolverRegistry = new ViewResolverRegistry();
     private HandlerExecutor handlerExecutor;
 
-    public DispatcherServlet(final String... basePackages) {
-        this.basePackages = basePackages.clone();
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
+    public void addViewResolver(final ViewResolver viewResolver) {
+        viewResolverRegistry.addViewResolver(viewResolver);
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-
-        addHandlerMapping(new AnnotationHandlerMapping((Object[]) basePackages));
         handlerMappingRegistry.initialize();
-
-        addHandlerAdapter(new HandlerExecutionAdapter());
         handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
-    }
-
-    private void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
-    }
-
-    private void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -82,9 +73,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private View resolveView(final String viewName) {
-        if (JSON_VIEW_NAME.equals(viewName)) {
-            return new JsonView();
-        }
-        return new JspView(viewName);
+        return viewResolverRegistry.resolveViewName(viewName)
+                .orElseThrow(() -> new IllegalStateException("No ViewResolver for view name: " + viewName));
     }
 }
