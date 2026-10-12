@@ -82,7 +82,6 @@ DispatcherServlet에 필요한 MVC 구성을 준비해 ServletContext에 등록�
 
 - [x] 구성한 HandlerMapping과 HandlerAdapter를 DispatcherServlet에 전달해 등록한다.
 - [x] DispatcherServlet을 `dispatcher` 이름으로 등록하고 애플리케이션 시작 시 초기화되도록 설정하며 `/`에 매핑한다.
-- [x] Annotation Handler가 있으면 Legacy보다 우선 선택하고, 없으면 Legacy Mapping으로 넘긴다.
 
 ## HandlerAdapter
 
@@ -105,3 +104,15 @@ Handler의 종류에 맞는 방식으로 Handler를 실행한다.
 
 - [x] 지정된 패키지에서 @Controller가 선언된 클래스를 찾는다.
 - [x] 찾은 Controller 클래스의 인스턴스를 생성한다.
+
+## JsonView
+
+### 책임
+
+Model을 JSON으로 변환하여 HTTP 응답으로 렌더링한다.
+
+### 계약
+
+- [x] model에 데이터가 1개면 해당 value를 JSON으로 변환한다.
+- [x] model에 데이터가 2개 이상이면 model 전체를 JSON으로 변환한다.
+- [x] 응답 Content-Type은 `application/json;charset=UTF-8`이다.
