@@ -50,9 +50,44 @@ class UserControllerTest {
     }
 
     @Test
+    void missingAccount() throws Exception {
+        assertError(null, HttpServletResponse.SC_BAD_REQUEST, "{\"message\":\"account는 필수입니다.\"}");
+    }
+
+    @Test
+    void emptyAccount() throws Exception {
+        assertError("", HttpServletResponse.SC_BAD_REQUEST, "{\"message\":\"account는 필수입니다.\"}");
+    }
+
+    @Test
+    void blankAccount() throws Exception {
+        assertError("   ", HttpServletResponse.SC_BAD_REQUEST, "{\"message\":\"account는 필수입니다.\"}");
+    }
+
+    @Test
+    void unknownAccount() throws Exception {
+        assertError("unknown-user", HttpServletResponse.SC_NOT_FOUND, "{\"message\":\"사용자를 찾을 수 없습니다.\"}");
+    }
+
+    @Test
     void postIsNotMapped() {
         when(request.getMethod()).thenReturn("POST");
 
         assertThat(handlerMapping.getHandler(request)).isEmpty();
+    }
+
+    private void assertError(final String account, final int status, final String expectedJson) throws Exception {
+        final var writer = new StringWriter();
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn(account);
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
+
+        final var handler = handlerMapping.getHandler(request).orElseThrow();
+        final var modelAndView = new AnnotationHandlerAdapter().handle(request, response, handler);
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
+
+        verify(response).setStatus(status);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(writer.toString()).isEqualTo(expectedJson);
     }
 }

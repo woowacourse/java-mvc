@@ -15,9 +15,9 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -76,13 +76,39 @@ class DispatcherServletTest {
     }
 
     @Test
-    void exceptionCause() {
+    void missingAccount() throws Exception {
+        assertUserError(null, HttpServletResponse.SC_BAD_REQUEST, "{\"message\":\"account는 필수입니다.\"}");
+    }
+
+    @Test
+    void unknownAccount() throws Exception {
+        assertUserError("unknown-user", HttpServletResponse.SC_NOT_FOUND, "{\"message\":\"사용자를 찾을 수 없습니다.\"}");
+    }
+
+    @Test
+    void exceptionCause() throws Exception {
         when(request.getRequestURI()).thenReturn("/api/user");
         when(request.getMethod()).thenReturn("GET");
-        when(request.getParameter("account")).thenReturn("unknown-user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenThrow(new IOException("write failed"));
 
         assertThatThrownBy(() -> dispatcherServlet.service((ServletRequest) request, (ServletResponse) response))
                 .isInstanceOf(ServletException.class)
-                .hasRootCauseInstanceOf(NoSuchElementException.class);
+                .hasRootCauseInstanceOf(IOException.class)
+                .hasRootCauseMessage("write failed");
+    }
+
+    private void assertUserError(final String account, final int status, final String expectedJson) throws Exception {
+        final var writer = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn(account);
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
+
+        dispatcherServlet.service((ServletRequest) request, (ServletResponse) response);
+
+        verify(response).setStatus(status);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(writer.toString()).isEqualTo(expectedJson);
     }
 }

@@ -8,6 +8,7 @@ import com.interface21.webmvc.servlet.view.JsonView;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +22,24 @@ public class UserController {
         final String account = req.getParameter("account");
         log.debug("user id : {}", account);
 
-        final var user = InMemoryUserRepository.findByAccount(account).orElseThrow();
+        if (account == null || account.isBlank()) {
+            return error(res, HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+        }
+
+        final var user = InMemoryUserRepository.findByAccount(account);
+        if (user.isEmpty()) {
+            return error(res, HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
+        }
+
         final var modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", user.get());
 
         return modelAndView;
+    }
+
+    private ModelAndView error(final HttpServletResponse response, final int status, final String message) {
+        response.setStatus(status);
+        return new ModelAndView(new JsonView())
+                .addObject("error", Map.of("message", message));
     }
 }
