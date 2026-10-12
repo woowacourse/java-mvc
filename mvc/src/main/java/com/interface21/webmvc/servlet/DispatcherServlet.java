@@ -1,11 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
@@ -14,32 +10,29 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
 
-        handlerMappings.addAll(List.of(manualHandlerMapping, annotationHandlerMapping));
-        handlerAdapters.addAll(List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
+        handlerMappings.add(annotationHandlerMapping);
+        handlerAdapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
