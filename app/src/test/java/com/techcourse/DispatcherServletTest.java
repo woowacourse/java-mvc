@@ -1,9 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -24,19 +26,19 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
+        servlet = new DispatcherServlet("com.techcourse.controller");
         servlet.init();
     }
 
     @Test
-    void showsLegacyLoginPage() throws Exception {
+    void showsLoginPage() throws Exception {
         final var request = request("GET", "/login/view");
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getSession()).thenReturn(mock(HttpSession.class));
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(dispatcher).forward(request, response);
     }
@@ -48,33 +50,33 @@ class DispatcherServletTest {
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(dispatcher).forward(request, response);
     }
 
     @Test
-    void registersWithAnnotationAndLogsInWithLegacyController() throws Exception {
+    void registersAndLogsIn() throws Exception {
         final var registerRequest = request("POST", "/register");
         final var registerResponse = mock(HttpServletResponse.class);
-        when(registerRequest.getParameter("account")).thenReturn("step2-user");
+        when(registerRequest.getParameter("account")).thenReturn("step3-user");
         when(registerRequest.getParameter("password")).thenReturn("password");
-        when(registerRequest.getParameter("email")).thenReturn("step2@example.com");
+        when(registerRequest.getParameter("email")).thenReturn("step3@example.com");
 
-        servlet.service(registerRequest, registerResponse);
+        service(registerRequest, registerResponse);
 
         verify(registerResponse).sendRedirect("/index.jsp");
-        final var user = InMemoryUserRepository.findByAccount("step2-user").orElseThrow();
+        final var user = InMemoryUserRepository.findByAccount("step3-user").orElseThrow();
         assertThat(user.checkPassword("password")).isTrue();
 
         final var loginRequest = request("POST", "/login");
         final var loginResponse = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
         when(loginRequest.getSession()).thenReturn(session);
-        when(loginRequest.getParameter("account")).thenReturn("step2-user");
+        when(loginRequest.getParameter("account")).thenReturn("step3-user");
         when(loginRequest.getParameter("password")).thenReturn("password");
 
-        servlet.service(loginRequest, loginResponse);
+        service(loginRequest, loginResponse);
 
         verify(session).setAttribute(UserSession.SESSION_KEY, user);
         verify(loginResponse).sendRedirect("/index.jsp");
@@ -85,19 +87,83 @@ class DispatcherServletTest {
         final var request = request("GET", "/unknown");
         final var response = mock(HttpServletResponse.class);
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
-    void doesNotFallBackToLegacyRegistrationForUnsupportedMethod() throws Exception {
+    void rejectsUnsupportedRegistrationMethod() throws Exception {
         final var request = request("PUT", "/register");
         final var response = mock(HttpServletResponse.class);
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void showsHomePage() throws Exception {
+        final var request = request("GET", "/");
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
+
+        service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void stillSupportsRegistrationViewUrl() throws Exception {
+        final var request = request("GET", "/register/view");
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void logsOutAndRedirectsHome() throws Exception {
+        final var request = request("GET", "/logout");
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+
+        service(request, response);
+
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
+    }
+
+    @Test
+    void rejectsIncorrectPassword() throws Exception {
+        final var request = request("POST", "/login");
+        final var response = mock(HttpServletResponse.class);
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("incorrect");
+
+        service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void redirectsLoggedInUserFromLoginPage() throws Exception {
+        final var request = request("GET", "/login/view");
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY))
+                .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
     }
 
     @Test
@@ -108,7 +174,7 @@ class DispatcherServletTest {
         when(request.getParameter("account")).thenReturn("gugu");
         when(response.getWriter()).thenReturn(new PrintWriter(body));
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).contains("\"id\":1", "\"account\":\"gugu\"", "\"email\":\"hkkang@woowahan.com\"")
@@ -123,7 +189,7 @@ class DispatcherServletTest {
         when(request.getParameter("account")).thenReturn("unknown-user");
         when(response.getWriter()).thenReturn(new PrintWriter(body));
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         assertThat(body.toString()).isEqualTo("null");
@@ -136,10 +202,14 @@ class DispatcherServletTest {
         final var body = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(body));
 
-        servlet.service(request, response);
+        service(request, response);
 
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         assertThat(body.toString()).isEqualTo("null");
+    }
+
+    private void service(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        servlet.service((ServletRequest) request, response);
     }
 
     private HttpServletRequest request(final String method, final String uri) {
