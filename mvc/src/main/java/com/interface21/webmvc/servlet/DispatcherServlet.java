@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,9 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
@@ -21,18 +18,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> mappings = List.of();
     private final List<HandlerAdapter> adapters = List.of(
-            new SimpleControllerHandlerAdapter(), new HandlerExecutionAdapter());
+            new HandlerExecutionAdapter());
 
-    public DispatcherServlet() {
+    private final String basePackage;
+
+    public DispatcherServlet(final String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
-        mappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        mappings = List.of(annotationHandlerMapping);
     }
 
     @Override

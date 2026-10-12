@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.techcourse.controller.UserSession;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import com.techcourse.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,17 +24,93 @@ import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet servlet;
+    private TestDispatcherServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
+        servlet = new TestDispatcherServlet();
         servlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         when(request.getMethod()).thenReturn("GET");
+    }
+
+    @Test
+    void rendersUserAsJson() throws Exception {
+        final var account = "json-" + UUID.randomUUID();
+        InMemoryUserRepository.save(new User(3, account, "secret", "user@example.com"));
+        final var output = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getParameter("account")).thenReturn(account);
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("application/json;charset=UTF-8");
+        assertThat(output.toString()).isEqualTo("{\"account\":\"" + account + "\"}");
+    }
+
+    @Test
+    void rejectsGetLogin() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        servlet.service(request, response);
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void rendersLoginFormForAnonymousUser() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
+        servlet.service(request, response);
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void redirectsLoginFormForLoggedInUser() throws Exception {
+        when(request.getRequestURI()).thenReturn("/login/view");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(
+                InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+        servlet.service(request, response);
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void rejectsIncorrectPassword() throws Exception {
+        login("gugu", "incorrect");
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void rejectsUnknownAccount() throws Exception {
+        login("missing-" + UUID.randomUUID(), "secret");
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void redirectsAlreadyLoggedInUser() throws Exception {
+        final var session = mock(HttpSession.class);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(
+                InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        servlet.service(request, response);
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    private void login(final String account, final String password) throws Exception {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn(account);
+        when(request.getParameter("password")).thenReturn(password);
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        servlet.service(request, response);
     }
 
     @Test
@@ -45,7 +125,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void registersUserThenLogsInThroughLegacyController() throws Exception {
+    void registersUserThenLogsIn() throws Exception {
         final var account = "registration-" + UUID.randomUUID();
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
@@ -85,7 +165,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void rendersLegacyView() throws Exception {
+    void rendersHomeView() throws Exception {
         when(request.getRequestURI()).thenReturn("/");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
@@ -96,12 +176,14 @@ class DispatcherServletTest {
     }
 
     @Test
-    void redirectsLegacyController() throws Exception {
+    void redirectsLogoutController() throws Exception {
         when(request.getRequestURI()).thenReturn("/logout");
-        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
 
         servlet.service(request, response);
 
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
         verify(response).sendRedirect("/");
     }
 
@@ -154,5 +236,16 @@ class DispatcherServletTest {
                 .isInstanceOf(ServletException.class)
                 .hasCauseInstanceOf(IllegalStateException.class)
                 .hasRootCauseMessage("controller failure");
+    }
+    private static class TestDispatcherServlet extends DispatcherServlet {
+        TestDispatcherServlet() {
+            super("com.techcourse.controller");
+        }
+
+        @Override
+        public void service(final HttpServletRequest request, final HttpServletResponse response)
+                throws ServletException {
+            super.service(request, response);
+        }
     }
 }
