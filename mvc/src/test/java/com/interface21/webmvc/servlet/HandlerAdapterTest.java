@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,19 +13,9 @@ import static org.mockito.Mockito.mock;
 class HandlerAdapterTest {
 
     @Test
-    void legacyAdapterSupportsOnlyController() throws Exception {
-        final HandlerAdapter adapter = new SimpleControllerHandlerAdapter();
-        final Controller controller = (request, response) -> "/index.jsp";
-
-        assertThat(adapter.supports(controller)).isTrue();
-        assertThat(adapter.supports(execution())).isFalse();
-        assertThat(adapter.supports(null)).isFalse();
-    }
-
-    @Test
     void annotationAdapterSupportsOnlyHandlerExecution() throws Exception {
         final HandlerAdapter adapter = new HandlerExecutionAdapter();
-        final Controller controller = (request, response) -> "/index.jsp";
+        final Object controller = new Object();
 
         assertThat(adapter.supports(execution())).isTrue();
         assertThat(adapter.supports(controller)).isFalse();
