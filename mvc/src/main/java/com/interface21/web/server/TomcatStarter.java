@@ -1,13 +1,13 @@
-package com.techcourse;
+package com.interface21.web.server;
 
+import com.interface21.web.UncheckedServletException;
+import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-
-import java.io.File;
 
 public class TomcatStarter {
 
@@ -25,7 +25,7 @@ public class TomcatStarter {
 
         final var docBase = new File(webappDirLocation).getAbsolutePath();
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
-        skipJarScan(context);
+//        skipJarScan(context);
         skipClearReferences(context);
     }
 
