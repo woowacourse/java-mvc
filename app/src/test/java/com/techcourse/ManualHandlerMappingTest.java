@@ -2,7 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,12 +20,12 @@ class ManualHandlerMappingTest {
         manualHandlerMapping.initialize();
 
         final var request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getRequestURI()).thenReturn("/register/view");
 
         final HandlerMapping handlerMapping = manualHandlerMapping;
         final Object handler = handlerMapping.getHandler(request);
 
-        assertThat(handler).isInstanceOf(LogoutController.class);
+        assertThat(handler).isInstanceOf(RegisterViewController.class);
         assertThat(handler).isInstanceOf(Controller.class);
     }
 
@@ -49,6 +49,18 @@ class ManualHandlerMappingTest {
 
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/login/view");
+
+        assertThat(manualHandlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    @DisplayName("로그아웃 요청은 수동 매핑에 등록하지 않는다")
+    void doesNotMapLogout() {
+        final var manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/logout");
 
         assertThat(manualHandlerMapping.getHandler(request)).isNull();
     }

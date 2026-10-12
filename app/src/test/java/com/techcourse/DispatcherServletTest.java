@@ -120,6 +120,23 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("GET 로그아웃은 세션의 사용자 속성을 제거하고 홈으로 이동한다")
+    void logsOutWithGetRequest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service(request, response);
+
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
+    }
+
+    @Test
     @DisplayName("같은 URL의 GET 요청은 애노테이션 컨트롤러의 화면 메서드를 실행한다")
     void runsGetHandlerForRegister() throws Exception {
         final var request = mock(HttpServletRequest.class);
