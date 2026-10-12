@@ -1,16 +1,15 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.LegacyHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,18 +18,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
+
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+
+    public DispatcherServlet(final String basePackage) {
+        this.basePackage = Objects.requireNonNull(basePackage);
+    }
 
     @Override
     public void init() {
         handlerMappings = List.of(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse.controller")
+                new AnnotationHandlerMapping(basePackage)
         );
 
         handlerAdapters = List.of(
-                new LegacyHandlerAdapter(),
                 new AnnotationHandlerAdapter()
         );
 
@@ -44,8 +47,11 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws ServletException {
-        log.debug("Method : {}, Request URI : {}",
-                request.getMethod(), request.getRequestURI());
+        log.debug(
+                "Method : {}, Request URI : {}",
+                request.getMethod(),
+                request.getRequestURI()
+        );
 
         try {
             final Object handler = getHandler(request);
@@ -59,12 +65,22 @@ public class DispatcherServlet extends HttpServlet {
 
             if (adapter == null) {
                 throw new IllegalStateException(
-                        "지원하는 HandlerAdapter가 없습니다: " + handler.getClass().getName()
+                        "지원하는 HandlerAdapter가 없습니다: "
+                                + handler.getClass().getName()
                 );
             }
 
-            final ModelAndView mav = adapter.handle(handler, request, response);
-            mav.getView().render(mav.getModel(), request, response);
+            final ModelAndView mav = adapter.handle(
+                    handler,
+                    request,
+                    response
+            );
+
+            mav.getView().render(
+                    mav.getModel(),
+                    request,
+                    response
+            );
 
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -80,6 +96,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
+
         return null;
     }
 
@@ -89,6 +106,7 @@ public class DispatcherServlet extends HttpServlet {
                 return adapter;
             }
         }
+
         return null;
     }
 }
