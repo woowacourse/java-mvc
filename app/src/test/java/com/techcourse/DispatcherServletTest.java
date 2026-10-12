@@ -31,6 +31,22 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("홈 요청은 index.jsp로 전달한다")
+    void showsHomeView() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     @DisplayName("POST 로그인에 성공하면 사용자를 세션에 저장하고 홈으로 이동한다")
     void logsInWithPostRequest() throws Exception {
         final var request = mock(HttpServletRequest.class);
