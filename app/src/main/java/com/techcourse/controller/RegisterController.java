@@ -18,6 +18,11 @@ public class RegisterController {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView showLegacy(final HttpServletRequest request, final HttpServletResponse response) {
+        return show(request, response);
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
