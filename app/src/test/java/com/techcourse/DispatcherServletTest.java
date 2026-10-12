@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.domain.User;
+import com.interface21.web.http.MediaType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +10,10 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,6 +28,60 @@ class DispatcherServletTest {
     void setUp() {
         servlet = new DispatcherServlet();
         servlet.init();
+    }
+
+    @Test
+    void rendersUserApiAsJson() throws Exception {
+        final String account = UUID.randomUUID().toString();
+        InMemoryUserRepository.save(new User(3, account, "secret", "json@example.com"));
+        final var request = apiRequest(account);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"user\":{\"account\":\"" + account + "\"}}");
+    }
+
+    @Test
+    void rendersInvalidAccountAsBadRequestJson() throws Exception {
+        for (final String account : new String[]{null, "", " "}) {
+            final var response = mock(HttpServletResponse.class);
+            final var body = new StringWriter();
+            when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+            servlet.service(apiRequest(account), response);
+
+            verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            assertThat(body.toString()).contains("\"error\"", "\"code\":\"INVALID_ACCOUNT\"",
+                    "\"message\":\"account is required\"").doesNotContain("<html");
+        }
+    }
+
+    @Test
+    void rendersUnknownUserAsNotFoundJson() throws Exception {
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(apiRequest(UUID.randomUUID().toString()), response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).contains("\"error\"", "\"code\":\"USER_NOT_FOUND\"",
+                "\"message\":\"user not found\"").doesNotContain("<html");
+    }
+
+    private HttpServletRequest apiRequest(String account) {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getParameter("account")).thenReturn(account);
+        return request;
     }
 
     @Test
