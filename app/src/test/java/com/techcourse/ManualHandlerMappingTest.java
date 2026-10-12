@@ -1,8 +1,8 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,13 +20,25 @@ class ManualHandlerMappingTest {
         manualHandlerMapping.initialize();
 
         final var request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getRequestURI()).thenReturn("/");
 
         final HandlerMapping handlerMapping = manualHandlerMapping;
         final Object handler = handlerMapping.getHandler(request);
 
-        assertThat(handler).isInstanceOf(RegisterViewController.class);
+        assertThat(handler).isInstanceOf(ForwardController.class);
         assertThat(handler).isInstanceOf(Controller.class);
+    }
+
+    @Test
+    @DisplayName("회원가입 화면 요청은 수동 매핑에 등록하지 않는다")
+    void doesNotMapRegisterView() {
+        final var manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+
+        assertThat(manualHandlerMapping.getHandler(request)).isNull();
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
@@ -19,7 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/register/view", new RegisterViewController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

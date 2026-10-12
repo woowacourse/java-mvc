@@ -153,6 +153,22 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("회원가입 화면 요청은 register.jsp로 전달한다")
+    void showsRegisterView() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     @DisplayName("컨트롤러의 모델을 JSP 요청 속성으로 전달한다")
     void passesModelToView() throws Exception {
         final var request = mock(HttpServletRequest.class);
