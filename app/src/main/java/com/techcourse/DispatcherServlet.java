@@ -43,12 +43,16 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
     }
 
@@ -59,7 +63,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new IllegalArgumentException("요청을 처리할 핸들러가 없습니다. " + request.getMethod() + " " + request.getRequestURI());
+        return null;
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
