@@ -116,6 +116,17 @@ class DispatcherServletTest {
     }
 
     @Test
+    void unknownHttpMethodReturnsNotFound() throws Exception {
+        request("UPDATE", "/register");
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).sendRedirect(anyString());
+        verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
     void unknownUriReturnsNotFound() throws Exception {
         request("GET", "/not-registered");
 

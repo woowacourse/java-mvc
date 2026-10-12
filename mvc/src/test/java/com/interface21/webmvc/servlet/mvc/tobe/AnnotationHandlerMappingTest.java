@@ -1,17 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.web.bind.annotation.RequestMethod;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.interface21.web.bind.annotation.RequestMethod;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -103,6 +103,24 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("POST");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void deleteToGetOnlyUrlReturnsNoHandler() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("DELETE");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void unknownHttpMethodReturnsNoHandler() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("UPDATE");
 
         assertThat(handlerMapping.getHandler(request)).isNull();
     }
