@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -8,6 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -94,6 +98,48 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void rendersUserAsJsonWithoutPassword() throws Exception {
+        final var request = request("GET", "/api/user");
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).contains("\"id\":1", "\"account\":\"gugu\"", "\"email\":\"hkkang@woowahan.com\"")
+                .doesNotContain("password", "\"user\":");
+    }
+
+    @Test
+    void returnsNotFoundForUnknownUser() throws Exception {
+        final var request = request("GET", "/api/user");
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getParameter("account")).thenReturn("unknown-user");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        assertThat(body.toString()).isEqualTo("null");
+    }
+
+    @Test
+    void returnsBadRequestWhenAccountIsMissing() throws Exception {
+        final var request = request("GET", "/api/user");
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertThat(body.toString()).isEqualTo("null");
     }
 
     private HttpServletRequest request(final String method, final String uri) {
