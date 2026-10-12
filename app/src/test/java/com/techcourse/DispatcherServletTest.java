@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -159,5 +163,21 @@ class DispatcherServletTest {
         final var registeredUser = InMemoryUserRepository.findByAccount("test-register").orElseThrow();
         assertEquals("test-register", registeredUser.getAccount());
         verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 사용자_API를_요청하면_JSON을_응답한다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var responseBody = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(responseBody));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertEquals("{\"account\":\"gugu\"}", responseBody.toString());
     }
 }
