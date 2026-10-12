@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -97,6 +100,24 @@ class DispatcherServletTest {
         verify(response).sendRedirect("/index.jsp");
         assertThat(InMemoryUserRepository.findByAccount(account))
                 .hasValueSatisfying(user -> assertThat(user.checkPassword("password")).isTrue());
+    }
+
+    @Test
+    @DisplayName("사용자 조회 요청은 계정을 JSON으로 응답한다")
+    void returnsUserAsJson() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 
     @Test
