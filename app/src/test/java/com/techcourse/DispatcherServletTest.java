@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -127,5 +131,22 @@ class DispatcherServletTest {
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(ServletException.class)
                 .hasCause(cause);
+    }
+
+    @Test
+    void 사용자_정보를_JSON으로_응답한다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString())
+                .isEqualTo("{\"id\":1,\"account\":\"gugu\",\"email\":\"hkkang@woowahan.com\"}");
     }
 }
