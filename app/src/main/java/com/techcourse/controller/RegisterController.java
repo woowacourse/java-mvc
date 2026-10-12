@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
-    @RequestMapping(value = "/api/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(
             final HttpServletRequest request,
             final HttpServletResponse response
@@ -24,6 +24,6 @@ public class RegisterController {
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("redirect:/api/"));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }

@@ -17,13 +17,13 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/api/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(
             final HttpServletRequest request,
             final HttpServletResponse response
     ) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/api/"));
+            return new ModelAndView(new JspView("redirect:/"));
         }
 
         final String viewName = InMemoryUserRepository.findByAccount(request.getParameter("account"))
@@ -39,7 +39,7 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/api/";
+            return "redirect:/";
         }
         return "redirect:/401.jsp";
     }

@@ -48,7 +48,7 @@ class HandlerAdapterIntegrationTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/api/register/view");
+        when(request.getRequestURI()).thenReturn("/register/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
 
@@ -62,7 +62,7 @@ class HandlerAdapterIntegrationTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final String account = "test-" + UUID.randomUUID();
-        when(request.getRequestURI()).thenReturn("/api/register");
+        when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn(account);
         when(request.getParameter("password")).thenReturn("password");
@@ -70,7 +70,7 @@ class HandlerAdapterIntegrationTest {
 
         handleRequest(request, response);
 
-        verify(response).sendRedirect("/api/");
+        verify(response).sendRedirect("/");
         assertThat(InMemoryUserRepository.findByAccount(account).map(User::getAccount)).contains(account);
     }
 
@@ -79,7 +79,7 @@ class HandlerAdapterIntegrationTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/api/");
+        when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
 
@@ -94,7 +94,7 @@ class HandlerAdapterIntegrationTest {
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
         final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/api/login/view");
+        when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
@@ -110,7 +110,7 @@ class HandlerAdapterIntegrationTest {
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
         final User user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
-        when(request.getRequestURI()).thenReturn("/api/login");
+        when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(session);
         when(request.getParameter("account")).thenReturn("gugu");
@@ -119,7 +119,7 @@ class HandlerAdapterIntegrationTest {
         handleRequest(request, response);
 
         verify(session).setAttribute(UserSession.SESSION_KEY, user);
-        verify(response).sendRedirect("/api/");
+        verify(response).sendRedirect("/");
     }
 
     @Test
@@ -127,7 +127,7 @@ class HandlerAdapterIntegrationTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
-        when(request.getRequestURI()).thenReturn("/api/login");
+        when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(session);
         when(request.getParameter("account")).thenReturn("gugu");
@@ -144,19 +144,19 @@ class HandlerAdapterIntegrationTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
-        when(request.getRequestURI()).thenReturn("/api/logout");
+        when(request.getRequestURI()).thenReturn("/logout");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
 
         handleRequest(request, response);
 
         verify(session).removeAttribute(UserSession.SESSION_KEY);
-        verify(response).sendRedirect("/api/");
+        verify(response).sendRedirect("/");
     }
 
     @Test
     void loginAndRegistrationDoNotHandleGetRequests() {
-        for (final String path : new String[] {"/api/login", "/api/register"}) {
+        for (final String path : new String[] {"/login", "/register"}) {
             final var request = mock(HttpServletRequest.class);
             when(request.getRequestURI()).thenReturn(path);
             when(request.getMethod()).thenReturn("GET");
