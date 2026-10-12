@@ -1,27 +1,36 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-
-    public DispatcherServlet() {
-    }
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping.initialize();
+
+        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -30,22 +39,38 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
+            final var handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            final var adapter = getHandlerAdapter(handler);
+            final var modelAndView = adapter.handle(request, response, handler);
+            final var view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private Object getHandler(final HttpServletRequest request) {
+        for (var handlerMapping : handlerMappings) {
+            final var handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
         }
+        return null;
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        for (var handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new IllegalArgumentException("지원하지 않는 핸들러: " + handler.getClass().getName());
     }
 }
