@@ -6,10 +6,21 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Objects;
 
 public class JsonView implements View {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private final ObjectMapper objectMapper;
+
+    public JsonView() {
+        this(OBJECT_MAPPER);
+    }
+
+    public JsonView(ObjectMapper objectMapper) {
+        this.objectMapper = Objects.requireNonNull(objectMapper);
+    }
 
     @Override
     public void render(
@@ -17,18 +28,22 @@ public class JsonView implements View {
             final HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
-        Object value = model;
-        if (model.size() == 1) {
-            value = model.values()
-                    .iterator()
-                    .next();
-        }
+        Object value = selectSerializationTarget(model);
 
-        String json = OBJECT_MAPPER.writeValueAsString(value);
+        String json = objectMapper.writeValueAsString(value);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         response.getWriter()
                 .write(json);
+    }
+
+    private static Object selectSerializationTarget(Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values()
+                    .iterator()
+                    .next();
+        }
+        return model;
     }
 }
