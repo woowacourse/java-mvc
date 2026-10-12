@@ -11,13 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class ChildController extends TestController {
+public class ChildController extends ParentController {
 
     private static final Logger log = LoggerFactory.getLogger(ChildController.class);
 
     @RequestMapping(value = "/child", method = RequestMethod.GET)
     public ModelAndView child(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("")).addObject("handler", "child");
+        log.info("child controller child method");
+        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("handler", "child");
+        return modelAndView;
     }
 
     @Override
