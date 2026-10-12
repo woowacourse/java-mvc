@@ -73,6 +73,12 @@ class AnnotationHandlerRegistrationTest {
         }
     }
 
+    @Test
+    void 상속받은_public_메서드는_등록하지_않는다() {
+        assertThat(getHandler("/same", RequestMethod.GET)).isNotNull();
+        assertThat(getHandler("/inherited", RequestMethod.GET)).isNull();
+    }
+
     private HandlerExecution getHandler(final String url, final RequestMethod requestMethod) {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(url);

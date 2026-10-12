@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class RegistrationController {
+public class RegistrationController extends BaseRegistrationController {
 
     @RequestMapping(value = "/same", method = RequestMethod.GET)
     public ModelAndView get(final HttpServletRequest request, final HttpServletResponse response) {
