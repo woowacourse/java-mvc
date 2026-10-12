@@ -110,7 +110,7 @@ webmvc.org.springframework.web.servlet.view 패키지에서 JsonView 클래스�
 
 #### 2. Legacy MVC 제거하기
 
-- [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
+- [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
 - [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링하자.
 - [ ] Legacy MVC를 제거하고 나서 DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 옮겨보자.
 
