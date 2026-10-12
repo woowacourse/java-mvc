@@ -29,11 +29,6 @@ public class HandlerExecution {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        Object result = method.invoke(controller, request, response);
-        if (result instanceof ModelAndView modelAndView) {
-            return modelAndView;
-        }
-
-        throw new IllegalStateException("핸들러 메서드가 ModelAndView를 반환하지 않았습니다: " + method.toGenericString());
+        return (ModelAndView) method.invoke(controller, request, response);
     }
 }

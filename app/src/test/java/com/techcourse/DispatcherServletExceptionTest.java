@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
@@ -128,6 +130,19 @@ class DispatcherServletExceptionTest {
     }
 
     @Test
+    void preservesResponseStatusWhenAnnotationHandlerReturnsNull() throws Exception {
+        final var method = NotFoundController.class.getMethod("handle", HttpServletRequest.class, HttpServletResponse.class);
+        final var execution = new HandlerExecution(new NotFoundController(), method);
+        when(mappingRegistry.getHandler(request)).thenReturn(Optional.of(execution));
+        when(adapterRegistry.getHandlerAdapter(execution)).thenReturn(new AnnotationHandlerAdapter());
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verifyNoMoreInteractions(response);
+    }
+
+    @Test
     void wrapsMissingAdapterFailure() {
         final var expected = new IllegalArgumentException("adapter not found");
         when(adapterRegistry.getHandlerAdapter(handler)).thenThrow(expected);
@@ -152,6 +167,17 @@ class DispatcherServletExceptionTest {
         final var execution = new HandlerExecution(controller, method);
         when(mappingRegistry.getHandler(request)).thenReturn(Optional.of(execution));
         when(adapterRegistry.getHandlerAdapter(execution)).thenReturn(new AnnotationHandlerAdapter());
+    }
+
+    public static class NotFoundController {
+
+        public ModelAndView handle(
+                final HttpServletRequest request,
+                final HttpServletResponse response
+        ) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
     }
 
     public static class ThrowingController {
