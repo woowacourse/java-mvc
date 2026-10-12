@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = getHandler(request);
+            final Optional<Object> foundHandler = getHandler(request);
+            if (foundHandler.isEmpty()) {
+                log.warn("요청을 처리할 핸들러가 없습니다: {} {}", request.getMethod(), requestURI);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            final Object handler = foundHandler.get();
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
@@ -57,12 +64,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(final HttpServletRequest request) {
+    private Optional<Object> getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 핸들러가 없습니다: " + request.getRequestURI()));
+                .findFirst();
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
