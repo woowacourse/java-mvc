@@ -36,7 +36,7 @@ class JsonViewTest {
     }
 
     @Test
-    void singleObject() throws Exception {
+    void singleMap() throws Exception {
         final var model = Map.of("user", Map.of("account", "초록"));
 
         view.render(model, request, response);
@@ -44,6 +44,16 @@ class JsonViewTest {
         final var inOrder = inOrder(response);
         inOrder.verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         inOrder.verify(response).getWriter();
+        assertThat(objectMapper.readTree(writer.toString()))
+                .isEqualTo(objectMapper.readTree("{\"account\":\"초록\"}"));
+    }
+
+    @Test
+    void singleJavaObject() throws Exception {
+        final var model = Map.of("user", new TestUser("초록"));
+
+        view.render(model, request, response);
+
         assertThat(objectMapper.readTree(writer.toString()))
                 .isEqualTo(objectMapper.readTree("{\"account\":\"초록\"}"));
     }
@@ -89,5 +99,18 @@ class JsonViewTest {
         view.render(Collections.singletonMap("user", null), request, response);
 
         assertThat(writer.toString()).isEqualTo("null");
+    }
+
+    public static class TestUser {
+
+        private final String account;
+
+        public TestUser(final String account) {
+            this.account = account;
+        }
+
+        public String getAccount() {
+            return account;
+        }
     }
 }
