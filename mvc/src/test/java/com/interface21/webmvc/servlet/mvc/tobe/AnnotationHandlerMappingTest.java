@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -126,6 +127,89 @@ class AnnotationHandlerMappingTest {
 
         // then
         assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @Test
+    void registersOverriddenMappingOnlyOnce() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.child");
+        mapping.initialize();
+        assertThat(execute(mapping, "/inherited").getObject("handler")).isEqualTo("child");
+    }
+
+    @Test
+    void inheritsMappingWhenOverrideHasNoAnnotation() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.unannotated");
+        mapping.initialize();
+        assertThat(execute(mapping, "/inherited").getObject("handler")).isEqualTo("inherited-child");
+    }
+
+    @Test
+    void childMappingReplacesParentMapping() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.remapped");
+        mapping.initialize();
+        assertThat(execute(mapping, "/child").getObject("handler")).isEqualTo("remapped");
+        assertThat(mapping.getHandler(request("/inherited"))).isNull();
+    }
+
+    @Test
+    void usesInterfaceMappingOnPublicImplementation() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.interfaces");
+        mapping.initialize();
+        assertThat(execute(mapping, "/interface").getObject("handler")).isEqualTo("interface");
+    }
+
+    @Test
+    void rejectsConflictingInterfaceMappings() {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.conflicts");
+        assertThatThrownBy(mapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Ambiguous request mapping");
+    }
+
+    @Test
+    void canInitializeAgain() throws Exception {
+        handlerMapping.initialize();
+        assertThat(execute(handlerMapping, "/get-test")).isNotNull();
+    }
+
+    @Test
+    void failedInitializationDoesNotExposePartialMappings() {
+        final var mapping = new AnnotationHandlerMapping("duplicatehandlers");
+        assertThatThrownBy(mapping::initialize).isInstanceOf(IllegalStateException.class);
+        assertThat(mapping.getHandler(request("/duplicate"))).isNull();
+    }
+
+    @Test
+    void inheritsNearestParentMapping() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.nearest");
+        mapping.initialize();
+        assertThat(execute(mapping, "/nearest").getObject("handler")).isEqualTo("nearest-child");
+        assertThat(mapping.getHandler(request("/inherited"))).isNull();
+    }
+
+    @Test
+    void classMappingTakesPrecedenceOverInterfaces() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.classmapping");
+        mapping.initialize();
+        assertThat(execute(mapping, "/class").getObject("handler")).isEqualTo("class");
+        assertThat(mapping.getHandler(request("/first"))).isNull();
+        assertThat(mapping.getHandler(request("/second"))).isNull();
+    }
+
+    private ModelAndView execute(
+            AnnotationHandlerMapping mapping, String path) throws Exception {
+        final var request = request(path);
+        final var handler = (HandlerExecution) mapping.getHandler(request);
+        assertThat(handler).isNotNull();
+        return handler.handle(request, mock(HttpServletResponse.class));
+    }
+
+    private HttpServletRequest request(String path) {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getContextPath()).thenReturn("");
+        when(request.getRequestURI()).thenReturn(path);
+        when(request.getMethod()).thenReturn("GET");
+        return request;
     }
 
     @Test
