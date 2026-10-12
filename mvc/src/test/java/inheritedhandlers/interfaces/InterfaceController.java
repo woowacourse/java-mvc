@@ -21,4 +21,3 @@ interface InterfaceRoute {
     @RequestMapping(value = "/interface", method = RequestMethod.GET)
     ModelAndView show(HttpServletRequest request, HttpServletResponse response);
 }
-

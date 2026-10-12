@@ -18,4 +18,3 @@ public class RemappedController extends BaseController {
         return new ModelAndView(new JspView("")).addObject("handler", "remapped");
     }
 }
-

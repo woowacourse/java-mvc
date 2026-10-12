@@ -15,6 +15,9 @@ public class HandlerExecution {
 
     public HandlerExecution(final Object controller, final Method method) {
         validate(method);
+        if (!method.trySetAccessible()) {
+            throw new IllegalStateException("Cannot access handler method: " + method);
+        }
         this.controller = controller;
         this.method = method;
     }

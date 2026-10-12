@@ -100,4 +100,3 @@ redirect 모델에 불필요한 User를 넣지 않는다. flash/session 전달 �
 JsonView 구조·UTF-8 테스트, UserController DTO·400/404 테스트, 실제 Dispatcher→handler→View 테스트, 동적 포트를 사용하는 실제 HTTP API 테스트를 수행한다. 홈 forward, 로그인·가입 POST redirect, 로그아웃, 이전 화면 경로, context path API 요청, 상속 매핑과 직접 생성 검증을 확인한다.
 
 `:mvc:check :app:check`와 두 모듈 빌드가 성공해야 완료다. 전체 `test`도 실행하되 study 실패가 발생하면 실패 이름과 원인을 따로 기록하고 이번 변경과의 관련성을 확인한다. 실행 가능한 테스트로 확인하지 못한 항목은 완료했다고 표기하지 않는다.
-

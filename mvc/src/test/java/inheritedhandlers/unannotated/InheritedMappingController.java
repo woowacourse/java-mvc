@@ -15,4 +15,3 @@ public class InheritedMappingController extends BaseController {
         return new ModelAndView(new JspView("")).addObject("handler", "inherited-child");
     }
 }
-

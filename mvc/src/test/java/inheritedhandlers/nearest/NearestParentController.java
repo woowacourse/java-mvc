@@ -24,4 +24,3 @@ class MiddleController extends BaseController {
         return new ModelAndView(new JspView(""));
     }
 }
-

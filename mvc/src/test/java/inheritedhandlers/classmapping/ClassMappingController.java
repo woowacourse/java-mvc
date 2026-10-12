@@ -26,4 +26,3 @@ interface SecondRoute {
     @RequestMapping(value = "/second", method = RequestMethod.GET)
     ModelAndView show(HttpServletRequest request, HttpServletResponse response);
 }
-

@@ -14,4 +14,3 @@ public class BaseController {
         return new ModelAndView(new JspView("")).addObject("handler", "base");
     }
 }
-

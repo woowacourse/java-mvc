@@ -16,4 +16,3 @@ public class HomeController {
         return new ModelAndView(new JspView("/index.jsp"));
     }
 }
-

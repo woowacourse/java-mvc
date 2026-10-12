@@ -159,6 +159,13 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void executesInheritedDefaultMethodFromNonPublicInterface() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("inheritedhandlers.defaults");
+        mapping.initialize();
+        assertThat(execute(mapping, "/default").getObject("handler")).isEqualTo("interface-default");
+    }
+
+    @Test
     void rejectsConflictingInterfaceMappings() {
         final var mapping = new AnnotationHandlerMapping("inheritedhandlers.conflicts");
         assertThatThrownBy(mapping::initialize)

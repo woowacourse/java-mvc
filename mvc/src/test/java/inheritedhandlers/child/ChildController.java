@@ -18,4 +18,3 @@ public class ChildController extends BaseController {
         return new ModelAndView(new JspView("")).addObject("handler", "child");
     }
 }
-

@@ -35,4 +35,3 @@ public class UserController {
         return new ModelAndView(new JsonView()).addObject("error", new ErrorResponse(code, message));
     }
 }
-
