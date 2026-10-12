@@ -17,12 +17,12 @@ public class LoginViewController {
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        final String viewName = UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
-                })
-                .orElse("/login.jsp");
-        return new ModelAndView(new JspView(viewName));
+        final var loggedInUser = UserSession.getUserFrom(req.getSession());
+        if (loggedInUser.isEmpty()) {
+            return new ModelAndView(new JspView("/login.jsp"));
+        }
+
+        log.info("logged in {}", loggedInUser.get().getAccount());
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }

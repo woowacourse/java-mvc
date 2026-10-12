@@ -23,12 +23,15 @@ public class LoginController {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        final String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+        final var account = req.getParameter("account");
+        final var registeredUser = InMemoryUserRepository.findByAccount(account);
+        if (registeredUser.isEmpty()) {
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
+        }
+
+        final var user = registeredUser.get();
+        log.info("User : {}", user);
+        final String viewName = login(req, user);
         return new ModelAndView(new JspView(viewName));
     }
 
