@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -29,14 +28,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
-        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        handlerMappings = List.of(annotationHandlerMapping);
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
