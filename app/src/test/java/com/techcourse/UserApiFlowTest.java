@@ -40,7 +40,7 @@ class UserApiFlowTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/api/user");
-        servlet = new DispatcherServlet();
+        servlet = new DispatcherServletInitializer().createDispatcherServlet();
         servlet.init(mock(ServletConfig.class));
     }
 

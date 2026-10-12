@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -124,9 +123,12 @@ class HandlerExecutionAdapterTest {
 
     private static Stream<Arguments> unsupportedHandlers() {
         return Stream.of(
-                Arguments.of("기존 Controller 객체", mock(Controller.class)),
+                Arguments.of("HandlerExecution이 아닌 TestHandler 객체", new TestHandler()),
                 Arguments.of("일반 Object 객체", new Object()),
                 Arguments.of("null", null)
         );
+    }
+
+    private static class TestHandler {
     }
 }
