@@ -5,17 +5,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class DispatcherServletTest {
+class DispatcherServletIntegrationTest {
 
     private DispatcherServlet servlet;
     private HttpServletRequest request;
@@ -23,14 +27,21 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        AnnotationHandlerMapping mapping =
+                new AnnotationHandlerMapping("com.techcourse.controller");
+        mapping.initialize();
+
+        servlet = new DispatcherServlet(
+                List.of(mapping),
+                List.of(new HandlerExecutionAdapter())
+        );
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
     }
 
     @Test
-    void legacyControllerForwardsToJsp() throws Exception {
+    void registerViewForwardsToJsp() throws Exception {
         givenRequest("GET", "/register/view");
         RequestDispatcher dispatcher = givenDispatcher("/register.jsp");
 
@@ -40,7 +51,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerRedirects() throws Exception {
+    void logoutRemovesUserFromSessionAndRedirects() throws Exception {
         givenRequest("GET", "/logout");
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
@@ -64,7 +75,7 @@ class DispatcherServletTest {
     @Test
     void annotatedPostControllerSavesUserAndRedirects() throws Exception {
         givenRequest("POST", "/register");
-        String account = "step2-" + UUID.randomUUID();
+        String account = "step3-" + UUID.randomUUID();
         when(request.getParameter("account")).thenReturn(account);
         when(request.getParameter("password")).thenReturn("password");
         when(request.getParameter("email")).thenReturn("test@example.com");
