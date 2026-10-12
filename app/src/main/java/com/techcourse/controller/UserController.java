@@ -26,6 +26,11 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
+        if (account == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final Optional<User> foundUser = InMemoryUserRepository.findByAccount(account);
 
