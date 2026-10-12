@@ -1,10 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -22,6 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -33,6 +34,11 @@ public class DispatcherServlet extends HttpServlet {
                 new ManualHandlerMapping()
         );
         handlerMappings.forEach(HandlerMapping::initialize);
+
+        handlerAdapters = List.of(
+                new HandlerExecutionHandlerAdapter(),
+                new ControllerHandlerAdapter()
+        );
     }
 
     @Override
@@ -42,15 +48,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            if (handler instanceof Controller controller) {
-                final var viewName = controller.execute(request, response);
-                move(viewName, request, response);
-            } else if (handler instanceof HandlerExecution handlerExecution) {
-                final ModelAndView modelAndView = handlerExecution.handle(request, response);
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-            } else {
-                throw new IllegalStateException("지원하지 않는 핸들러입니다: " + handler);
-            }
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -65,13 +65,10 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 핸들러가 없습니다: " + request.getRequestURI()));
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("지원하지 않는 핸들러입니다: " + handler));
     }
 }
