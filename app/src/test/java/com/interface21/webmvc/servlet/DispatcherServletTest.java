@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
@@ -23,7 +23,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
         dispatcherServlet.init();
     }
 
