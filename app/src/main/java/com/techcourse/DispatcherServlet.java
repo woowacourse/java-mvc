@@ -1,8 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -45,37 +43,18 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = getHandler(request);
+            final var handler = handlerMappings.getHandler(request);
             if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            final var handlerAdapter = getHandlerAdapter(handler);
+            final var handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final var handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        return null;
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalStateException("핸들러를 실행할 어댑터가 없습니다: " + handler.getClass().getName());
     }
 }

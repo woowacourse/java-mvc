@@ -1,9 +1,8 @@
 package com.interface21.webmvc.servlet;
 
-import java.util.Iterator;
 import java.util.List;
 
-public class HandlerAdapterRegistry implements Iterable<HandlerAdapter> {
+public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
 
@@ -11,8 +10,11 @@ public class HandlerAdapterRegistry implements Iterable<HandlerAdapter> {
         this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
-    @Override
-    public Iterator<HandlerAdapter> iterator() {
-        return handlerAdapters.iterator();
+    public HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "핸들러를 실행할 어댑터가 없습니다: " + handler.getClass().getName()));
     }
 }

@@ -1,9 +1,11 @@
 package com.interface21.webmvc.servlet;
 
-import java.util.Iterator;
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
 
-public class HandlerMappingRegistry implements Iterable<HandlerMapping> {
+import java.util.List;
+import java.util.Objects;
+
+public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -11,8 +13,11 @@ public class HandlerMappingRegistry implements Iterable<HandlerMapping> {
         this.handlerMappings = List.copyOf(handlerMappings);
     }
 
-    @Override
-    public Iterator<HandlerMapping> iterator() {
-        return handlerMappings.iterator();
+    public Object getHandler(final HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 }
