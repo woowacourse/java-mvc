@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JsonView;
 import com.interface21.webmvc.servlet.view.JspView;
 
 @Controller
@@ -53,5 +54,12 @@ public class TestController {
     @RequestMapping(value = "/multiple-methods-test", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView multipleMethods(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping(value = "/json-test", method = RequestMethod.GET)
+    public ModelAndView json(final HttpServletRequest request, final HttpServletResponse response) {
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("name", "봉구스");
+        return modelAndView;
     }
 }
