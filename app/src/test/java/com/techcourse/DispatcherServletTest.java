@@ -33,8 +33,21 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("GET /register/view 요청은 회원가입 화면으로 이동한다")
+    void getRegisterView() throws Exception {
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
     @DisplayName("GET /register 요청은 회원가입 화면으로 이동한다")
-    void annotationGetMapping() throws Exception {
+    void getRegister() throws Exception {
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("GET");
@@ -47,7 +60,7 @@ class DispatcherServletTest {
 
     @Test
     @DisplayName("POST /register 요청은 사용자를 저장하고 리다이렉트한다")
-    void annotationPostMapping() throws Exception {
+    void postRegister() throws Exception {
         final var account = UUID.randomUUID().toString();
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
