@@ -1,20 +1,21 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.ModelAndView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
+    private final Object controller;
+    private final Method method;
+
+    public HandlerExecution(final Object controller, final Method method) {
+        this.controller = controller;
+        this.method = method;
+    }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final ModelAndView modelAndView = new ModelAndView(new JspView(request.getRequestURI() + ".jsp"));
-        modelAndView.addObject("id", request.getAttribute("id"));
-
-        return modelAndView;
+        return (ModelAndView) method.invoke(controller, request, response);
     }
 }
