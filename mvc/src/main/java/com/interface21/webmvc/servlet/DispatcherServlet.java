@@ -1,10 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,15 +17,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
-
-    public DispatcherServlet() {
-        // 두 방식이 같은 요청에 일치하면 어노테이션 매핑을 우선한다.
-        // 경로 전체를 어노테이션 방식으로 이전했다면 해당 수동 등록은 제거한다.
-        this(
-                List.of(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping()),
-                List.of(new HandlerExecutionAdapter(), new ControllerAdapter())
-        );
-    }
 
     public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = List.copyOf(handlerMappings);

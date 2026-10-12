@@ -1,4 +1,4 @@
-package com.techcourse.fixture.mappingpolicy;
+package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class AnnotatedLoginController {
+public class HomeController {
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("redirect:/annotated-login"));
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

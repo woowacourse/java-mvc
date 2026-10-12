@@ -1,16 +1,8 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,12 +11,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -288,64 +278,6 @@ class DispatcherServletTest {
             assertThatThrownBy(() -> servlet.service(request, response))
                     .isInstanceOf(ServletException.class)
                     .hasCause(failure);
-        }
-    }
-
-    @Nested
-    @DisplayName("기본 구성의 기존 MVC 연결")
-    class LegacyIntegration {
-
-        private HttpServletRequest request;
-        private HttpServletResponse response;
-
-        @BeforeEach
-        void setUp() {
-            request = mock(HttpServletRequest.class);
-            response = mock(HttpServletResponse.class);
-        }
-
-        @Test
-        @DisplayName("기본 생성자도 기존 Controller 요청을 처리한다")
-        void defaultConstructorHandlesLegacyController() throws Exception {
-            // given
-            final var dispatcher = mock(RequestDispatcher.class);
-            when(request.getRequestURI()).thenReturn("/");
-            when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
-            final var servlet = new DispatcherServlet();
-            servlet.init();
-
-            // when
-            servlet.service(request, response);
-
-            // then
-            verify(dispatcher).forward(request, response);
-        }
-
-        @Test
-        @DisplayName("POST /login 요청은 기존 로그인 컨트롤러를 실행해 인덱스로 리다이렉트한다")
-        void handlesLegacyLoginController() throws Exception {
-            // given
-            final var session = mock(HttpSession.class);
-            final var user = new User(42, "legacy-user", "password", "legacy@example.test");
-            when(request.getRequestURI()).thenReturn("/login");
-            when(request.getMethod()).thenReturn("POST");
-            when(request.getSession()).thenReturn(session);
-            when(request.getParameter("account")).thenReturn("legacy-user");
-            when(request.getParameter("password")).thenReturn("password");
-            final var servlet = new DispatcherServlet();
-            servlet.init();
-
-            try (final var repository = mockStatic(InMemoryUserRepository.class)) {
-                repository.when(() -> InMemoryUserRepository.findByAccount("legacy-user"))
-                        .thenReturn(Optional.of(user));
-
-                // when
-                servlet.service(request, response);
-
-                // then
-                verify(response).sendRedirect("/index.jsp");
-            }
         }
     }
 

@@ -14,14 +14,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -134,7 +141,7 @@ class LoginControllerTest {
             try (final var repository = mockStatic(InMemoryUserRepository.class)) {
                 repository.when(() -> InMemoryUserRepository.findByAccount(ACCOUNT))
                         .thenReturn(Optional.of(USER));
-                controller.execute(request, response);
+                controller.login(request, response);
             }
         }
 
@@ -160,10 +167,11 @@ class LoginControllerTest {
                         .thenReturn(Optional.of(USER));
 
                 // when
-                final var viewName = controller.execute(request, response);
+                final var modelAndView = controller.login(request, response);
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
 
                 // then
-                assertThat(viewName).isEqualTo("redirect:/index.jsp");
+                verify(response).sendRedirect("/index.jsp");
             }
         }
 
@@ -178,10 +186,11 @@ class LoginControllerTest {
                         .thenReturn(Optional.of(USER));
 
                 // when
-                final var viewName = controller.execute(request, response);
+                final var modelAndView = controller.login(request, response);
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
 
                 // then
-                assertThat(viewName).isEqualTo("redirect:/401.jsp");
+                verify(response).sendRedirect("/401.jsp");
             }
         }
 
@@ -195,10 +204,11 @@ class LoginControllerTest {
                         .thenReturn(Optional.empty());
 
                 // when
-                final var viewName = controller.execute(request, response);
+                final var modelAndView = controller.login(request, response);
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
 
                 // then
-                assertThat(viewName).isEqualTo("redirect:/401.jsp");
+                verify(response).sendRedirect("/401.jsp");
             }
         }
 
@@ -213,7 +223,7 @@ class LoginControllerTest {
                         .thenReturn(Optional.of(USER));
 
                 // when
-                controller.execute(request, response);
+                controller.login(request, response);
 
                 // then
                 verify(session).setAttribute(UserSession.SESSION_KEY, USER);
@@ -227,11 +237,65 @@ class LoginControllerTest {
             when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(USER);
             try (final var repository = mockStatic(InMemoryUserRepository.class)) {
                 // when
-                final var viewName = controller.execute(request, response);
+                final var modelAndView = controller.login(request, response);
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
 
                 // then
-                assertThat(viewName).isEqualTo("redirect:/index.jsp");
+                verify(response).sendRedirect("/index.jsp");
             }
+        }
+
+        @DisplayName("인증에 실패하면 세션에 사용자를 저장하지 않는다")
+        @ParameterizedTest(name = "[{index}] 세션 저장 금지: {0}")
+        @MethodSource("failedAuthentication")
+        void doesNotStoreUserOnFailure(final String caseName, final Optional<User> user,
+                                      final String submittedPassword) {
+            // given
+            when(request.getParameter("account")).thenReturn(ACCOUNT);
+            when(request.getParameter("password")).thenReturn(submittedPassword);
+            try (final var repository = mockStatic(InMemoryUserRepository.class)) {
+                repository.when(() -> InMemoryUserRepository.findByAccount(ACCOUNT)).thenReturn(user);
+
+                // when
+                controller.login(request, response);
+
+                // then
+                verify(session, never()).setAttribute(eq(UserSession.SESSION_KEY), any());
+            }
+        }
+
+        static Stream<Arguments> failedAuthentication() {
+            return Stream.of(
+                    Arguments.of("존재하지 않는 계정", Optional.empty(), PASSWORD),
+                    Arguments.of("잘못된 비밀번호", Optional.of(USER), "wrong-password")
+            );
+        }
+
+        @Test
+        @DisplayName("이미 로그인했으면 저장소를 다시 조회하지 않는다")
+        void doesNotQueryRepositoryWhenAlreadyLoggedIn() {
+            // given
+            when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(USER);
+            try (final var repository = mockStatic(InMemoryUserRepository.class)) {
+                // when
+                controller.login(request, response);
+
+                // then
+                repository.verifyNoInteractions();
+            }
+        }
+
+        @Test
+        @DisplayName("이미 로그인했으면 세션 사용자를 다시 저장하지 않는다")
+        void doesNotOverwriteSessionWhenAlreadyLoggedIn() {
+            // given
+            when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(USER);
+
+            // when
+            controller.login(request, response);
+
+            // then
+            verify(session, never()).setAttribute(eq(UserSession.SESSION_KEY), any());
         }
     }
 }

@@ -16,7 +16,7 @@ public class ModelAndView {
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
-        model.put(attributeName, attributeValue);
+        model.put(Objects.requireNonNull(attributeName, "모델 이름은 null일 수 없습니다."), attributeValue);
         return this;
     }
 

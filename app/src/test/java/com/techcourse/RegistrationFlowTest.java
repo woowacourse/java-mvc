@@ -3,12 +3,17 @@ package com.techcourse;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -22,14 +27,14 @@ class RegistrationFlowTest {
 
     private HttpServletRequest request;
     private HttpServletResponse response;
-    private DispatcherServlet servlet;
+    private Servlet servlet;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws ServletException {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = new DispatcherServletInitializer().createDispatcherServlet();
+        servlet.init(mock(ServletConfig.class));
     }
 
     @Nested
@@ -126,8 +131,8 @@ class RegistrationFlowTest {
         }
 
         @Test
-        @DisplayName("PUT /register 요청이 기존 수동 Controller로 넘어가 저장되지 않는다")
-        void doesNotFallBackToLegacyRegistration() throws Exception {
+        @DisplayName("PUT /register 요청은 사용자를 저장하지 않는다")
+        void doesNotSaveUserForUnsupportedMethod() throws Exception {
             // given
             try (final var repository = mockStatic(InMemoryUserRepository.class)) {
                 // when
@@ -141,11 +146,11 @@ class RegistrationFlowTest {
 
     @Nested
     @DisplayName("기존 경로와의 호환")
-    class LegacyCompatibility {
+    class PreviousPathCompatibility {
 
         @Test
         @DisplayName("기존 GET /register/view 요청도 회원가입 화면을 제공한다")
-        void preservesLegacyRegistrationView() throws Exception {
+        void preservesPreviousRegistrationView() throws Exception {
             // given
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestURI()).thenReturn("/register/view");
@@ -157,6 +162,21 @@ class RegistrationFlowTest {
 
             // then
             verify(dispatcher).forward(request, response);
+        }
+
+        @DisplayName("기존 화면 경로도 GET 이외의 요청에는 404를 응답한다")
+        @ParameterizedTest(name = "[{index}] {0} /register/view → 매핑 없음")
+        @ValueSource(strings = {"POST", "PUT", "DELETE"})
+        void rejectsUnsupportedRegistrationViewMethod(final String method) throws Exception {
+            // given
+            when(request.getMethod()).thenReturn(method);
+            when(request.getRequestURI()).thenReturn("/register/view");
+
+            // when
+            servlet.service(request, response);
+
+            // then
+            verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 }
