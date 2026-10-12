@@ -64,6 +64,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        final String requestUri = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final Object handler = handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
+
+        if (handler != null) {
+            return handler;
+        }
+
+        for (RequestMethod method : RequestMethod.values()) {
+            if (handlerExecutions.containsKey(new HandlerKey(requestUri, method))) {
+                throw new IllegalArgumentException(
+                        "지원하지 않는 HTTP 메서드입니다: " + request.getMethod() + " " + requestUri
+                );
+            }
+        }
+        return null;
     }
 }

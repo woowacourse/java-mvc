@@ -1,7 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -20,23 +19,29 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackages;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackages) {
+        this.basePackages = basePackages;
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        AnnotationHandlerMapping annotationHandlerMapping =
-                new AnnotationHandlerMapping("com.techcourse.controller");
+        handlerMappings = createHandlerMappings();
+        handlerAdapters = createHandlerAdapters();
+    }
 
-        manualHandlerMapping.initialize();
+    private List<HandlerMapping> createHandlerMappings() {
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
-        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        return List.of(annotationHandlerMapping);
+    }
+
+    private List<HandlerAdapter> createHandlerAdapters() {
+        return List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -45,9 +50,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            final var modelAndView = handlerAdapter.handle(request, response, handler);
+            final Object handler = getHandler(request);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
