@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,12 +35,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerHandlers(final Class<?> controllerClass, final Object controller) {
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            final var requestMapping = method.getAnnotation(RequestMapping.class);
-            if (requestMapping != null && Modifier.isPublic(method.getModifiers())) {
-                registerHandler(controller, method, requestMapping);
-            }
-        }
+        Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .filter(method -> Modifier.isPublic(method.getModifiers()))
+                .forEach(method -> registerHandler(controller, method, method.getAnnotation(RequestMapping.class)));
     }
 
     private void registerHandler(final Object controller, final Method method, final RequestMapping requestMapping) {
