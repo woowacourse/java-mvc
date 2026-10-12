@@ -1,7 +1,9 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
@@ -19,8 +21,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private HandlerMappingRegistry handlerMappings;
+    private HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -32,8 +34,9 @@ public class DispatcherServlet extends HttpServlet {
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
-        handlerAdapters = List.of(new SimpleControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        handlerMappings = new HandlerMappingRegistry(List.of(annotationHandlerMapping, manualHandlerMapping));
+        handlerAdapters = new HandlerAdapterRegistry(
+                List.of(new SimpleControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter()));
     }
 
     @Override
