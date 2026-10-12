@@ -84,6 +84,42 @@ class DispatcherServletTest {
     }
 
     @Test
+    @DisplayName("로그인하지 않은 사용자가 로그인 화면을 요청하면 JSP를 보여준다")
+    void showsLoginViewForGuest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        final var requestDispatcher = mock(RequestDispatcher.class);
+
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자가 로그인 화면을 요청하면 홈으로 이동한다")
+    void redirectsLoggedInUserFromLoginView() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY))
+                .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
     @DisplayName("같은 URL의 GET 요청은 애노테이션 컨트롤러의 화면 메서드를 실행한다")
     void runsGetHandlerForRegister() throws Exception {
         final var request = mock(HttpServletRequest.class);
