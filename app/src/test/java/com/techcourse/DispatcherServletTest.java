@@ -28,7 +28,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 기존_컨트롤러를_실행하고_JSP로_전달한다() throws Exception {
+    void 회원가입_화면_컨트롤러가_JSP로_전달한다() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
@@ -46,9 +46,9 @@ class DispatcherServletTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("PROPFIND");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
 
         dispatcherServlet.service(request, response);
 
