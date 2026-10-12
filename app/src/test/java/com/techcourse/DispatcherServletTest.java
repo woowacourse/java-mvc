@@ -1,9 +1,12 @@
 package com.techcourse;
 
 import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,8 +29,12 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
         dispatcherServlet.init();
+    }
+
+    private void dispatch(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        dispatcherServlet.service((ServletRequest) request, (ServletResponse) response);
     }
 
     @Test
@@ -41,7 +48,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(requestDispatcher).forward(request, response);
     }
@@ -60,7 +67,7 @@ class DispatcherServletTest {
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("password");
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(session).setAttribute(UserSession.SESSION_KEY,
                 InMemoryUserRepository.findByAccount("gugu").orElseThrow());
@@ -80,7 +87,7 @@ class DispatcherServletTest {
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("wrong");
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(response).sendRedirect("/401.jsp");
     }
@@ -94,7 +101,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("GET");
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
@@ -112,7 +119,7 @@ class DispatcherServletTest {
         when(request.getSession()).thenReturn(session);
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(requestDispatcher).forward(request, response);
     }
@@ -130,7 +137,7 @@ class DispatcherServletTest {
         when(session.getAttribute(UserSession.SESSION_KEY))
                 .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(response).sendRedirect("/index.jsp");
     }
@@ -146,7 +153,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(session).removeAttribute(UserSession.SESSION_KEY);
         verify(response).sendRedirect("/");
@@ -163,7 +170,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(requestDispatcher).forward(request, response);
     }
@@ -179,7 +186,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(requestDispatcher).forward(request, response);
     }
@@ -195,7 +202,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("/model-test.jsp")).thenReturn(requestDispatcher);
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(request).setAttribute("message", "hello");
         verify(requestDispatcher).forward(request, response);
@@ -214,7 +221,7 @@ class DispatcherServletTest {
         when(request.getParameter("password")).thenReturn("password");
         when(request.getParameter("email")).thenReturn("new-user@example.com");
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(response).sendRedirect("/index.jsp");
         assertThat(InMemoryUserRepository.findByAccount(account))
@@ -233,7 +240,7 @@ class DispatcherServletTest {
         when(request.getParameter("account")).thenReturn("gugu");
         when(response.getWriter()).thenReturn(new PrintWriter(body));
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
@@ -248,7 +255,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/unknown");
         when(request.getMethod()).thenReturn("GET");
 
-        dispatcherServlet.service(request, response);
+        dispatch(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
