@@ -37,10 +37,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         final var annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         annotationHandlerMapping.initialize();
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
 
-        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        handlerMappings = List.of(annotationHandlerMapping);
         handlerAdapters = List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter());
     }
 
