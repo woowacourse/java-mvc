@@ -13,7 +13,6 @@ import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.LegacyControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.techcourse.controller.UserSession;
@@ -35,11 +34,9 @@ class HandlerAdapterIntegrationTest {
     @BeforeEach
     void setUp() {
         mappingRegistry = new HandlerMappingRegistry();
-        mappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         mappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
 
         adapterRegistry = new HandlerAdapterRegistry();
-        adapterRegistry.addHandlerAdapter(new LegacyControllerHandlerAdapter());
         adapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 

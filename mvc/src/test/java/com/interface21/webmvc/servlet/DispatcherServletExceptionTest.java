@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
@@ -8,9 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
@@ -43,7 +40,7 @@ class DispatcherServletExceptionTest {
 
         try (final var mappings = mockConstruction(HandlerMappingRegistry.class);
              final var adapters = mockConstruction(HandlerAdapterRegistry.class)) {
-            servlet = new DispatcherServlet();
+            servlet = new DispatcherServlet("samples");
             mappingRegistry = mappings.constructed().getFirst();
             adapterRegistry = adapters.constructed().getFirst();
         }
