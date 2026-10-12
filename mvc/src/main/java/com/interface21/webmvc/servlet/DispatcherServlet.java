@@ -1,10 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,30 +11,32 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 모든 요청의 진입점(Front Controller).
+ * 어떤 매핑/어댑터를 쓸지는 외부에서 주입받고, 요청 처리 순서만 책임진다.
+ */
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = List.copyOf(handlerMappings);
+        this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
     @Override
     public void init() {
-        handlerMappings = List.of(new AnnotationHandlerMapping(BASE_PACKAGE));
         handlerMappings.forEach(HandlerMapping::initialize);
-        handlerAdapters = List.of(new AnnotationHandlerAdapter());
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             // 1. 요청을 처리할 핸들러 탐색
@@ -46,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             final var adapter = getHandlerAdapter(handler);
             // 3. 어댑터가 핸들러를 실행하고 ModelAndView 로 통일해 반환
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
-            // 4. 뷰 렌더링 (forward / redirect)
+            // 4. 뷰 렌더링 (forward / redirect / json)
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
