@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -39,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         annotationHandlerMapping.initialize();
 
         handlerMappings = List.of(annotationHandlerMapping);
-        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter());
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
