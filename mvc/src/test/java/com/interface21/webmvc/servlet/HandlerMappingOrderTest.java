@@ -1,10 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.core.Ordered;
-import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.handler.AbstractHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.legacy.Controller;
-import com.interface21.webmvc.servlet.mvc.legacy.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.annotation.HandlerExecutionAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,10 +38,10 @@ class HandlerMappingOrderTest {
         final var unordered = mock(HandlerMapping.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final Controller fallback = (req, res) -> "redirect:/fallback";
+        final var fallback = handler("/fallback");
         when(unordered.getHandler(request)).thenReturn(fallback);
         final var servlet = new DispatcherServlet(List.of(unordered, mapping(0, "/ordered")),
-                List.of(new ControllerHandlerAdapter()));
+                List.of(new HandlerExecutionAdapter()));
 
         servlet.init();
         servlet.service(request, response);
@@ -65,25 +66,32 @@ class HandlerMappingOrderTest {
         assertThat(mapping.getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
     }
 
-    private TestMapping mapping(final int order, final String path) {
-        final var mapping = new TestMapping((req, res) -> "redirect:" + path);
+    private TestMapping mapping(final int order, final String path) throws Exception {
+        final var mapping = new TestMapping(handler(path));
         mapping.setOrder(order);
         return mapping;
+    }
+
+    private HandlerExecution handler(final String path) throws Exception {
+        final var handler = mock(HandlerExecution.class);
+        when(handler.handle(any(HttpServletRequest.class), any(HttpServletResponse.class)))
+                .thenReturn(new ModelAndView(new JspView("redirect:" + path)));
+        return handler;
     }
 
     private void assertRedirect(final List<HandlerMapping> mappings, final String path) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var servlet = new DispatcherServlet(mappings, List.of(new ControllerHandlerAdapter()));
+        final var servlet = new DispatcherServlet(mappings, List.of(new HandlerExecutionAdapter()));
         servlet.init();
         servlet.service(request, response);
         verify(response).sendRedirect(path);
     }
 
     private static class TestMapping extends AbstractHandlerMapping {
-        private final Controller handler;
+        private final HandlerExecution handler;
 
-        TestMapping(final Controller handler) {
+        TestMapping(final HandlerExecution handler) {
             this.handler = handler;
         }
 

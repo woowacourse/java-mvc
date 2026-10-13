@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.annotation;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.legacy.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ class HandlerExecutionAdapterTest {
     @DisplayName("HandlerExecution 타입만 지원한다")
     void supportsOnlyHandlerExecutions() {
         assertThat(adapter.supports(mock(HandlerExecution.class))).isTrue();
-        assertThat(adapter.supports(mock(Controller.class))).isFalse();
+        assertThat(adapter.supports(new Object())).isFalse();
         assertThat(adapter.supports(null)).isFalse();
     }
 
