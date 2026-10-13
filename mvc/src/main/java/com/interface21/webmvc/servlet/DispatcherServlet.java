@@ -1,12 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.HandlerExecutor;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
@@ -24,8 +17,10 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
     private final HandlerExecutor handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
+    private final String[] basePackages;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String... basePackages) {
+        this.basePackages = basePackages.clone();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -38,15 +33,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping((Object[]) basePackages);
         annotationHandlerMapping.initialize();
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
 
         addHandlerMapping(annotationHandlerMapping);
-        addHandlerMapping(manualHandlerMapping);
         addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     @Override
