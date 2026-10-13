@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +24,17 @@ class ManualHandlerMappingTest {
     @Test
     void 요청_URL에_등록된_기존_컨트롤러를_반환한다() {
         final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/logout");
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(LogoutController.class);
+    }
+
+    @Test
+    void 어노테이션으로_전환한_로그인_주소는_수동_매핑에서_제외한다() {
+        final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/login");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(LoginController.class);
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 
     @Test

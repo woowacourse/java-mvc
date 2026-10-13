@@ -56,7 +56,7 @@ class RegisterControllerIntegrationTest {
     }
 
     @Test
-    void 어노테이션으로_가입한_회원이_기존_컨트롤러로_로그인한다() throws Exception {
+    void 어노테이션으로_가입한_회원이_로그인한다() throws Exception {
         final var account = "register-test-" + UUID.randomUUID();
         final var registerRequest = mock(HttpServletRequest.class);
         final var registerResponse = mock(HttpServletResponse.class);
