@@ -50,7 +50,7 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Your Website 2021</div>
                             <div>
-                                <a href="/index.jsp">Home</a>
+                                <a href="/">Home</a>
                                 &middot;
                                 <a href="#">Privacy Policy</a>
                                 &middot;

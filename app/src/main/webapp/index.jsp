@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.techcourse.controller.UserSession" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -8,16 +11,20 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="/index.jsp">대시보드</a>
+            <a class="navbar-brand ps-3" href="/">대시보드</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <% if (session.getAttribute("user") != null) { %>
+            <%
+                final var loggedInUser = UserSession.getUserFrom(session);
+                if (loggedInUser.isPresent()) {
+                    final String encodedAccount = URLEncoder.encode(loggedInUser.get().getAccount(), StandardCharsets.UTF_8);
+            %>
             <div class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
                 <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#!">내정보</a></li>
+                            <li><a class="dropdown-item" href="/api/user?account=<%= encodedAccount %>">내정보</a></li>
                             <li><hr class="dropdown-divider" /></li>
                             <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
                         </ul>
@@ -36,7 +43,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="/index.jsp">
+                            <a class="nav-link" href="/">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 대시보드
                             </a>
@@ -78,7 +85,7 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Your Website 2021</div>
                             <div>
-                                <a href="/index.jsp">Home</a>
+                                <a href="/">Home</a>
                                 &middot;
                                 <a href="#">Privacy Policy</a>
                                 &middot;
