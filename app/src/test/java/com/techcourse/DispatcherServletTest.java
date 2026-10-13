@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.techcourse.controller.UserSession;
@@ -24,14 +24,12 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
         dispatcherServlet = new DispatcherServlet(
-                List.of(manualHandlerMapping, annotationHandlerMapping),
-                List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter()));
+                List.of(annotationHandlerMapping),
+                List.of(new HandlerExecutionHandlerAdapter()));
     }
 
     @Test
@@ -47,7 +45,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 어노테이션_회원가입과_기존_로그인_로그아웃이_공존한다() throws Exception {
+    void 어노테이션_컨트롤러로_회원가입_로그인_로그아웃을_처리한다() throws Exception {
         String account = "mvc-integration-user";
         String password = "test-password";
         HttpServletRequest registerRequest = request("POST", "/register");
