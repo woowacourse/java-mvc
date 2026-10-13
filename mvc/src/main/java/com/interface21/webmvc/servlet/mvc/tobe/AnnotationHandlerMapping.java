@@ -4,7 +4,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -36,18 +35,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping with {} handlers!", handlerExecutions.size());
     }
 
+    @SuppressWarnings("unchecked")
     private void registerController(final Class<?> controllerClass, final Object controller) {
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-            if (requestMapping == null) {
-                continue;
-            }
-
+        final Iterable<Method> requestMappingMethods = ReflectionUtils.getAllMethods(
+                controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
+        for (Method method : requestMappingMethods) {
             if (!Modifier.isPublic(method.getModifiers())) {
                 throw new IllegalStateException("요청 매핑 메서드는 public이어야 합니다: "
                         + controllerClass.getName() + "#" + method.getName());
             }
+
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             registerHandler(controller, method, requestMapping);
         }
     }
