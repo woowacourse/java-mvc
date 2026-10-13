@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -19,17 +18,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
 
+    private final Object[] basePackage;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        handlerMappings = List.of(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
+        handlerMappings = List.of(new AnnotationHandlerMapping(basePackage));
         handlerMappings.forEach(HandlerMapping::initialize);
 
         handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
