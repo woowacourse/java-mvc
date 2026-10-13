@@ -120,21 +120,6 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 같은_URL이_등록되어_있으면_어노테이션_컨트롤러를_우선한다() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
-
-        dispatcherServlet.service(request, response);
-
-        verify(request).setAttribute("handler", "annotation");
-        verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
     void 등록되지_않은_요청에는_404로_응답한다() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

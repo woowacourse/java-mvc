@@ -54,6 +54,14 @@ class ManualHandlerMappingTest {
     }
 
     @Test
+    void 어노테이션으로_전환한_회원가입_화면_주소는_수동_매핑에서_제외한다() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
     void 등록되지_않은_URL이면_null을_반환한다() {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/unknown");

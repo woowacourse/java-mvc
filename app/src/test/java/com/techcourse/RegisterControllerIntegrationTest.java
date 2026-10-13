@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +55,27 @@ class RegisterControllerIntegrationTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+        verify(request, never()).getSession();
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void POST_회원가입_화면_요청에는_404로_응답하고_회원을_저장하지_않는다() throws Exception {
+        final var account = "unsupported-register-view-test-" + UUID.randomUUID();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn(account);
+        when(request.getParameter("password")).thenReturn("password");
+        when(request.getParameter("email")).thenReturn("register@example.com");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(request, never()).getParameter(anyString());
+        verify(request, never()).getRequestDispatcher(anyString());
+        assertThat(InMemoryUserRepository.findByAccount(account)).isEmpty();
     }
 
     @Test
