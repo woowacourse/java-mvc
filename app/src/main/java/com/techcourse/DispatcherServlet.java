@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.ServletException;
@@ -27,15 +26,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
         handlerMappings = new ArrayList<>();
         handlerMappings.add(annotationHandlerMapping);
-        handlerMappings.add(manualHandlerMapping);
     }
 
     @Override
@@ -47,10 +42,7 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final ModelAndView modelAndView;
 
-            if (handler instanceof Controller controller) {
-                String viewName = controller.execute(request, response);
-                modelAndView = new ModelAndView(new JspView(viewName));
-            } else if (handler instanceof HandlerExecution handlerExecution) {
+            if (handler instanceof HandlerExecution handlerExecution) {
                 modelAndView = handlerExecution.handle(request, response);
             } else {
                 throw new IllegalStateException("지원하지 않는 핸들러: " + handler);
