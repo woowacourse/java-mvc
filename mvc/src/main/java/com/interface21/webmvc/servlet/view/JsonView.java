@@ -10,12 +10,12 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Object value = model.size() == 1 ? model.values().iterator().next() : model;
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(objectMapper.writeValueAsString(value));
+        response.getWriter().write(OBJECT_MAPPER.writeValueAsString(value));
     }
 }
