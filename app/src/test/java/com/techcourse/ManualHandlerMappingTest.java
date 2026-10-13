@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,11 +21,11 @@ class ManualHandlerMappingTest {
     }
 
     @Test
-    void 요청_URL에_등록된_기존_컨트롤러를_반환한다() {
+    void 어노테이션으로_전환한_홈_주소는_수동_매핑에서_제외한다() {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(ForwardController.class);
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 
     @Test

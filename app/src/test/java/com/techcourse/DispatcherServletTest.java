@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -40,6 +41,21 @@ class DispatcherServletTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+        verify(request, never()).getSession();
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void POST_홈_요청에는_404로_응답하고_시작_JSP로_전달하지_않는다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("POST");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(request, never()).getRequestDispatcher(anyString());
     }
 
     @Test
