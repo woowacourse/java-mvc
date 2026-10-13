@@ -5,7 +5,6 @@ import com.techcourse.repository.InMemoryUserRepository;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -13,18 +12,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
+    public String save(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView("redirect:/index.jsp");
+        return "redirect:/index.jsp";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView("/register.jsp");
+    public String show(final HttpServletRequest req, final HttpServletResponse res) {
+        return "/register.jsp";
     }
 }

@@ -17,6 +17,13 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(controller, request, response);
+        final Object returnValue = method.invoke(controller, request, response);
+        if (returnValue instanceof ModelAndView modelAndView) {
+            return modelAndView;
+        }
+        if (returnValue instanceof String viewName) {
+            return new ModelAndView(viewName);
+        }
+        throw new IllegalStateException("Unsupported handler return value: " + returnValue);
     }
 }
