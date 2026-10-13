@@ -38,12 +38,12 @@ public class LoginController {
     }
 
     private ModelAndView authenticate(final HttpServletRequest request, final User user) {
-        log.info("User : {}", user);
         if (!user.checkPassword(request.getParameter("password"))) {
             return redirectToUnauthorized();
         }
 
         request.getSession().setAttribute(UserSession.SESSION_KEY, user);
+        log.info("Login success. account: {}", user.getAccount());
         return redirectToIndex();
     }
 
