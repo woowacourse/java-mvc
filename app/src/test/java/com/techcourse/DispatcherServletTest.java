@@ -1,5 +1,9 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import java.util.List;
+
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import jakarta.servlet.http.HttpServlet;
 
@@ -26,7 +30,9 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        servlet = new DispatcherServlet("com.techcourse.controller");
+        final var handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        handlerMapping.initialize();
+        servlet = new DispatcherServlet(List.of(handlerMapping), List.of(new HandlerExecutionAdapter()));
         servlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
