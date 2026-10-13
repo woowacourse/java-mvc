@@ -70,11 +70,49 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 등록되지_않은_URL이면_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/not-registered");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void 지원하지_않는_HTTP_메서드이면_예외_대신_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("PROPFIND");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
     void 같은_URL과_HTTP_메서드의_매핑이_중복되면_초기화에_실패한다() {
         final var duplicatedHandlerMapping = new AnnotationHandlerMapping("duplicated");
 
         assertThatThrownBy(duplicatedHandlerMapping::initialize)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("/duplicated-test");
+    }
+
+    @Test
+    void 핸들러_메서드의_반환_타입이_ModelAndView가_아니면_초기화에_실패한다() {
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("invalidreturntype");
+
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("반환 타입");
+    }
+
+    @Test
+    void 핸들러_메서드의_매개변수가_맞지_않으면_초기화에_실패한다() {
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("invalidparameter");
+
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("매개변수");
     }
 }
