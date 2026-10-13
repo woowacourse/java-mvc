@@ -22,9 +22,10 @@ public class DispatcherTestController {
         return new ModelAndView(new JspView("redirect:/annotation-test"));
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/annotation-login.jsp"));
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/register.jsp"))
+                .addObject("handler", "annotation");
     }
 
     @RequestMapping(value = "/annotation-error", method = RequestMethod.GET)

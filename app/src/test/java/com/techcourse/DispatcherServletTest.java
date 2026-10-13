@@ -84,12 +84,13 @@ class DispatcherServletTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/register/view");
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/annotation-login.jsp")).thenReturn(requestDispatcher);
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
 
         dispatcherServlet.service(request, response);
 
+        verify(request).setAttribute("handler", "annotation");
         verify(requestDispatcher).forward(request, response);
     }
 
