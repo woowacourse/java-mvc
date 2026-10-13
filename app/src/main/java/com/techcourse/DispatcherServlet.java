@@ -11,7 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,15 +44,23 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        final var handler = handlerMappingRegistry.getHandler(request);
-        final HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        final Object handler;
+        try {
+            handler = handlerMappingRegistry.getHandler(request);
+        } catch (NoSuchElementException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         try {
-            ModelAndView modelAndView = adapter.handle(request, response, handler);
+            final HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
+            final ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
+
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e);
