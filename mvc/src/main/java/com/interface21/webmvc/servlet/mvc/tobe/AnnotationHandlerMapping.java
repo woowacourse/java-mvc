@@ -1,23 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,57 +23,59 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::registerHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
+    }
 
-        Set<Class> classes = findAllClassesUsingClassLoader(basePackage[0].toString());
-
-        for (Class clazz : classes) {
-            if (!clazz.isAnnotationPresent(Controller.class)) {
+    private void registerHandlerExecutions(final Class<?> controllerClass, final Object controller) {
+        for (final Method method : controllerClass.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
-            Method[] methods = clazz.getDeclaredMethods();
-
-            for (Method method : methods) {
-                if (!method.isAnnotationPresent(RequestMapping.class)) {
-                    continue;
-                }
-                String url = method.getAnnotation(RequestMapping.class).value();
-                RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
-                if (requestMethods.length == 0) {
-                    requestMethods = RequestMethod.values();
-                }
-
-                for (RequestMethod requestMethod : requestMethods) {
-                    handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution());
-                }
-            }
+            validatePublicMethod(method);
+            registerHandlerExecution(controller, method);
         }
     }
 
+    private void validatePublicMethod(final Method method) {
+        if (!Modifier.isPublic(method.getModifiers())) {
+            throw new IllegalStateException("@RequestMapping 메서드는 public이어야 합니다: " + method);
+        }
+    }
+
+    private void registerHandlerExecution(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        for (final RequestMethod requestMethod : resolveRequestMethods(requestMapping)) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            validateDuplicateMapping(handlerKey, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("Path : {}, Method : {}, Handler : {}", requestMapping.value(), requestMethod, method);
+        }
+    }
+
+    private void validateDuplicateMapping(final HandlerKey handlerKey, final Method method) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey + ", " + method);
+        }
+    }
+
+    private RequestMethod[] resolveRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
+    }
+
+    @Override
     public Object getHandler(final HttpServletRequest request) {
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey key = new HandlerKey(request.getRequestURI(), requestMethod);
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey key = new HandlerKey(request.getRequestURI(), requestMethod);
         return handlerExecutions.get(key);
-    }
-
-    private Set<Class> findAllClassesUsingClassLoader(String packageName) {
-        InputStream stream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(packageName.replaceAll("[.]", "/"));
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        return reader.lines()
-                .filter(line -> line.endsWith(".class"))
-                .map(line -> getClass(line, packageName))
-                .collect(Collectors.toSet());
-    }
-
-    private Class getClass(String className, String packageName) {
-        try {
-            return Class.forName(packageName + "."
-                    + className.substring(0, className.lastIndexOf('.')));
-        } catch (ClassNotFoundException e) {
-            // handle the exception
-        }
-        return null;
     }
 }

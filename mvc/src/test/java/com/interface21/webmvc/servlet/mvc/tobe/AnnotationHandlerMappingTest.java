@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +48,23 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 같은_URL과_HTTP_메서드에_핸들러가_중복_매핑되면_예외가_발생한다() {
+        final var duplicateHandlerMapping = new AnnotationHandlerMapping("fixture.duplicate");
+
+        assertThatThrownBy(duplicateHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("중복된 요청 매핑입니다");
+    }
+
+    @Test
+    void public이_아닌_메서드에_RequestMapping이_붙어있으면_예외가_발생한다() {
+        final var nonPublicHandlerMapping = new AnnotationHandlerMapping("fixture.nonpublic");
+
+        assertThatThrownBy(nonPublicHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("public이어야 합니다");
     }
 }
