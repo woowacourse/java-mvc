@@ -1,9 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.HandlerScanner;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +24,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            handlerMappings = scanner.getHandlerMappings();
-            handlerAdapters = scanner.getHandlerAdapters();
+            handlerMappings = scanner.createHandlerMappings();
+            handlerAdapters = scanner.createHandlerAdapters();
         } catch (RuntimeException e) {
             throw new ServletException("핸들러 초기화에 실패했습니다.", e);
         }
@@ -71,7 +67,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) throws ServletException {
-       return handlerAdapters.stream()
+        return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow(() -> new ServletException("지원하는 어댑터가 없습니다: " + handler.getClass().getName()));
