@@ -11,7 +11,7 @@ public class ControllerScanner {
     private final Reflections reflections;
     private final Map<Class<?>, Object> controllers = new HashMap<>();
 
-    public ControllerScanner(String packages) {
+    public ControllerScanner(Object[] packages) {
         this.reflections = new Reflections(packages);
     }
 

@@ -6,7 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Set;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,39 +26,29 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner cs = new ControllerScanner(basePackage);
 
-        for (Class<?> clazz : typesAnnotatedWith) {
-            try {
-                Object instance = clazz.getDeclaredConstructor().newInstance();
+        Map<Class<?>, Object> controllers = cs.getControllers();
 
-                for (Method method : clazz.getDeclaredMethods()) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
 
-                        RequestMethod[] requestMethods = annotation.method();
+            Class<?> clazz = entry.getKey();
+            Object instance = entry.getValue();
+            Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
+                    ReflectionUtils.withAnnotation(RequestMapping.class));
 
-                        if (annotation.method().length == 0) {
-                            requestMethods = RequestMethod.values();
-                        }
+            for (Method method : methods) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                            HandlerExecution handlerExecution = handlerExecutions.putIfAbsent(handlerKey,
-                                    new HandlerExecution(instance, method));
-
-                            if (handlerExecution != null) {
-                                throw new IllegalStateException("중복된 핸들러 매핑: "
-                                                + requestMethod + " "
-                                                + annotation.value()
-                                );
-                            }
-                        }
-                    }
+                RequestMethod[] requestMethods = requestMapping.method();
+                if (requestMethods.length == 0) {
+                    requestMethods = RequestMethod.values();
                 }
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
+
+                for (RequestMethod requestMethod : requestMethods) {
+                    HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                    handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
+                }
             }
         }
     }
