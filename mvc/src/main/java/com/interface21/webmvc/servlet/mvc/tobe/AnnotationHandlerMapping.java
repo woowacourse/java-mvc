@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -35,7 +36,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
+            validatePublicMethod(method);
             registerHandlerExecution(controller, method);
+        }
+    }
+
+    private void validatePublicMethod(final Method method) {
+        if (!Modifier.isPublic(method.getModifiers())) {
+            throw new IllegalStateException("@RequestMapping 메서드는 public이어야 합니다: " + method);
         }
     }
 

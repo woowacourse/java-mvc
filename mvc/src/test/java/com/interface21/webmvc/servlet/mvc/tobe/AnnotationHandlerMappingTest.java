@@ -58,4 +58,13 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("중복된 요청 매핑입니다");
     }
+
+    @Test
+    void public이_아닌_메서드에_RequestMapping이_붙어있으면_예외가_발생한다() {
+        final var nonPublicHandlerMapping = new AnnotationHandlerMapping("fixture.nonpublic");
+
+        assertThatThrownBy(nonPublicHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("public이어야 합니다");
+    }
 }
