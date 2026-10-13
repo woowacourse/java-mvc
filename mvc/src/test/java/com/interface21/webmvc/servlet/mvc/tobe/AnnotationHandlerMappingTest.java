@@ -97,4 +97,22 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("/duplicated-test");
     }
+
+    @Test
+    void 핸들러_메서드의_반환_타입이_ModelAndView가_아니면_초기화에_실패한다() {
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("invalidreturntype");
+
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("반환 타입");
+    }
+
+    @Test
+    void 핸들러_메서드의_매개변수가_맞지_않으면_초기화에_실패한다() {
+        final var invalidHandlerMapping = new AnnotationHandlerMapping("invalidparameter");
+
+        assertThatThrownBy(invalidHandlerMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("매개변수");
+    }
 }
