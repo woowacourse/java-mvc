@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.view;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -78,6 +80,20 @@ class JsonViewTest {
                 .path("user").path("account").asText()).isEqualTo("second");
     }
 
+    @Test
+    void doesNotWritePartialJsonWhenSerializationFails() throws Exception {
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        assertThatThrownBy(() -> new JsonView().render(
+                Map.of("user", new FailingResponse()), mock(HttpServletRequest.class), response))
+                .isInstanceOf(JsonMappingException.class)
+                .hasRootCauseInstanceOf(IllegalStateException.class);
+
+        assertThat(body.toString()).isEmpty();
+    }
+
     private JsonNode render(JsonView view, Map<String, ?> model) throws Exception {
         final var response = mock(HttpServletResponse.class);
         final var body = new StringWriter();
@@ -87,5 +103,11 @@ class JsonViewTest {
     }
 
     public record SampleResponse(String account) {
+    }
+
+    public static class FailingResponse {
+        public String getAccount() {
+            throw new IllegalStateException("Cannot read account");
+        }
     }
 }
