@@ -40,7 +40,11 @@ class ManualHandlerMappingTest {
         when(postRequest.getRequestURI()).thenReturn("/login");
         when(postRequest.getMethod()).thenReturn("POST");
 
-        assertThat(handlerMapping.getHandler(getRequest)).isSameAs(handlerMapping.getHandler(postRequest));
+        final var getHandler = handlerMapping.getHandler(getRequest);
+        final var postHandler = handlerMapping.getHandler(postRequest);
+
+        assertThat(getHandler).isInstanceOf(LoginController.class);
+        assertThat(postHandler).isSameAs(getHandler);
     }
 
     @Test
