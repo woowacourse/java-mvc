@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.controller.UserSession;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,8 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
@@ -38,7 +43,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 로그아웃_요청을_처리하고_홈_주소로_이동한다() throws Exception {
+    void 로그아웃_요청은_세션의_사용자를_제거한_뒤_홈_주소로_이동한다() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var session = mock(HttpSession.class);
@@ -48,7 +53,42 @@ class DispatcherServletTest {
 
         dispatcherServlet.service(request, response);
 
-        verify(response).sendRedirect("/");
+        final var order = inOrder(session, response);
+        order.verify(session).removeAttribute(UserSession.SESSION_KEY);
+        order.verify(response).sendRedirect("/");
+        verify(session, never()).invalidate();
+    }
+
+    @Test
+    void 로그인하지_않은_사용자도_반복해서_로그아웃할_수_있다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service(request, response);
+        dispatcherServlet.service(request, response);
+
+        verify(session, times(2)).removeAttribute(UserSession.SESSION_KEY);
+        verify(response, times(2)).sendRedirect("/");
+    }
+
+    @Test
+    void POST_로그아웃_요청에는_404로_응답하고_세션에_접근하지_않는다() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var session = mock(HttpSession.class);
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(request, never()).getSession();
+        verifyNoInteractions(session);
     }
 
     @Test
