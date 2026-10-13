@@ -26,7 +26,7 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        if (account == null) {
+        if (account == null || account.isBlank()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return null;
         }
