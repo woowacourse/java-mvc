@@ -105,6 +105,29 @@ class DispatcherServletTest {
     }
 
     @Test
+    void missingAccountParameterReturnsBadRequest() throws Exception {
+        final var request = new MockHttpServletRequest("GET", "/api/user");
+
+        final var response = service(request);
+
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(response.getContentAsString()).isEqualTo("{}");
+    }
+
+    @Test
+    void unknownUserAccountReturnsNotFound() throws Exception {
+        final var request = new MockHttpServletRequest("GET", "/api/user");
+        request.setParameter("account", "unknown-account");
+
+        final var response = service(request);
+
+        assertThat(response.getStatus()).isEqualTo(404);
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(response.getContentAsString()).isEqualTo("{}");
+    }
+
+    @Test
     void unmappedPathReturnsNotFound() throws Exception {
         assertThat(service(new MockHttpServletRequest("GET", "/missing")).getStatus()).isEqualTo(404);
     }

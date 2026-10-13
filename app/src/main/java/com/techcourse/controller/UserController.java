@@ -19,8 +19,18 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         final String account = request.getParameter("account");
+        if (account == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new ModelAndView(new JsonView());
+        }
+
         log.debug("user id : {}", account);
-        final var user = InMemoryUserRepository.findByAccount(account).orElseThrow();
-        return new ModelAndView(new JsonView()).addObject("user", user);
+        final var user = InMemoryUserRepository.findByAccount(account);
+        if (user.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new ModelAndView(new JsonView());
+        }
+
+        return new ModelAndView(new JsonView()).addObject("user", user.get());
     }
 }
