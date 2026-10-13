@@ -1,11 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,20 +15,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
+
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
+    }
+
     @Override
     public void init() {
-        ManualHandlerMapping manual = new ManualHandlerMapping();
-        manual.initialize();
-
-        AnnotationHandlerMapping annotation = new AnnotationHandlerMapping("com.techcourse.controller");
+        AnnotationHandlerMapping annotation = new AnnotationHandlerMapping(basePackage);
         annotation.initialize();
 
-        handlerMappings = List.of(manual, annotation);
+        handlerMappings = List.of(annotation);
         handlerAdapters = List.of(
-                new ControllerHandlerAdapter(),
                 new HandlerExecutionAdapter()
         );
     }
