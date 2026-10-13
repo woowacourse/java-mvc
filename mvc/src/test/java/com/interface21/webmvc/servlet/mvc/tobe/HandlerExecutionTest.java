@@ -14,7 +14,7 @@ class HandlerExecutionTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"findUserId", "save"})
-    void handle(final String methodName) throws Exception {
+    void 컨트롤러_메서드를_실행해_모델에_id를_담는다(final String methodName) throws Exception {
         final var controller = new TestController();
         final var method = TestController.class.getMethod(
                 methodName, HttpServletRequest.class, HttpServletResponse.class);

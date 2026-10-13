@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class RegistrationController {
+public class RegistrationController extends BaseRegistrationController {
 
     @RequestMapping(value = "/same", method = RequestMethod.GET)
     public ModelAndView get(final HttpServletRequest request, final HttpServletResponse response) {
@@ -33,5 +33,20 @@ public class RegistrationController {
 
     public ModelAndView unmapped(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("")).addObject("method", "unmapped");
+    }
+
+    @RequestMapping("/private")
+    private ModelAndView privateHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping("/protected")
+    protected ModelAndView protectedHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
+    @RequestMapping("/package-private")
+    ModelAndView packagePrivateHandler(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
     }
 }

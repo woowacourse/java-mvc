@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class JspViewTest {
 
     @Test
-    void forwardsToJspAfterSettingModelAttributes() throws Exception {
+    void 모델_데이터를_요청에_담은_뒤_JSP로_전달한다() throws Exception {
         final var view = new JspView("/user.jsp");
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -35,7 +35,7 @@ class JspViewTest {
     }
 
     @Test
-    void redirectsWithoutForwarding() throws Exception {
+    void redirect_주소이면_JSP로_전달하지_않고_주소를_이동한다() throws Exception {
         final var view = new JspView("redirect:/login");
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
