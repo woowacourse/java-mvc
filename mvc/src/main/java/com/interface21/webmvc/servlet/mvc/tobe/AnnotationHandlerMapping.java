@@ -1,19 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Set;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,36 +25,35 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner cs = new ControllerScanner(basePackage);
 
-        for (Class<?> clazz : typesAnnotatedWith) {
-            try {
-                Object instance = clazz.getDeclaredConstructor().newInstance();
+        Map<Class<?>, Object> controllers = cs.getControllers();
 
-                for (Method method : clazz.getDeclaredMethods()) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
 
-                        RequestMethod[] requestMethods = annotation.method();
+            Class<?> clazz = entry.getKey();
+            Object instance = entry.getValue();
+            Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
+                    ReflectionUtils.withAnnotation(RequestMapping.class));
 
-                        if (annotation.method().length == 0) {
-                            requestMethods = RequestMethod.values();
-                        }
+            for (Method method : methods) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                            handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
-                        }
-                    }
+                RequestMethod[] requestMethods = requestMapping.method();
+                if (requestMethods.length == 0) {
+                    requestMethods = RequestMethod.values();
                 }
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("컨트롤러 인스턴스 생성 실패: " + clazz.getName(), e);
+
+                for (RequestMethod requestMethod : requestMethods) {
+                    HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                    handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
+                }
             }
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
