@@ -48,4 +48,19 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void executesInheritedMapping() throws Exception {
+        final var inheritedMapping = new AnnotationHandlerMapping("inherited");
+        inheritedMapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getAttribute("id")).thenReturn("gugu");
+
+        final var execution = (HandlerExecution) inheritedMapping.getHandler(request);
+        final var modelAndView = execution.handle(request, mock(HttpServletResponse.class));
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
 }
