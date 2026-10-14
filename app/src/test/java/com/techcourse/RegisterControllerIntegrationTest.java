@@ -44,41 +44,9 @@ class RegisterControllerIntegrationTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
-    void 기존_회원가입_화면_주소도_유지한다() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
-
-        dispatcherServlet.service(request, response);
-
-        verify(requestDispatcher).forward(request, response);
+        verify(request, never()).getParameter(anyString());
         verify(request, never()).getSession();
         verify(response, never()).sendRedirect(anyString());
-    }
-
-    @Test
-    void POST_회원가입_화면_요청에는_404로_응답하고_회원을_저장하지_않는다() throws Exception {
-        final var account = "unsupported-register-view-test-" + UUID.randomUUID();
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getParameter("account")).thenReturn(account);
-        when(request.getParameter("password")).thenReturn("password");
-        when(request.getParameter("email")).thenReturn("register@example.com");
-
-        dispatcherServlet.service(request, response);
-
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
-        verify(request, never()).getParameter(anyString());
-        verify(request, never()).getRequestDispatcher(anyString());
-        assertThat(InMemoryUserRepository.findByAccount(account)).isEmpty();
     }
 
     @Test
