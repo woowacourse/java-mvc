@@ -84,7 +84,9 @@ public class AnnotationHandlerMapping {
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
-        String path = request.getRequestURI();
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String path = requestUri.substring(contextPath.length());
 
         Optional<HandlerExecution> methodSpecificHandler = RequestMethod.fromHttpMethod(request.getMethod())
                 .map(requestMethod -> new HandlerKey(path, requestMethod))

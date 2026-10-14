@@ -26,6 +26,7 @@ class AnnotationHandlerMappingTest {
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getContextPath()).thenReturn("");
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -41,6 +42,7 @@ class AnnotationHandlerMappingTest {
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getContextPath()).thenReturn("");
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
