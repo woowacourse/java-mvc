@@ -33,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             // 1. 핸들러를 찾는다
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = manualHandlerMapping.getHandler(request);
             // 2. 핸들러를 실행한다
             final var viewName = controller.execute(request, response);
             // 3. 결과 뷰를 그린다

@@ -100,4 +100,25 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    @DisplayName("등록되지 않은 URL은 핸들러를 찾지 못한다")
+    void not_find_unregistered_url() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/missing");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    @DisplayName("정의하지 않은 HTTP method는 예외 없이 핸들러를 찾지 못한다")
+    void not_support_unknown_http_method() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/all-methods-test");
+        when(request.getMethod()).thenReturn("CONNECT");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
 }
