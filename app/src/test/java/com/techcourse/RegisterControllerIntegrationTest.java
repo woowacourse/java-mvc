@@ -1,9 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -21,12 +23,13 @@ import static org.mockito.Mockito.when;
 
 class RegisterControllerIntegrationTest {
 
-    private DispatcherServlet dispatcherServlet;
+    private Servlet dispatcherServlet;
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
+        servlet.init();
+        dispatcherServlet = servlet;
     }
 
     @Test

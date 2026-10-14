@@ -1,7 +1,9 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -20,15 +22,16 @@ import static org.mockito.Mockito.when;
 
 class LoginControllerIntegrationTest {
 
-    private DispatcherServlet dispatcherServlet;
+    private Servlet dispatcherServlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private HttpSession session;
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
+        servlet.init();
+        dispatcherServlet = servlet;
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         session = mock(HttpSession.class);

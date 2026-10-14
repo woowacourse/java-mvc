@@ -1,6 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,12 +23,13 @@ import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet dispatcherServlet;
+    private Servlet dispatcherServlet;
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
+        servlet.init();
+        dispatcherServlet = servlet;
     }
 
     @Test
