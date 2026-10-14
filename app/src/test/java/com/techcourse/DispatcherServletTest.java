@@ -1,16 +1,19 @@
 package com.techcourse;
 
-import com.techcourse.controller.UserSession;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
+import com.techcourse.controller.UserSession;
+import com.techcourse.domain.User;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -86,5 +89,52 @@ class DispatcherServletTest {
         // then
         verify(dispatcher).forward(request, response);
         verify(manualHandlerMapping, never()).getHandler(request);
+    }
+
+    @Test
+    void 가입_화면을_어노테이션_컨트롤러로_표시한다() throws Exception {
+        // given
+        DispatcherServlet servlet = new DispatcherServlet();
+        servlet.init();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        RequestDispatcher dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        // when
+        servlet.service(request, response);
+
+        // then
+        verify(dispatcher).forward(request, response);
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void 가입_요청을_어노테이션_컨트롤러로_저장한다() throws Exception {
+        // given
+        DispatcherServlet servlet = new DispatcherServlet();
+        servlet.init();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        String account = "junie-stage2-test";
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn(account);
+        when(request.getParameter("password")).thenReturn("secret");
+        when(request.getParameter("email")).thenReturn("junie@example.com");
+
+        // when
+        servlet.service(request, response);
+
+        // then
+        User savedUser = InMemoryUserRepository.findByAccount(account).orElseThrow();
+        assertThat(savedUser.getAccount()).isEqualTo(account);
+        assertThat(savedUser.checkPassword("secret")).isTrue();
+        verify(response).sendRedirect("/index.jsp");
+        verify(request, never()).getRequestDispatcher(anyString());
     }
 }

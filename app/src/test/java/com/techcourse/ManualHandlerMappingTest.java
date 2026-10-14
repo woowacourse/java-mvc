@@ -1,7 +1,7 @@
 package com.techcourse;
 
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,29 +21,46 @@ class ManualHandlerMappingTest {
     }
 
     @Test
-    void 가입_화면_주소에_기존_컨트롤러를_매핑한다() {
+    void 첫_화면_주소에_기존_컨트롤러를_매핑한다() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getRequestURI()).thenReturn("/");
 
         // when
         Object handler = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handler.getClass()).isEqualTo(RegisterViewController.class);
+        assertThat(handler.getClass()).isEqualTo(ForwardController.class);
     }
 
     @Test
-    void 가입_처리_주소에_기존_컨트롤러를_매핑한다() {
+    void 로그아웃_주소에_기존_컨트롤러를_매핑한다() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/logout");
 
         // when
         Object handler = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handler.getClass()).isEqualTo(RegisterController.class);
+        assertThat(handler.getClass()).isEqualTo(LogoutController.class);
+    }
+
+    @Test
+    void 가입_주소는_더_이상_수동_매핑하지_않는다() {
+        // given
+        HttpServletRequest registerRequest = mock(HttpServletRequest.class);
+        HttpServletRequest oldViewRequest = mock(HttpServletRequest.class);
+        when(registerRequest.getRequestURI()).thenReturn("/register");
+        when(oldViewRequest.getRequestURI()).thenReturn("/register/view");
+
+        // when
+        Object registerHandler = handlerMapping.getHandler(registerRequest);
+        Object oldViewHandler = handlerMapping.getHandler(oldViewRequest);
+
+        // then
+        assertThat(registerHandler).isNull();
+        assertThat(oldViewHandler).isNull();
     }
 
     @Test
