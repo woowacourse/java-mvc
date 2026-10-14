@@ -12,6 +12,22 @@ import static org.mockito.Mockito.when;
 class AnnotationHandlerMappingBehaviorTest {
 
     @Test
+    void 잘못된_컨트롤러_메서드를_등록하면_예외가_발생한다() {
+        // given
+        AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("mappingfixtures.invalid");
+
+        // when
+        Throwable thrown = catchThrowable(handlerMapping::initialize);
+
+        // then
+        assertThat(thrown)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mappingfixtures.invalid.InvalidController")
+                .hasMessageContaining("show")
+                .hasMessageContaining("반환 타입은 ModelAndView");
+    }
+
+    @Test
     void 명시한_HTTP_메서드의_매핑을_우선한다() throws Exception {
         // given
         AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("mappingfixtures.fallback");
