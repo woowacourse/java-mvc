@@ -3,6 +3,7 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -86,8 +87,37 @@ class LoginControllerIntegrationTest {
     }
 
     @Test
-    void GET_로그인_처리_요청에는_404로_응답하고_세션에_접근하지_않는다() throws Exception {
+    void 로그인하지_않은_사용자는_로그인_화면으로_전달한다() throws Exception {
         when(request.getMethod()).thenReturn("GET");
+        final var requestDispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(session).getAttribute(UserSession.SESSION_KEY);
+        verify(requestDispatcher).forward(request, response);
+        verify(request, never()).getParameter(anyString());
+        verify(session, never()).setAttribute(anyString(), any());
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void 이미_로그인한_사용자의_화면_요청은_홈으로_이동한다() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+        verify(request, never()).getRequestDispatcher(anyString());
+        verify(request, never()).getParameter(anyString());
+        verify(session, never()).setAttribute(anyString(), any());
+    }
+
+    @Test
+    void DELETE_로그인_요청에는_404로_응답하고_세션에_접근하지_않는다() throws Exception {
+        when(request.getMethod()).thenReturn("DELETE");
 
         dispatcherServlet.service(request, response);
 
