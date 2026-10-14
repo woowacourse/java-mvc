@@ -29,9 +29,10 @@ class ManualHandlerMappingTest {
     }
 
     @Test
-    @DisplayName("미등록 경로는 찾지 못한다")
+    @DisplayName("미등록 경로와 어노테이션으로 전환한 회원가입 경로는 찾지 못한다")
     void return_null_for_unregistered_path() {
         assertThat(handlerMapping.getHandler(request("/missing"))).isNull();
+        assertThat(handlerMapping.getHandler(request("/register"))).isNull();
     }
 
     @Test
