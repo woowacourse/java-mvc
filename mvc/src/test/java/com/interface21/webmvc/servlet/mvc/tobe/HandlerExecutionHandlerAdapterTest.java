@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ class HandlerExecutionHandlerAdapterTest {
     @Test
     void 핸들러_실행_객체만_지원한다() throws Exception {
         final var handlerExecution = createHandlerExecution();
-        final Controller controller = (request, response) -> "/index.jsp";
+        final var controller = new TestController();
 
         assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
         assertThat(handlerAdapter.supports(controller)).isFalse();
