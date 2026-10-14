@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package dispatchersamples;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -16,8 +16,4 @@ public class IntegrationController {
         return new ModelAndView(new JspView("/integration.jsp")).addObject("message", "hello");
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView overrideLegacy(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("redirect:/integration"));
-    }
 }
