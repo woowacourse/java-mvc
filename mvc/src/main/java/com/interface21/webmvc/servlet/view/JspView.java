@@ -10,10 +10,8 @@ import java.util.Map;
 
 public class JspView implements View {
 
-    private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     public static final String REDIRECT_PREFIX = "redirect:";
-
+    private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private final String viewName;
 
     public JspView(String viewName) {
@@ -26,7 +24,7 @@ public class JspView implements View {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        if(viewName.startsWith(REDIRECT_PREFIX)) {
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
@@ -36,6 +34,5 @@ public class JspView implements View {
         });
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
-        // todo
     }
 }
