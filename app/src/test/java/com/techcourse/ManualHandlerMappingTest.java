@@ -36,4 +36,12 @@ class ManualHandlerMappingTest {
 
         assertThat(handlerMapping.getHandler(request)).isNull();
     }
+
+    @Test
+    void doesNotRegisterMigratedController() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/register");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }
