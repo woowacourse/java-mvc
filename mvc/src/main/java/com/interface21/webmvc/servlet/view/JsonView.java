@@ -14,8 +14,15 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object value = model.size() == 1 ? model.values().iterator().next() : model;
+        final Object value = extractModelValue(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(value));
+    }
+
+    private Object extractModelValue(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().iterator().next();
+        }
+        return model;
     }
 }
