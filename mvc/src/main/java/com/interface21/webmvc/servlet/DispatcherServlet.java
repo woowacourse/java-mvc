@@ -23,10 +23,6 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
-        this("com.techcourse.controller");
-    }
-
     public DispatcherServlet(final String controllerBasePackage) {
         this.controllerBasePackage = Objects.requireNonNull(controllerBasePackage);
     }
