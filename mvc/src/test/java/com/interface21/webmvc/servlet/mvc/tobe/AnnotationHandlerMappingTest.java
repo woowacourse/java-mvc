@@ -1,9 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -57,5 +60,37 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(duplicateMapping::initialize)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("/duplicate", "GET", "DuplicateController#first", "DuplicateController#second");
+    }
+
+    @Test
+    void omittedMethodAndExplicitGetFailDuringInitialization() {
+        final var overlappingMapping = new AnnotationHandlerMapping("testfixtures.overlapping");
+
+        assertThatThrownBy(overlappingMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/overlapping", "GET", "OverlappingController#allMethods", "OverlappingController#get");
+    }
+
+    @ParameterizedTest
+    @EnumSource(RequestMethod.class)
+    void omittedMethodSupportsEveryHttpMethod(final RequestMethod method) {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/all-methods");
+        when(request.getMethod()).thenReturn(method.name());
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = RequestMethod.class, names = {"GET", "POST"})
+    void samePathCanHaveDifferentHttpMethods(final RequestMethod method) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/same-path");
+        when(request.getMethod()).thenReturn(method.name());
+
+        final var handler = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThat(handler.handle(request, mock(HttpServletResponse.class)).getObject("method"))
+                .isEqualTo(method.name());
     }
 }
