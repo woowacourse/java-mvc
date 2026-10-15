@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,28 +6,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
-    }
-
-    @Override
-    public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = List.copyOf(handlerMappings);
+        this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
     @Override
@@ -42,22 +33,25 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
             modelAndView.getView().render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
     }
 
     private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var handler = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-        if (handler != null) {
-            return handler.handle(request, response);
+        for (final var handlerMapping : handlerMappings) {
+            final var handler = handlerMapping.getHandler(request);
+            if (handler == null) {
+                continue;
+            }
+            for (final var handlerAdapter : handlerAdapters) {
+                if (handlerAdapter.supports(handler)) {
+                    return handlerAdapter.handle(request, response, handler);
+                }
+            }
+            throw new IllegalStateException("No adapter for handler: " + handler);
         }
-
-        final var controller = manualHandlerMapping.getHandler(request.getRequestURI());
-        if (controller == null) {
-            return null;
-        }
-        return new ModelAndView(new JspView(controller.execute(request, response)));
+        return null;
     }
 }
