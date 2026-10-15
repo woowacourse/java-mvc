@@ -50,7 +50,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                       final RequestMapping requestMapping) {
         Object controller = controllers.get(method.getDeclaringClass());
         for (HandlerKey handlerKey : mapHandlerKeys(requestMapping.value(), requestMapping.method())) {
+            validateDuplicateHandlerKey(handlerKey);
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+        }
+    }
+
+    private void validateDuplicateHandlerKey(final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 요청 매핑이 존재합니다: " + handlerKey);
         }
     }
 
