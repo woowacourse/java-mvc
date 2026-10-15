@@ -18,6 +18,6 @@ public class HandlerAdapterRegistry {
                 return handlerAdapter;
             }
         }
-        throw new IllegalStateException("핸들러를 실행할 수 있는 HandlerAdapter가 없습니다: " + handler.getClass().getName());
+        throw new IllegalStateException("핸들러를 실행할 수 있는 HandlerAdapter가 없습니다.");
     }
 }
