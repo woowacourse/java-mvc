@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet;
 
+import com.techcourse.controller.UserSession;
+import com.techcourse.repository.InMemoryUserRepository;
 import com.interface21.web.http.MediaType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +21,7 @@ class DispatcherServletTest {
 
     @Test
     void dispatchesAnnotationControllersThroughTheServlet() throws Exception {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        final DispatcherServlet dispatcherServlet = newDispatcherServlet();
 
         final HttpServletRequest loginRequest = request("POST", "/login");
         final HttpSession session = mock(HttpSession.class);
@@ -63,8 +64,7 @@ class DispatcherServletTest {
 
     @Test
     void rendersJsonForUserController() throws Exception {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        final DispatcherServlet dispatcherServlet = newDispatcherServlet();
 
         final HttpServletRequest request = request("GET", "/api/user");
         when(request.getParameter("account")).thenReturn("gugu");
@@ -76,6 +76,64 @@ class DispatcherServletTest {
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+    }
+
+    @Test
+    void forwardsHomeAndLoginScreen() throws Exception {
+        final DispatcherServlet dispatcherServlet = newDispatcherServlet();
+
+        final HttpServletRequest homeRequest = request("GET", "/");
+        final HttpServletResponse homeResponse = mock(HttpServletResponse.class);
+        final RequestDispatcher homeView = mock(RequestDispatcher.class);
+        when(homeRequest.getRequestDispatcher("/index.jsp")).thenReturn(homeView);
+
+        dispatcherServlet.service(homeRequest, homeResponse);
+
+        verify(homeView).forward(homeRequest, homeResponse);
+
+        final HttpServletRequest loginViewRequest = request("GET", "/login/view");
+        final HttpSession session = mock(HttpSession.class);
+        when(loginViewRequest.getSession()).thenReturn(session);
+        final HttpServletResponse loginViewResponse = mock(HttpServletResponse.class);
+        final RequestDispatcher loginView = mock(RequestDispatcher.class);
+        when(loginViewRequest.getRequestDispatcher("/login.jsp")).thenReturn(loginView);
+
+        dispatcherServlet.service(loginViewRequest, loginViewResponse);
+
+        verify(loginView).forward(loginViewRequest, loginViewResponse);
+    }
+
+    @Test
+    void savesUserOnLoginAndRemovesItOnLogout() throws Exception {
+        final DispatcherServlet dispatcherServlet = newDispatcherServlet();
+        final var user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+
+        final HttpServletRequest loginRequest = request("POST", "/login");
+        final HttpSession session = mock(HttpSession.class);
+        when(loginRequest.getSession()).thenReturn(session);
+        when(loginRequest.getParameter("account")).thenReturn("gugu");
+        when(loginRequest.getParameter("password")).thenReturn("password");
+        final HttpServletResponse loginResponse = mock(HttpServletResponse.class);
+
+        dispatcherServlet.service(loginRequest, loginResponse);
+
+        verify(session).setAttribute(UserSession.SESSION_KEY, user);
+        verify(loginResponse).sendRedirect("/index.jsp");
+
+        final HttpServletRequest logoutRequest = request("GET", "/logout");
+        when(logoutRequest.getSession()).thenReturn(session);
+        final HttpServletResponse logoutResponse = mock(HttpServletResponse.class);
+
+        dispatcherServlet.service(logoutRequest, logoutResponse);
+
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(logoutResponse).sendRedirect("/");
+    }
+
+    private DispatcherServlet newDispatcherServlet() {
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
+        dispatcherServlet.init();
+        return dispatcherServlet;
     }
 
     private HttpServletRequest request(final String method, final String requestURI) {
