@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +48,14 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void duplicateMappingFailsDuringInitialization() {
+        final var duplicateMapping = new AnnotationHandlerMapping("testfixtures.duplicate");
+
+        assertThatThrownBy(duplicateMapping::initialize)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("/duplicate", "GET", "DuplicateController#first", "DuplicateController#second");
     }
 }

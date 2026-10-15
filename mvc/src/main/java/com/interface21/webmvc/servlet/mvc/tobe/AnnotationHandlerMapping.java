@@ -46,9 +46,13 @@ public class AnnotationHandlerMapping {
                 continue;
             }
             for (final var requestMethod : resolveRequestMethods(requestMapping)) {
-                handlerExecutions.put(
-                        new HandlerKey(requestMapping.value(), requestMethod),
-                        new HandlerExecution(controller, method));
+                final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                final var handlerExecution = new HandlerExecution(controller, method);
+                final var existingHandler = handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+                if (existingHandler != null) {
+                    throw new IllegalStateException("Duplicate handler mapping: " + handlerKey
+                            + " (" + existingHandler + ", " + handlerExecution + ")");
+                }
             }
         }
     }
