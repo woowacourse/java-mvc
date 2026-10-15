@@ -1,6 +1,9 @@
 package com.techcourse;
 
 import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.domain.User;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,6 +62,21 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void returnsUserAsJson() throws Exception {
+        InMemoryUserRepository.save(new User(3, "json-user", "password", "user@example.com"));
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("json-user");
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("application/json;charset=UTF-8");
+        assertThat(body.toString()).isEqualTo("{\"account\":\"json-user\"}");
     }
 
     @Test
