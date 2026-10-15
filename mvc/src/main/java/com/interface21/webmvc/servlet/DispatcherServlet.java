@@ -1,21 +1,18 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serial;
+import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-
-import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -23,21 +20,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackages;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String... basePackages) {
+        this.basePackages = basePackages;
     }
 
     @Override
     public void init() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        manualHandlerMapping.initialize();
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
-        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        handlerMappings = List.of(annotationHandlerMapping);
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
