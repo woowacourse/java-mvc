@@ -1,8 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -14,35 +12,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String controllerBasePackage;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
-    }
-
-    DispatcherServlet(final List<HandlerMapping> handlerMappings,
-                      final List<HandlerAdapter> handlerAdapters) {
-        this.handlerMappings = handlerMappings;
-        this.handlerAdapters = handlerAdapters;
+    public DispatcherServlet(final String controllerBasePackage) {
+        this.controllerBasePackage = Objects.requireNonNull(controllerBasePackage);
     }
 
     @Override
     public void init() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerBasePackage);
         annotationHandlerMapping.initialize();
 
-        // @MVC 매핑을 먼저 조회해 같은 경로를 점진적으로 이전할 때 새 매핑이 우선하도록 한다.
-        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
-        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter());
+        handlerMappings = List.of(annotationHandlerMapping);
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
