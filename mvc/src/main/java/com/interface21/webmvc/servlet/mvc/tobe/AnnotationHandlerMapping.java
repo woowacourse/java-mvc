@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,11 +68,34 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    // URL이 등록되지 않았으면 다른 HandlerMapping에게 기회를 주기 위해 null을 반환하고,
+    // URL은 등록됐지만 HTTP 메서드가 맞지 않으면 404가 아닌 405로 응답할 수 있도록 예외를 던진다
     @Override
     public Object getHandler(final HttpServletRequest request) {
         final String url = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final String method = request.getMethod();
 
-        return handlerExecutions.get(new HandlerKey(url, requestMethod));
+        final Set<RequestMethod> allowedMethods = findAllowedMethods(url);
+        if (allowedMethods.isEmpty()) {
+            return null;
+        }
+
+        return findRequestMethod(method)
+                .filter(allowedMethods::contains)
+                .map(requestMethod -> handlerExecutions.get(new HandlerKey(url, requestMethod)))
+                .orElseThrow(() -> new MethodNotAllowedException(method, url, allowedMethods));
+    }
+
+    private Set<RequestMethod> findAllowedMethods(final String url) {
+        return Arrays.stream(RequestMethod.values())
+                .filter(requestMethod -> handlerExecutions.containsKey(new HandlerKey(url, requestMethod)))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    // RequestMethod에 정의되지 않은 메서드(ex. CONNECT)가 들어와도 500이 아닌 405로 응답하기 위해 Optional로 감싼다
+    private Optional<RequestMethod> findRequestMethod(final String method) {
+        return Arrays.stream(RequestMethod.values())
+                .filter(requestMethod -> requestMethod.name().equals(method))
+                .findAny();
     }
 }

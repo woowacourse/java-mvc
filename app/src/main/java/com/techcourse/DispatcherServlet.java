@@ -7,6 +7,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerNotFoundException;
+import com.interface21.webmvc.servlet.mvc.tobe.MethodNotAllowedException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +53,10 @@ public class DispatcherServlet extends HttpServlet {
         } catch (HandlerNotFoundException e) {
             log.warn(e.getMessage());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        } catch (MethodNotAllowedException e) {
+            log.warn(e.getMessage());
+            response.setHeader("Allow", e.getAllowHeaderValue());
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

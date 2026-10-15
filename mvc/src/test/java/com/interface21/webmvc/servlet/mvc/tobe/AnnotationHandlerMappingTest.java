@@ -5,7 +5,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.interface21.web.bind.annotation.RequestMethod;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,5 +53,39 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 등록되지_않은_URL이면_null을_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/not-registered");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void URL은_등록됐지만_지원하지_않는_메서드면_MethodNotAllowedException을_던진다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(MethodNotAllowedException.class)
+                .extracting("allowedMethods")
+                .isEqualTo(Set.of(RequestMethod.GET));
+    }
+
+    @Test
+    void RequestMethod에_정의되지_않은_메서드여도_MethodNotAllowedException을_던진다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CONNECT");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(MethodNotAllowedException.class);
     }
 }
