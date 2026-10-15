@@ -15,13 +15,11 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers() {
-        // @Controller 붙은 클래스 찾기(클래스를 찾는 거라서 classes라고 명명했습니다)
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        Map<Class<?>, Object> controllers = new HashMap<>();
+        final Set<Class<?>> controllerAnnotatedClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        final Map<Class<?>, Object> controllers = new HashMap<>();
 
-        // 찾은 클래스를 돌면서 인스턴스 생성하기
-        for (Class<?> clazz : classes) {
-            controllers.put(clazz, createInstance(clazz));
+        for (Class<?> controllerClass : controllerAnnotatedClasses) {
+            controllers.put(controllerClass, createInstance(controllerClass));
         }
 
         return controllers;
