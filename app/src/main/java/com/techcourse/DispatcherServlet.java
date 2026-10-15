@@ -1,11 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerNotFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.MethodNotAllowedException;
 import jakarta.servlet.ServletException;
@@ -13,8 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,20 +21,28 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
+    }
+
+    // 어떤 HandlerMapping, HandlerAdapter를 쓸지는 외부(설정)에서 정하고, 서블릿은 받은 것을 사용만 한다
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
-        handlerMappings.forEach(HandlerMapping::initialize);
-
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        handlerMappingRegistry.initialize();
     }
 
     @Override
@@ -46,10 +52,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            final Object handler = handlerMappingRegistry.getHandler(request);
+            final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
+            render(modelAndView, request, response);
         } catch (HandlerNotFoundException e) {
             log.warn(e.getMessage());
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -63,24 +68,8 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    // 등록된 순서대로 물어보고, 처음으로 핸들러를 찾은 HandlerMapping의 결과를 쓴다
-    private Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new HandlerNotFoundException(request.getMethod(), request.getRequestURI());
-    }
-
-    // 핸들러를 실행할 수 있는 HandlerAdapter를 찾는다
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalStateException("핸들러를 실행할 수 있는 HandlerAdapter가 없습니다: " + handler.getClass().getName());
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+                        final HttpServletResponse response) throws Exception {
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
