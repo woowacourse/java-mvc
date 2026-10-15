@@ -30,11 +30,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        addHandlerMapping(new ManualHandlerMapping());
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        addHandlerMapping(new ManualHandlerMapping());
 
-        addHandlerAdapter(new ControllerHandlerAdapter());
         addHandlerAdapter(new AnnotationHandlerAdapter());
+        addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
