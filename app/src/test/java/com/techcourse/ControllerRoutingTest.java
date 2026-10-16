@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,15 +14,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class DispatcherServletTest {
+class ControllerRoutingTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private HttpServletResponse response;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = ServletTestSupport.createServlet();
         response = mock(HttpServletResponse.class);
     }
 

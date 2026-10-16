@@ -3,6 +3,7 @@ package com.techcourse;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -18,13 +19,12 @@ import static org.mockito.Mockito.when;
 
 class RegistrationFlowTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private String account;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = ServletTestSupport.createServlet();
         account = "step2-" + UUID.randomUUID();
     }
 

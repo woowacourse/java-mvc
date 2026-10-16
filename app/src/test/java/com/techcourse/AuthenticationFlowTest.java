@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -18,15 +19,14 @@ import static org.mockito.Mockito.when;
 
 class AuthenticationFlowTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private HttpSession session;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = ServletTestSupport.createServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         session = mock(HttpSession.class);

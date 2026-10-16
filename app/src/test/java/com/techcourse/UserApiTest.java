@@ -3,6 +3,7 @@ package com.techcourse;
 import com.interface21.web.http.MediaType;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,15 +24,14 @@ import static org.mockito.Mockito.when;
 
 class UserApiTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private StringWriter body;
 
     @BeforeEach
     void setUp() throws Exception {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = ServletTestSupport.createServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         body = new StringWriter();
