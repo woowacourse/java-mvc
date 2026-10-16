@@ -22,11 +22,6 @@ public class DispatcherTestController {
         return new ModelAndView(new JspView("redirect:/annotation-test"));
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/annotation-login.jsp"));
-    }
-
     @RequestMapping(value = "/annotation-error", method = RequestMethod.GET)
     public ModelAndView fail(final HttpServletRequest request, final HttpServletResponse response) {
         throw new IllegalStateException("요청 처리 실패");

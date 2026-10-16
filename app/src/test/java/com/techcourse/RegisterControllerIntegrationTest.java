@@ -1,9 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -13,18 +15,21 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class RegisterControllerIntegrationTest {
 
-    private DispatcherServlet dispatcherServlet;
+    private Servlet dispatcherServlet;
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        final var servlet = new DispatcherServlet("com.techcourse.controller");
+        servlet.init();
+        dispatcherServlet = servlet;
     }
 
     @Test
@@ -39,24 +44,13 @@ class RegisterControllerIntegrationTest {
         dispatcherServlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+        verify(request, never()).getParameter(anyString());
+        verify(request, never()).getSession();
+        verify(response, never()).sendRedirect(anyString());
     }
 
     @Test
-    void 기존_회원가입_화면_주소도_유지한다() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
-
-        dispatcherServlet.service(request, response);
-
-        verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
-    void 어노테이션으로_가입한_회원이_기존_컨트롤러로_로그인한다() throws Exception {
+    void 어노테이션으로_가입한_회원이_로그인한다() throws Exception {
         final var account = "register-test-" + UUID.randomUUID();
         final var registerRequest = mock(HttpServletRequest.class);
         final var registerResponse = mock(HttpServletResponse.class);
