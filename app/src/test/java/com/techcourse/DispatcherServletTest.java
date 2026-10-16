@@ -1,12 +1,16 @@
 package com.techcourse;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.web.http.MediaType;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,5 +50,18 @@ class DispatcherServletTest {
 
         verify(request).setAttribute("message", "annotation handler");
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void rendersUserAsJsonThroughAnnotationHandler() throws Exception {
+        final var responseBody = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(responseBody));
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(responseBody.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 }
