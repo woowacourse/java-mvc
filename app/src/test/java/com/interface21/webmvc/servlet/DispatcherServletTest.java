@@ -34,6 +34,16 @@ class DispatcherServletTest {
     }
 
     @Test
+    void forwardsHomeViewThroughAnnotationHandler() throws Exception {
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     void forwardsRegisterView() throws Exception {
         when(request.getRequestURI()).thenReturn("/register/view");
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
@@ -50,6 +60,7 @@ class DispatcherServletTest {
 
         dispatcherServlet.service(request, response);
 
+        verify(request).setAttribute("message", "annotation handler");
         verify(requestDispatcher).forward(request, response);
     }
 
