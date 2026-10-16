@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.techcourse.controller.LoginViewController;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +24,9 @@ class ManualHandlerMappingTest {
     @Test
     void findsLegacyControllerByRequestUri() {
         final var request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(LoginViewController.class);
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(ForwardController.class);
     }
 
     @Test

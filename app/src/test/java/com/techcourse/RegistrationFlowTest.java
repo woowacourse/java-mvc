@@ -54,7 +54,7 @@ class RegistrationFlowTest {
     }
 
     @Test
-    void preservesLegacyRegistrationFormUrl() throws Exception {
+    void preservesRegistrationFormUrl() throws Exception {
         final var request = request("/register/view", "GET");
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
@@ -66,7 +66,7 @@ class RegistrationFlowTest {
     }
 
     @Test
-    void registeredMemberCanUseLegacyLoginAndLogout() throws Exception {
+    void registeredMemberCanLoginAndLogout() throws Exception {
         servlet.service(registrationRequest("POST"), mock(HttpServletResponse.class));
         final var user = InMemoryUserRepository.findByAccount(account).orElseThrow();
         final var session = mock(HttpSession.class);

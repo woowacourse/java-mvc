@@ -17,11 +17,6 @@ public class SampleController {
                 .addObject("id", request.getParameter("id"));
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView overrideLegacy(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/annotated.jsp"));
-    }
-
     @RequestMapping("/method-selection")
     public ModelAndView defaultMethod(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/default.jsp"));
