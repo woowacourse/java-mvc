@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.web.WebApplicationInitializer;
 import jakarta.servlet.ServletContext;
@@ -17,7 +17,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse");
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
