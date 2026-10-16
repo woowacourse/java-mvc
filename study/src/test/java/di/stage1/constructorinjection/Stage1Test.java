@@ -1,9 +1,9 @@
 package di.stage1.constructorinjection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage1Test {
 
