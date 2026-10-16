@@ -57,7 +57,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void serviceForwardsLegacyRegisterViewRequest() throws Exception {
+    void serviceForwardsRegisterViewAliasRequest() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
         final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
