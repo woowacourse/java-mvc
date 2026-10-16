@@ -118,4 +118,13 @@ class AnnotationHandlerMappingTest {
             assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
         }
     }
+
+    @Test
+    void returnsNoHandlerForUnsupportedHttpMethod() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CONNECT");
+
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }
