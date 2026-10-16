@@ -1,10 +1,12 @@
 package com.techcourse;
 
 import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -21,12 +23,13 @@ import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
+        dispatcherServlet.init();
+        servlet = dispatcherServlet;
     }
 
     @Test
