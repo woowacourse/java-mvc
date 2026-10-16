@@ -228,4 +228,17 @@ class DispatcherServletTest {
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
+
+    @Test
+    void serviceRespondsNotFoundForUnsupportedHttpMethod() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getMethod()).thenReturn("CONNECT");
+        when(request.getRequestURI()).thenReturn("/");
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
 }
