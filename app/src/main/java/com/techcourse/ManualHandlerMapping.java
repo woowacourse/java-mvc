@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.techcourse.controller.LoginController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     public void initialize() {
-        controllers.put("/login", new LoginController());
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));

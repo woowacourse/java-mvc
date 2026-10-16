@@ -3,6 +3,7 @@ package com.techcourse;
 import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -91,6 +92,75 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void serviceLogsInAndRedirectsHome() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+        final User user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("password");
+
+        servlet.service(request, response);
+
+        verify(session).setAttribute(UserSession.SESSION_KEY, user);
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void serviceRedirectsAlreadyLoggedInUser() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+        final User user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void serviceRedirectsWhenLoginPasswordIsWrong() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong-password");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void serviceRedirectsWhenLoginAccountIsUnknown() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("unknown-user");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
     }
 
     @Test
