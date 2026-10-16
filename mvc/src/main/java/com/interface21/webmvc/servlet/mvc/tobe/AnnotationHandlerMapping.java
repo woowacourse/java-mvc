@@ -67,8 +67,24 @@ public class AnnotationHandlerMapping {
 
     private void addHandlerExecutions(final Object controller, final Method method) {
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        final List<HandlerKey> handlerKeys = getHandlerKeys(method);
-        handlerKeys.forEach(key -> handlerExecutions.put(key, handlerExecution));
+        getHandlerKeys(method).forEach(key -> registerHandlerExecution(key, handlerExecution));
+    }
+
+    private void registerHandlerExecution(
+            final HandlerKey key,
+            final HandlerExecution handlerExecution
+    ) {
+        final HandlerExecution existing = handlerExecutions.get(key);
+
+        if (existing != null) {
+            throw new IllegalStateException(
+                    "중복된 핸들러 매핑: " + key
+                            + "\n기존 메서드: " + existing
+                            + "\n등록하려는 메서드: " + handlerExecution
+            );
+        }
+
+        handlerExecutions.put(key, handlerExecution);
     }
 
     private List<HandlerKey> getHandlerKeys(final Method method) {
