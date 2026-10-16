@@ -1,6 +1,12 @@
 package di.stage3.context;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -10,11 +16,50 @@ class DIContainer {
     private final Set<Object> beans;
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = Set.of();
+        this.beans = classes.stream()
+                .map(this::createInstance)
+                .collect(Collectors.toSet());
+        this.beans.forEach(this::injectFields);
+    }
+
+    private Object createInstance(final Class<?> clazz) {
+        try {
+            final var constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("빈 생성에 실패했습니다: " + clazz.getName(), e);
+        }
+    }
+
+    private void injectFields(final Object bean) {
+        for (final Field field : bean.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            findBean(field.getType()).ifPresent(dependency -> inject(bean, field, dependency));
+        }
+    }
+
+    private <T> Optional<T> findBean(final Class<T> type) {
+        return beans.stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .findFirst();
+    }
+
+    private void inject(final Object bean, final Field field, final Object dependency) {
+        try {
+            field.setAccessible(true);
+            field.set(bean, dependency);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("의존성 주입에 실패했습니다: " + field, e);
+        }
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        return null;
+        return findBean(aClass)
+                .orElseThrow(() -> new IllegalArgumentException("빈을 찾을 수 없습니다: " + aClass.getName()));
     }
 }
