@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
+import com.techcourse.domain.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,6 +57,40 @@ class DispatcherServletTest {
 
         verify(session).removeAttribute(UserSession.SESSION_KEY);
         verify(response).sendRedirect("/");
+    }
+
+    @Test
+    void serviceForwardsLoginViewForGuest() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getSession()).thenReturn(session);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
+
+        servlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void serviceRedirectsLoginViewForLoggedInUser() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+        final User user = new User(1, "gugu", "password", "gugu@example.com");
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(user);
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
     }
 
     @Test
