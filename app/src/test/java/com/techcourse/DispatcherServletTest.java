@@ -26,6 +26,21 @@ class DispatcherServletTest {
     }
 
     @Test
+    void serviceForwardsHomeRequest() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
+
+        servlet.service(request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
     void serviceRedirectsAfterAnnotatedRegisterRequest() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
