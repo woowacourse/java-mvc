@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));

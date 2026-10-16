@@ -1,9 +1,11 @@
 package com.techcourse;
 
 import com.interface21.web.http.MediaType;
+import com.techcourse.controller.UserSession;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +40,22 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void serviceLogsOutAndRedirectsHome() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getSession()).thenReturn(session);
+
+        servlet.service(request, response);
+
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
     }
 
     @Test
