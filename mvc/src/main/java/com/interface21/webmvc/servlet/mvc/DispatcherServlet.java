@@ -1,11 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.adapter.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -27,12 +26,10 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry(List.of(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse")
         ));
 
         this.handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(
-                new ManualHandlerAdapter(),
                 new AnnotationHandlerAdapter()
         ));
     }
