@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.when;
 class UserControllerTest {
 
     @Test
-    @DisplayName("account로 조회한 사용자를 모델에 담고 JsonView를 반환한다")
+    @DisplayName("조회한 사용자의 account만 Map으로 모델에 담고 JsonView를 반환한다")
     void show() {
         final var account = UUID.randomUUID().toString();
         final var user = new User(2, account, "password", "user@example.com");
@@ -32,7 +33,7 @@ class UserControllerTest {
 
         assertThat(modelAndView.getView()).isInstanceOf(JsonView.class);
         assertThat(modelAndView.getModel()).containsOnlyKeys("user");
-        assertThat(modelAndView.getObject("user")).isSameAs(user);
+        assertThat(modelAndView.getObject("user")).isEqualTo(Map.of("account", account));
     }
 
     @Test

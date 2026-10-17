@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 @Controller
 public class UserController {
 
@@ -27,7 +29,7 @@ public class UserController {
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow(() -> new UserException(account));
 
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", Map.of("account", user.getAccount()));
         return modelAndView;
     }
 }
