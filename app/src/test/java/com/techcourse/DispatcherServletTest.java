@@ -1,5 +1,9 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.web.http.MediaType;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -18,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
-    private final DispatcherServlet servlet = new DispatcherServlet();
+    private final TestDispatcherServlet servlet = new TestDispatcherServlet();
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -28,7 +32,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerForwardsToJsp() throws Exception {
+    void homeControllerForwardsToJsp() throws Exception {
         request("GET", "/");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
@@ -39,7 +43,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerLogsInAndRedirects() throws Exception {
+    void loginControllerLogsInAndRedirects() throws Exception {
         request("POST", "/login");
         final var session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
@@ -55,7 +59,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerLogsOut() throws Exception {
+    void logoutControllerRemovesUserAndRedirects() throws Exception {
         request("GET", "/logout");
         final var session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
@@ -67,7 +71,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyRegisterViewStillWorks() throws Exception {
+    void registerViewControllerShowsForm() throws Exception {
         request("GET", "/register/view");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
@@ -133,6 +137,82 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void wrongPasswordRedirectsToUnauthorizedPage() throws Exception {
+        request("POST", "/login");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+        verify(session, never()).setAttribute(anyString(), org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void missingAccountRedirectsToUnauthorizedPage() throws Exception {
+        request("POST", "/login");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("not-registered");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void loginViewForwardsWhenNotLoggedIn() throws Exception {
+        request("GET", "/login/view");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void loggedInUserSkipsLogin() throws Exception {
+        request("POST", "/login");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY))
+                .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void userApiReturnsJsonWithoutModelKey() throws Exception {
+        request("GET", "/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    }
+
+    private static class TestDispatcherServlet extends DispatcherServlet {
+
+        TestDispatcherServlet() {
+            super("com.techcourse.controller");
+        }
+
+        @Override
+        public void service(final HttpServletRequest request, final HttpServletResponse response)
+                throws jakarta.servlet.ServletException {
+            super.service(request, response);
+        }
     }
 
     private void request(final String method, final String uri) {
