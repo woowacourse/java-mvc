@@ -28,7 +28,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerForwardsToJsp() throws Exception {
+    void homeControllerForwardsToJsp() throws Exception {
         request("GET", "/");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
@@ -39,7 +39,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerLogsInAndRedirects() throws Exception {
+    void loginControllerLogsInAndRedirects() throws Exception {
         request("POST", "/login");
         final var session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
@@ -55,7 +55,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyControllerLogsOut() throws Exception {
+    void logoutControllerRemovesUserAndRedirects() throws Exception {
         request("GET", "/logout");
         final var session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
@@ -67,7 +67,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacyRegisterViewStillWorks() throws Exception {
+    void registerViewControllerShowsForm() throws Exception {
         request("GET", "/register/view");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
@@ -133,6 +133,56 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void wrongPasswordRedirectsToUnauthorizedPage() throws Exception {
+        request("POST", "/login");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+        verify(session, never()).setAttribute(anyString(), org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void missingAccountRedirectsToUnauthorizedPage() throws Exception {
+        request("POST", "/login");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("not-registered");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void loginViewForwardsWhenNotLoggedIn() throws Exception {
+        request("GET", "/login/view");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void loggedInUserSkipsLogin() throws Exception {
+        request("POST", "/login");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(UserSession.SESSION_KEY))
+                .thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/index.jsp");
     }
 
     private void request(final String method, final String uri) {
