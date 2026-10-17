@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -16,10 +17,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final String basePackage;
+    private final HandlerExceptionResolver exceptionResolver;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String basePackage, final HandlerExceptionResolver exceptionResolver) {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.basePackage = basePackage;
+        this.exceptionResolver = exceptionResolver;
     }
 
     @Override
@@ -30,23 +35,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappingRegistry() {
         // 실제 controller가 있는 "com.techcourse" 전달
-        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(this.basePackage);
         annotationHandlerMapping.initialize();
 
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
-
     }
 
     private void initHandlerAdapterRegistry() {
-        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
         final var handlerExecutionAdapter = new HandlerExecutionAdapter();
-
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(handlerExecutionAdapter);
     }
 
@@ -64,6 +60,10 @@ public class DispatcherServlet extends HttpServlet {
             mav.getView().render(mav.getModel(), request, response);
 
         } catch (Throwable e) {
+            final Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
+            if (exceptionResolver.resolve(cause, response)) {
+                return;
+            }
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
