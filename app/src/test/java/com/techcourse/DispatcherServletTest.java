@@ -1,5 +1,9 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.web.http.MediaType;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -18,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
-    private final DispatcherServlet servlet = new DispatcherServlet();
+    private final TestDispatcherServlet servlet = new TestDispatcherServlet();
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -183,6 +187,32 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void userApiReturnsJsonWithoutModelKey() throws Exception {
+        request("GET", "/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    }
+
+    private static class TestDispatcherServlet extends DispatcherServlet {
+
+        TestDispatcherServlet() {
+            super("com.techcourse.controller");
+        }
+
+        @Override
+        public void service(final HttpServletRequest request, final HttpServletResponse response)
+                throws jakarta.servlet.ServletException {
+            super.service(request, response);
+        }
     }
 
     private void request(final String method, final String uri) {
