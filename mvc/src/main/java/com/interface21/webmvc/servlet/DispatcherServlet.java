@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -16,11 +18,13 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final String basePackage;
+    private final HandlerExceptionResolver exceptionResolver;
 
-    public DispatcherServlet(final String basePackage) {
+    public DispatcherServlet(final String basePackage, final HandlerExceptionResolver exceptionResolver) {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.basePackage = basePackage;
+        this.exceptionResolver = exceptionResolver;
     }
 
     @Override
@@ -39,7 +43,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerAdapterRegistry() {
         final var handlerExecutionAdapter = new HandlerExecutionAdapter();
-
         handlerAdapterRegistry.addHandlerAdapter(handlerExecutionAdapter);
     }
 
@@ -57,6 +60,10 @@ public class DispatcherServlet extends HttpServlet {
             mav.getView().render(mav.getModel(), request, response);
 
         } catch (Throwable e) {
+            final Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
+            if (exceptionResolver.resolve(cause, response)) {
+                return;
+            }
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }

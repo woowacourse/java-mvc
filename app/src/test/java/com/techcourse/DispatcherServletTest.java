@@ -4,6 +4,7 @@ import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
+import com.techcourse.exception.GlobalExceptionHandler;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +34,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getServletPath()).thenReturn("/");
 
-        final var dispatcherServlet = new DispatcherServlet("com.techcourse");
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse", new GlobalExceptionHandler());
         dispatcherServlet.init();
         dispatcherServlet.service((ServletRequest) request, response);
 
@@ -52,13 +54,31 @@ class DispatcherServletTest {
         when(request.getServletPath()).thenReturn("/api/user");
         when(request.getParameter("account")).thenReturn(account);
         when(response.getWriter()).thenReturn(new PrintWriter(body));
-        final var dispatcherServlet = new DispatcherServlet("com.techcourse");
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse", new GlobalExceptionHandler());
         dispatcherServlet.init();
 
         dispatcherServlet.service((ServletRequest) request, response);
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).isEqualTo("{\"account\":\"" + account + "\"}");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자 조회 요청은 404 상태코드로 응답한다")
+    void respondWithUnknownUser() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getServletPath()).thenReturn("/api/user");
+        when(request.getParameter("account")).thenReturn(UUID.randomUUID().toString());
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse", new GlobalExceptionHandler());
+        dispatcherServlet.init();
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).getWriter();
     }
 
     @Test
@@ -71,7 +91,7 @@ class DispatcherServletTest {
         when(logoutRequest.getRequestURI()).thenReturn("/logout");
         when(logoutRequest.getServletPath()).thenReturn("/logout");
         when(logoutRequest.getSession()).thenReturn(session);
-        final var dispatcherServlet = new DispatcherServlet("com.techcourse");
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse", new GlobalExceptionHandler());
         dispatcherServlet.init();
 
         dispatcherServlet.service((ServletRequest) logoutRequest, logoutResponse);

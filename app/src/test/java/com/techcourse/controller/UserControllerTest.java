@@ -2,13 +2,13 @@ package com.techcourse.controller;
 
 import com.interface21.webmvc.servlet.view.JsonView;
 import com.techcourse.domain.User;
+import com.techcourse.exception.UserException;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +43,6 @@ class UserControllerTest {
         when(request.getParameter("account")).thenReturn(UUID.randomUUID().toString());
 
         assertThatThrownBy(() -> new UserController().show(request, response))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(UserException.class);
     }
 }
