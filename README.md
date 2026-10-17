@@ -56,9 +56,9 @@
 모델을 JSON으로 응답하고 모든 컨트롤러를 어노테이션 방식으로 통일한다.
 각 기능 구현 단위로 커밋할 때 해당 항목을 `- [x]`로 변경한다.
 
-- [ ] JsonView: Jackson으로 모델을 JSON으로 변환하고 APPLICATION_JSON_UTF8_VALUE로 응답한다.
-- [ ] 모델이 1개면 값만, 여러 개면 Map 전체를 변환하고 빈 모델은 빈 JSON 객체로 응답한다.
-- [ ] UserController: GET /api/user에서 account로 조회한 사용자를 JSON으로 응답한다.
+- [x] JsonView: Jackson으로 모델을 JSON으로 변환하고 APPLICATION_JSON_UTF8_VALUE로 응답한다.
+- [x] 모델이 1개면 값만, 여러 개면 Map 전체를 변환하고 빈 모델은 빈 JSON 객체로 응답한다.
+- [x] UserController: GET /api/user에서 account로 조회한 사용자를 JSON으로 응답한다.
 - [ ] 모든 컨트롤러를 어노테이션 방식과 ModelAndView 반환으로 전환하고 기존 경로를 유지한다.
 - [ ] 로그인·로그아웃·화면 조회·회원가입 동작을 테스트한다.
 - [ ] ManualHandlerMapping과 asis 패키지의 레거시 코드를 제거한다.
