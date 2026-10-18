@@ -25,6 +25,7 @@ class ManualHandlerMappingTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/");
+        when(request.getContextPath()).thenReturn("");
 
         // when
         Object handler = handlerMapping.getHandler(request);
@@ -38,6 +39,21 @@ class ManualHandlerMappingTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getContextPath()).thenReturn("");
+
+        // when
+        Object handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler.getClass()).isEqualTo(LogoutController.class);
+    }
+
+    @Test
+    void 컨텍스트_경로를_제외하고_기존_컨트롤러를_조회한다() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/mvc/logout");
+        when(request.getContextPath()).thenReturn("/mvc");
 
         // when
         Object handler = handlerMapping.getHandler(request);
@@ -53,6 +69,8 @@ class ManualHandlerMappingTest {
         HttpServletRequest oldViewRequest = mock(HttpServletRequest.class);
         when(registerRequest.getRequestURI()).thenReturn("/register");
         when(oldViewRequest.getRequestURI()).thenReturn("/register/view");
+        when(registerRequest.getContextPath()).thenReturn("");
+        when(oldViewRequest.getContextPath()).thenReturn("");
 
         // when
         Object registerHandler = handlerMapping.getHandler(registerRequest);
@@ -68,6 +86,7 @@ class ManualHandlerMappingTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/unknown");
+        when(request.getContextPath()).thenReturn("");
 
         // when
         Object handler = handlerMapping.getHandler(request);

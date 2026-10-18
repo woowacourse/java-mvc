@@ -66,6 +66,27 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 컨텍스트_경로가_있어도_기존_컨트롤러를_실행한다() throws Exception {
+        // given
+        DispatcherServlet servlet = new DispatcherServlet();
+        servlet.init();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession session = mock(HttpSession.class);
+        when(request.getRequestURI()).thenReturn("/mvc/logout");
+        when(request.getContextPath()).thenReturn("/mvc");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
+
+        // when
+        servlet.service(request, response);
+
+        // then
+        verify(session).removeAttribute(UserSession.SESSION_KEY);
+        verify(response).sendRedirect("/");
+    }
+
+    @Test
     void 같은_주소가_겹치면_어노테이션_매핑을_먼저_사용한다() throws Exception {
         // given
         AnnotationHandlerMapping annotationHandlerMapping = mock(AnnotationHandlerMapping.class);
