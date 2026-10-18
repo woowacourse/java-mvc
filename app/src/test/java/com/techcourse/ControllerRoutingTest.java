@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,20 +14,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class DispatcherServletTest {
+class ControllerRoutingTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private HttpServletResponse response;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = ServletTestSupport.createServlet();
         response = mock(HttpServletResponse.class);
     }
 
     @Test
-    void forwardsLegacyControllerResult() throws Exception {
+    void forwardsControllerResult() throws Exception {
         final var request = request("/", "GET");
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
@@ -37,7 +37,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void redirectsLegacyControllerResult() throws Exception {
+    void redirectsControllerResult() throws Exception {
         final var request = request("/logout", "GET");
         when(request.getSession()).thenReturn(mock(HttpSession.class));
 
@@ -60,19 +60,8 @@ class DispatcherServletTest {
     }
 
     @Test
-    void prioritizesAnnotatedMappingOverLegacyMapping() throws Exception {
+    void forwardsLoginViewForAnonymousUser() throws Exception {
         final var request = request("/login/view", "GET");
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/annotated.jsp")).thenReturn(dispatcher);
-
-        servlet.service(request, response);
-
-        verify(dispatcher).forward(request, response);
-    }
-
-    @Test
-    void fallsBackToLegacyWhenAnnotatedHttpMethodDoesNotMatch() throws Exception {
-        final var request = request("/login/view", "POST");
         when(request.getSession()).thenReturn(mock(HttpSession.class));
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
@@ -80,6 +69,15 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void rejectsUnmappedLoginViewMethod() throws Exception {
+        final var request = request("/login/view", "POST");
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test

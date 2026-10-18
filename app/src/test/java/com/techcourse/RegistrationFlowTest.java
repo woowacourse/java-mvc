@@ -3,6 +3,7 @@ package com.techcourse;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -18,13 +19,12 @@ import static org.mockito.Mockito.when;
 
 class RegistrationFlowTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
     private String account;
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        servlet = ServletTestSupport.createServlet();
         account = "step2-" + UUID.randomUUID();
     }
 
@@ -54,7 +54,7 @@ class RegistrationFlowTest {
     }
 
     @Test
-    void preservesLegacyRegistrationFormUrl() throws Exception {
+    void preservesRegistrationFormUrl() throws Exception {
         final var request = request("/register/view", "GET");
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
@@ -66,7 +66,7 @@ class RegistrationFlowTest {
     }
 
     @Test
-    void registeredMemberCanUseLegacyLoginAndLogout() throws Exception {
+    void registeredMemberCanLoginAndLogout() throws Exception {
         servlet.service(registrationRequest("POST"), mock(HttpServletResponse.class));
         final var user = InMemoryUserRepository.findByAccount(account).orElseThrow();
         final var session = mock(HttpSession.class);
