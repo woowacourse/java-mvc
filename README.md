@@ -133,3 +133,16 @@ mav.getView().render(mav.getModel(), request, response);
 ```
 따라서 DispatcherServlet이 JspView, JsonView처럼 View 인터페이스를 구현한 다양한 View를 동일한 방식으로 처리할 수 있다.
 또한, 컨트롤러가 추가한 모델 데이터도 View에 전달할 수 있게 되었다. 
+
+
+-----
+
+1. JsonView와 JspView     
+   JsonView는 모델 데이터를 JSON으로 직렬화해서 응답하고, JspView는 JSP로 뷰를 렌더링하거나 리다이렉트한다. 
+  /api/user는 뷰 대신 JSON 데이터를 반환하기 위해 JsonView를 사용한다.
+
+
+2. DispatcherServlet과 DispatcherServletInitializer
+   DispatcherServlet은 공통 MVC 기능을 담당하므로 mvc 모듈에 두고, 
+스캔할 패키지를 생성자로 전달받는다. DispatcherServletInitializer는 앱 설정을 담당하므로 app 모듈에 두고, 
+new DispatcherServlet("com.techcourse")를 생성해 등록한다.
