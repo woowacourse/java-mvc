@@ -21,31 +21,23 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final AnnotationHandlerMapping annotationHandlerMapping;
-    private final ManualHandlerMapping manualHandlerMapping;
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this(
+        this(List.of(
                 new AnnotationHandlerMapping("com.techcourse.controller"),
                 new ManualHandlerMapping()
-        );
+        ));
     }
 
-    DispatcherServlet(
-            AnnotationHandlerMapping annotationHandlerMapping,
-            ManualHandlerMapping manualHandlerMapping
-    ) {
-        this.annotationHandlerMapping = annotationHandlerMapping;
-        this.manualHandlerMapping = manualHandlerMapping;
+    DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = List.copyOf(handlerMappings);
     }
 
     @Override
     public void init() {
-        annotationHandlerMapping.initialize();
-        manualHandlerMapping.initialize();
-        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+        handlerMappings.forEach(HandlerMapping::initialize);
         handlerAdapters = List.of(new HandlerExecutionAdapter(), new ControllerHandlerAdapter());
     }
 

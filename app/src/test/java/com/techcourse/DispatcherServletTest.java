@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
@@ -12,15 +13,35 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
+
+    @Test
+    void 주입된_핸들러_매핑을_순서대로_초기화한다() {
+        // given
+        HandlerMapping first = mock(HandlerMapping.class);
+        HandlerMapping second = mock(HandlerMapping.class);
+        DispatcherServlet servlet = new DispatcherServlet(List.of(first, second));
+
+        // when
+        servlet.init();
+
+        // then
+        InOrder initializationOrder = inOrder(first, second);
+        initializationOrder.verify(first).initialize();
+        initializationOrder.verify(second).initialize();
+    }
 
     @Test
     void 기존_컨트롤러의_JSP_응답을_forward한다() throws Exception {
@@ -91,7 +112,7 @@ class DispatcherServletTest {
         // given
         AnnotationHandlerMapping annotationHandlerMapping = mock(AnnotationHandlerMapping.class);
         ManualHandlerMapping manualHandlerMapping = mock(ManualHandlerMapping.class);
-        DispatcherServlet servlet = new DispatcherServlet(annotationHandlerMapping, manualHandlerMapping);
+        DispatcherServlet servlet = new DispatcherServlet(List.of(annotationHandlerMapping, manualHandlerMapping));
         servlet.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);

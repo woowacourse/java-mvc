@@ -31,6 +31,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.anyMethodHandlers = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
