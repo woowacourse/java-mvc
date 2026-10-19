@@ -2,6 +2,8 @@ package com.techcourse;
 
 import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -25,11 +28,14 @@ class DispatcherServletTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final HttpSession session = mock(HttpSession.class);
-    private final DispatcherServlet dispatcherServlet = new DispatcherServlet("com.techcourse");
+    private DispatcherServlet dispatcherServlet;
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet.init();
+        final var handlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        handlerMapping.initialize();
+        dispatcherServlet = new DispatcherServlet(
+                List.of(handlerMapping), List.of(new HandlerExecutionAdapter()));
         when(request.getSession()).thenReturn(session);
     }
 
