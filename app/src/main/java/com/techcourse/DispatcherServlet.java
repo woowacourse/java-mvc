@@ -20,21 +20,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackages;
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackage) {
+        this.basePackages = basePackage;
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        addHandlerMapping(new ManualHandlerMapping());
-
+        addHandlerMapping(new AnnotationHandlerMapping(basePackages));
         addHandlerAdapter(new AnnotationHandlerAdapter());
-        addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
