@@ -1,8 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,19 +17,16 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public DispatcherServlet() {
-    }
-
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
@@ -73,6 +67,6 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerAdapter;
             }
         }
-        throw new IllegalStateException("핸들러를 처리할 어댑터가 없습니다: " + handler.getClass().getName());
+        throw new IllegalStateException("No adapter for handler: " + handler.getClass().getName());
     }
 }

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +37,7 @@ class HandlerExecutionHandlerAdapterTest {
     @Test
     @DisplayName("HandlerExecution이 아니면 처리할 수 없다")
     void handleable_withNonHandlerExecution() {
-        assertFalse(handlerAdapter.handleable(new ForwardController("/index.jsp")));
+        assertFalse(handlerAdapter.handleable(new Object()));
     }
 
     @Test
