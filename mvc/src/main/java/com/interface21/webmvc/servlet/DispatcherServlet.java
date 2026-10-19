@@ -1,10 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,36 +9,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import java.util.Collections;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
-    }
-
-    @Override
-    public void init() {
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        final AnnotationHandlerMapping annotationHandlerMapping =
-                new AnnotationHandlerMapping("com.techcourse");
-        annotationHandlerMapping.initialize();
-
-        handlerMappings.add(annotationHandlerMapping);
-        handlerMappings.add(manualHandlerMapping);
-
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionAdapter());
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
+        this.handlerMappings = List.copyOf(handlerMappings);
+        this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
     @Override
