@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,9 +29,9 @@ class HandlerExecutionHandlerAdapterTest {
 
     @Test
     void HandlerExecution이_아니면_지원하지_않는다() {
-        final var controller = new ForwardController("/index.jsp");
+        final var notHandlerExecution = new Object();
 
-        assertThat(handlerAdapter.supports(controller)).isFalse();
+        assertThat(handlerAdapter.supports(notHandlerExecution)).isFalse();
     }
 
     @Test
