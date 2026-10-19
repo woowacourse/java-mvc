@@ -149,6 +149,41 @@ class DispatcherServletTest {
         assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
     }
 
+    @Test
+    void returnsBadRequestWhenAccountIsMissing() throws Exception {
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        service("/api/user", "GET");
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertThat(body.toString()).isEqualTo("\"account 파라미터가 필요합니다.\"");
+    }
+
+    @Test
+    void returnsBadRequestWhenAccountIsBlank() throws Exception {
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        when(request.getParameter("account")).thenReturn(" ");
+
+        service("/api/user", "GET");
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertThat(body.toString()).isEqualTo("\"account 파라미터가 필요합니다.\"");
+    }
+
+    @Test
+    void returnsNotFoundWhenUserDoesNotExist() throws Exception {
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        when(request.getParameter("account")).thenReturn("unknown");
+
+        service("/api/user", "GET");
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        assertThat(body.toString()).isEqualTo("\"사용자를 찾을 수 없습니다.\"");
+    }
+
     private void service(final String uri, final String method) throws Exception {
         when(request.getRequestURI()).thenReturn(uri);
         when(request.getMethod()).thenReturn(method);

@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
@@ -23,8 +25,18 @@ public class UserController {
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account).orElseThrow();
-        modelAndView.addObject("user", user);
+        if (account == null || account.isBlank()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return modelAndView.addObject("error", "account 파라미터가 필요합니다.");
+        }
+
+        final Optional<User> user = InMemoryUserRepository.findByAccount(account);
+        if (user.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return modelAndView.addObject("error", "사용자를 찾을 수 없습니다.");
+        }
+
+        modelAndView.addObject("user", user.orElseThrow());
         return modelAndView;
     }
 }
