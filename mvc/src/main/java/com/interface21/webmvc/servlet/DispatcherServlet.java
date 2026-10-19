@@ -1,10 +1,8 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,16 +17,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse"));
-        handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        handlerMappings = List.of(new AnnotationHandlerMapping(basePackage));
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
@@ -42,12 +42,16 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
     }
 
@@ -58,8 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new IllegalArgumentException(
-                "요청을 처리할 핸들러가 없습니다: " + request.getMethod() + " " + request.getRequestURI());
+        return null;
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {

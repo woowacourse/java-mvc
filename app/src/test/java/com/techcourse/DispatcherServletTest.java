@@ -1,10 +1,16 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
@@ -21,27 +29,27 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("com.techcourse");
         dispatcherServlet.init();
         response = mock(HttpServletResponse.class);
     }
 
     @Test
-    void 레거시_컨트롤러가_처리한_요청을_forward한다() throws Exception {
+    void 홈_요청을_forward한다() throws Exception {
         final var request = request("GET", "/");
         final var requestDispatcher = requestDispatcher(request, "/index.jsp");
 
-        dispatcherServlet.service(request, response);
+        dispatcherServlet.service((ServletRequest) request, response);
 
         verify(requestDispatcher).forward(request, response);
     }
 
     @Test
-    void 레거시_매핑에_없는_요청은_어노테이션_컨트롤러가_처리한다() throws Exception {
+    void 어노테이션_컨트롤러가_회원가입_화면을_forward한다() throws Exception {
         final var request = request("GET", "/register");
         final var requestDispatcher = requestDispatcher(request, "/register.jsp");
 
-        dispatcherServlet.service(request, response);
+        dispatcherServlet.service((ServletRequest) request, response);
 
         verify(requestDispatcher).forward(request, response);
     }
@@ -53,19 +61,149 @@ class DispatcherServletTest {
         when(request.getParameter("password")).thenReturn("password");
         when(request.getParameter("email")).thenReturn("dispatcher-test@example.com");
 
-        dispatcherServlet.service(request, response);
+        dispatcherServlet.service((ServletRequest) request, response);
 
         verify(response).sendRedirect("/index.jsp");
         assertThat(InMemoryUserRepository.findByAccount("dispatcher-test")).isPresent();
     }
 
     @Test
-    void 어느_매핑에도_없는_요청이면_예외가_발생한다() {
+    void 어느_매핑에도_없는_요청이면_404로_응답한다() throws Exception {
         final var request = request("GET", "/not-found");
 
-        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verifyNoMoreInteractions(response);
+    }
+
+    @Test
+    void 로그인에_성공하면_사용자를_세션에_저장한다() throws Exception {
+        final var request = request("POST", "/login");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("password");
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(session).setAttribute("user", InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 비밀번호가_틀리면_로그인_실패_화면으로_이동한다() throws Exception {
+        final var request = request("POST", "/login");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong-password");
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void 로그인하지_않았으면_로그인_화면을_forward한다() throws Exception {
+        final var request = request("GET", "/login/view");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        final var requestDispatcher = requestDispatcher(request, "/login.jsp");
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 로그인한_사용자는_로그인_화면에서_홈으로_이동한다() throws Exception {
+        final var request = request("GET", "/login/view");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute("user")).thenReturn(InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
+    void 로그아웃하면_세션의_사용자를_제거하고_홈으로_이동한다() throws Exception {
+        final var request = request("GET", "/logout");
+        final var session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(session).removeAttribute("user");
+        verify(response).sendRedirect("/");
+    }
+
+    @Test
+    void 회원가입_화면의_기존_URL을_유지한다() throws Exception {
+        final var request = request("GET", "/register/view");
+        final var requestDispatcher = requestDispatcher(request, "/register.jsp");
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(requestDispatcher).forward(request, response);
+    }
+
+    @Test
+    void 사용자_조회_API는_모델_키_없이_사용자를_JSON으로_응답한다() throws Exception {
+        final var request = request("GET", "/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+    }
+
+    @Test
+    void 계정이_누락되면_400으로_응답한다() throws Exception {
+        assertUserError(null, HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void 계정이_빈_문자열이면_400으로_응답한다() throws Exception {
+        assertUserError("", HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void 계정이_공백이면_400으로_응답한다() throws Exception {
+        assertUserError(" \t ", HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void 존재하지_않는_계정이면_404로_응답한다() throws Exception {
+        assertUserError("nonexistent-account", HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void 컨트롤러_내부_오류는_서블릿_예외로_전파한다() {
+        final var request = request("GET", "/api/user");
+        when(request.getParameter("account")).thenThrow(new IllegalStateException("조회 실패"));
+
+        assertThatThrownBy(() -> dispatcherServlet.service((ServletRequest) request, response))
                 .isInstanceOf(ServletException.class)
-                .hasMessageContaining("GET /not-found");
+                .hasRootCauseInstanceOf(IllegalStateException.class)
+                .hasStackTraceContaining("조회 실패");
+        verifyNoInteractions(response);
+    }
+
+    private void assertUserError(final String account, final int status, final String message) throws Exception {
+        final var request = request("GET", "/api/user");
+        when(request.getParameter("account")).thenReturn(account);
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).setStatus(status);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"message\":\"" + message + "\"}");
     }
 
     private HttpServletRequest request(final String method, final String uri) {
