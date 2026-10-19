@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
@@ -66,12 +68,13 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 어느_매핑에도_없는_요청이면_예외가_발생한다() {
+    void 어느_매핑에도_없는_요청이면_404로_응답한다() throws Exception {
         final var request = request("GET", "/not-found");
 
-        assertThatThrownBy(() -> dispatcherServlet.service((ServletRequest) request, response))
-                .isInstanceOf(ServletException.class)
-                .hasMessageContaining("GET /not-found");
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verifyNoMoreInteractions(response);
     }
 
     @Test
@@ -156,6 +159,51 @@ class DispatcherServletTest {
 
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(body.toString()).isEqualTo("{\"account\":\"gugu\"}");
+    }
+
+    @Test
+    void 계정이_누락되면_400으로_응답한다() throws Exception {
+        assertUserError(null, HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void 계정이_빈_문자열이면_400으로_응답한다() throws Exception {
+        assertUserError("", HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void 계정이_공백이면_400으로_응답한다() throws Exception {
+        assertUserError(" \t ", HttpServletResponse.SC_BAD_REQUEST, "account는 필수입니다.");
+    }
+
+    @Test
+    void 존재하지_않는_계정이면_404로_응답한다() throws Exception {
+        assertUserError("nonexistent-account", HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void 컨트롤러_내부_오류는_서블릿_예외로_전파한다() {
+        final var request = request("GET", "/api/user");
+        when(request.getParameter("account")).thenThrow(new IllegalStateException("조회 실패"));
+
+        assertThatThrownBy(() -> dispatcherServlet.service((ServletRequest) request, response))
+                .isInstanceOf(ServletException.class)
+                .hasRootCauseInstanceOf(IllegalStateException.class)
+                .hasStackTraceContaining("조회 실패");
+        verifyNoInteractions(response);
+    }
+
+    private void assertUserError(final String account, final int status, final String message) throws Exception {
+        final var request = request("GET", "/api/user");
+        when(request.getParameter("account")).thenReturn(account);
+        final var body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        dispatcherServlet.service((ServletRequest) request, response);
+
+        verify(response).setStatus(status);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(body.toString()).isEqualTo("{\"message\":\"" + message + "\"}");
     }
 
     private HttpServletRequest request(final String method, final String uri) {
