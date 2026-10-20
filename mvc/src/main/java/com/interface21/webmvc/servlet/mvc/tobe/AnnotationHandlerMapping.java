@@ -55,13 +55,16 @@ public class AnnotationHandlerMapping {
                     ? RequestMethod.values() : requestMapping.method();
             final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             for (final RequestMethod requestMethod : requestMethods) {
-                handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod), handlerExecution);
+                final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                if (handlerExecutions.putIfAbsent(handlerKey, handlerExecution) != null) {
+                    throw new IllegalStateException("중복된 요청 매핑입니다: " + handlerKey);
+                }
             }
         }
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        final String url = request.getRequestURI();
+        final String url = request.getRequestURI().substring(request.getContextPath().length());
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(url, requestMethod));
     }
