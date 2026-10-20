@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -38,12 +37,10 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     // 새로운 HandlerMapping, HandlerAdapter가 생기면 DispatcherServlet이 아닌 이곳만 수정한다
     private void addHandlerMappings(final DispatcherServlet dispatcherServlet) {
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
     }
 
     private void addHandlerAdapters(final DispatcherServlet dispatcherServlet) {
-        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 }
