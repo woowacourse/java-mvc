@@ -23,9 +23,14 @@ public class LoginController {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        final var viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final var account = req.getParameter("account");
+        if (account == null || account.isBlank()) {
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
+        }
+
+        final var viewName = InMemoryUserRepository.findByAccount(account)
                 .map(user -> {
-                    log.info("User : {}", user);
+                    log.info("User account : {}", user.getAccount());
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");

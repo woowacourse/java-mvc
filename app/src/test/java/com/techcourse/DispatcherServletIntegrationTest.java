@@ -263,6 +263,23 @@ class DispatcherServletIntegrationTest {
     }
 
     @Test
+    @DisplayName("로그인 계정이 누락되거나 비어 있으면 인증 실패 화면으로 redirect한다")
+    void reject_login_for_missing_or_blank_account() throws Exception {
+        for (String account : new String[]{null, "", "   "}) {
+            final var request = request("/login", "POST");
+            final var response = mock(HttpServletResponse.class);
+            final var session = mock(HttpSession.class);
+            when(request.getSession()).thenReturn(session);
+            when(request.getParameter("account")).thenReturn(account);
+
+            servlet.service(request, response);
+
+            verify(response).sendRedirect("/401.jsp");
+            verify(session, never()).setAttribute(anyString(), any());
+        }
+    }
+
+    @Test
     @DisplayName("비밀번호가 틀리면 인증 실패 화면으로 redirect한다")
     void reject_login_for_wrong_password() throws Exception {
         final var request = request("/login", "POST");
