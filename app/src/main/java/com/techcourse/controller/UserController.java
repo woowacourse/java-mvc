@@ -9,12 +9,14 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Map;
+
 @Controller
 public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = InMemoryUserRepository.findByAccount(req.getParameter("account")).orElseThrow();
-        return new ModelAndView(new JsonView()).addObject("user", user);
+        return new ModelAndView(new JsonView()).addObject("user", Map.of("account", user.getAccount()));
     }
 }

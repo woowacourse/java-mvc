@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
+import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.Servlet;
@@ -171,6 +172,22 @@ class DispatcherServletIntegrationTest {
     }
 
     @Test
+    @DisplayName("회원 도메인에 다른 getter가 있어도 조회 응답은 account만 포함한다")
+    void expose_only_account_in_user_response() throws Exception {
+        final var account = UUID.randomUUID().toString();
+        InMemoryUserRepository.save(new UserWithPassword(account, "private-password"));
+        final var request = request("/api/user", "GET");
+        final var response = mock(HttpServletResponse.class);
+        final var output = new StringWriter();
+        when(request.getParameter("account")).thenReturn(account);
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        assertThat(output.toString()).isEqualTo("{\"account\":\"" + account + "\"}");
+    }
+
+    @Test
     @DisplayName("조회할 회원이 없으면 회원 조회 실패의 원인을 전달한다")
     void preserve_missing_user_failure() {
         final var request = request("/api/user", "GET");
@@ -275,4 +292,19 @@ class DispatcherServletIntegrationTest {
         when(request.getMethod()).thenReturn(method);
         return request;
     }
+
+    public static class UserWithPassword extends User {
+
+        private final String password;
+
+        public UserWithPassword(final String account, final String password) {
+            super(2, account, password, "private@example.com");
+            this.password = password;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+    }
+
 }
