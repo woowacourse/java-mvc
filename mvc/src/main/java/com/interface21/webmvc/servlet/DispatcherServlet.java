@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,31 +14,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final Object[] basePackage;
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
-
-    public DispatcherServlet(final Object... basePackage) {
-        this.basePackage = basePackage;
-    }
-
-    DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
-        this.basePackage = new Object[0];
+    public DispatcherServlet(final List<HandlerMapping> handlerMappings, final List<HandlerAdapter> handlerAdapters) {
         this.handlerMappings = List.copyOf(handlerMappings);
         this.handlerAdapters = List.copyOf(handlerAdapters);
-    }
-
-    @Override
-    public void init() throws ServletException {
-        try {
-            final var annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
-            annotationHandlerMapping.initialize();
-            handlerMappings = List.of(annotationHandlerMapping);
-            handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
-        } catch (Exception e) {
-            throw new ServletException("Failed to initialize handler mappings", e);
-        }
     }
 
     @Override

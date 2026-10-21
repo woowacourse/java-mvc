@@ -3,24 +3,28 @@ package com.techcourse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.http.MediaType;
-import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -33,9 +37,16 @@ class DispatcherServletIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        final var dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
-        dispatcherServlet.init();
-        servlet = dispatcherServlet;
+        final var servletContext = mock(ServletContext.class);
+        final var registration = mock(ServletRegistration.Dynamic.class);
+        when(servletContext.addServlet(eq("dispatcher"), any(Servlet.class))).thenReturn(registration);
+
+        new DispatcherServletInitializer().onStartup(servletContext);
+
+        final var servletCaptor = ArgumentCaptor.forClass(Servlet.class);
+        verify(servletContext).addServlet(eq("dispatcher"), servletCaptor.capture());
+        servlet = servletCaptor.getValue();
+        servlet.init(mock(ServletConfig.class));
     }
 
     @Test
@@ -144,7 +155,7 @@ class DispatcherServletIntegrationTest {
     }
 
     @Test
-    @DisplayName("두 매핑에 없는 경로는 404로 응답한다")
+    @DisplayName("등록되지 않은 경로는 404로 응답한다")
     void respond_not_found_for_unknown_path() throws Exception {
         final var response = mock(HttpServletResponse.class);
 

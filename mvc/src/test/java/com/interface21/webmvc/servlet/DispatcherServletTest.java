@@ -10,22 +10,24 @@ import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 class DispatcherServletTest {
 
     @Test
-    @DisplayName("어노테이션 핸들러가 반환한 뷰에 모델을 전달한다")
-    void render_annotation_handler_model() throws Exception {
-        final var servlet = new DispatcherServlet("dispatcher.samples");
-        servlet.init();
+    @DisplayName("서블릿 초기화 후에도 주입한 전략을 사용해 뷰와 모델을 전달한다")
+    void use_injected_strategies_after_initialization() throws Exception {
+        final var servlet = createServletWithAnnotationMapping();
+        servlet.init(mock(ServletConfig.class));
         final var request = request("/view-test", "GET");
         final var response = mock(HttpServletResponse.class);
         final var view = mock(View.class);
@@ -145,14 +147,25 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("설정한 패키지의 컨트롤러 초기화 실패는 원인을 보존해 전달한다")
-    void preserve_initialization_failure_cause() {
-        final var servlet = new DispatcherServlet("invalidcontrollers.missing");
+    @DisplayName("외부 전략 목록이 변경되어도 생성 시 전달받은 전략으로 요청을 처리한다")
+    void preserve_strategies_after_external_list_changes() throws Exception {
+        final var handler = new Object();
+        final HandlerMapping mapping = request -> handler;
+        final var adapter = mock(HandlerAdapter.class);
+        final List<HandlerMapping> mappings = new ArrayList<>(List.of(mapping));
+        final List<HandlerAdapter> adapters = new ArrayList<>(List.of(adapter));
+        final var servlet = new DispatcherServlet(mappings, adapters);
+        final var request = request("/test", "GET");
+        final var response = mock(HttpServletResponse.class);
+        final var view = mock(View.class);
+        when(adapter.supports(handler)).thenReturn(true);
+        when(adapter.handle(request, response, handler)).thenReturn(new ModelAndView(view));
 
-        assertThatThrownBy(servlet::init)
-                .isInstanceOf(ServletException.class)
-                .hasCauseInstanceOf(IllegalStateException.class)
-                .hasRootCauseInstanceOf(NoSuchMethodException.class);
+        mappings.clear();
+        adapters.clear();
+        servlet.service(request, response);
+
+        verify(view).render(Map.of(), request, response);
     }
 
     private DispatcherServlet createServletWithAnnotationMapping() {
