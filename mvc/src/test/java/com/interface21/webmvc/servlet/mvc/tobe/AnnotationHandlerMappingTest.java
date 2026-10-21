@@ -119,6 +119,21 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void registersOverriddenMappingOnlyOnce() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("fixtures.mapping.overridden");
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/inherited");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var execution = mapping.getHandler(request);
+
+        assertThat(execution).isNotNull();
+        assertThat(execution.handle(request, mock(HttpServletResponse.class)).getObject("handler"))
+                .isEqualTo("overridden");
+    }
+
+    @Test
     void rejectsOverlappingMappings() {
         final var conflictingMapping = new AnnotationHandlerMapping("fixtures.mapping.conflict");
 
