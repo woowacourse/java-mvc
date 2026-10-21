@@ -1,14 +1,17 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.web.http.MediaType;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 class DispatcherServletIntegrationTest {
@@ -141,6 +147,32 @@ class DispatcherServletIntegrationTest {
         servlet.service(request("/missing", "GET"), response);
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("회원 조회 API는 회원 정보만 감싸지 않은 JSON으로 응답한다")
+    void find_user_as_json() throws Exception {
+        final var request = request("/api/user", "GET");
+        final var response = mock(HttpServletResponse.class);
+        final var output = new StringWriter();
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(output.toString()).isEqualTo("{\"account\":\"gugu\"}");
+    }
+
+    @Test
+    @DisplayName("조회할 회원이 없으면 회원 조회 실패의 원인을 전달한다")
+    void preserve_missing_user_failure() {
+        final var request = request("/api/user", "GET");
+        when(request.getParameter("account")).thenReturn(UUID.randomUUID().toString());
+
+        assertThatThrownBy(() -> servlet.service(request, mock(HttpServletResponse.class)))
+                .isInstanceOf(ServletException.class)
+                .hasRootCauseInstanceOf(NoSuchElementException.class);
     }
 
     private HttpServletRequest registrationRequest(final String account) {
