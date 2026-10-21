@@ -155,7 +155,7 @@ class DispatcherServletTest {
                 .hasCause(failure);
     }
 
-    private DispatcherServlet createServletWithBothMappings() throws Exception {
+    private DispatcherServlet createServletWithBothMappings() {
         final var annotationMapping = new AnnotationHandlerMapping("dispatcher.samples");
         annotationMapping.initialize();
         final var manualMapping = new ManualHandlerMapping();

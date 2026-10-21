@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import org.reflections.Reflections;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,8 +16,7 @@ public class ControllerScanner {
         this.basePackage = basePackage;
     }
 
-    public Map<Class<?>, Object> scan()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Map<Class<?>, Object> scan() {
         final Set<Class<?>> controllerTypes = new HashSet<>();
         for (Object base : basePackage) {
             final var reflections = new Reflections(base);
@@ -27,9 +25,17 @@ public class ControllerScanner {
 
         final Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> controllerType : controllerTypes) {
-            final var controller = controllerType.getDeclaredConstructor().newInstance();
+            final var controller = createController(controllerType);
             controllers.put(controllerType, controller);
         }
         return controllers;
+    }
+
+    private Object createController(final Class<?> controllerType) {
+        try {
+            return controllerType.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to instantiate controller: " + controllerType.getName(), e);
+        }
     }
 }
