@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
@@ -8,10 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
@@ -28,8 +24,9 @@ class DispatcherServletTest {
     @Test
     @DisplayName("어노테이션 핸들러가 반환한 뷰에 모델을 전달한다")
     void render_annotation_handler_model() throws Exception {
-        final var servlet = createServletWithAnnotationMapping();
-        final var request = request("/login/view", "GET");
+        final var servlet = new DispatcherServlet("dispatcher.samples");
+        servlet.init();
+        final var request = request("/view-test", "GET");
         final var response = mock(HttpServletResponse.class);
         final var view = mock(View.class);
         when(request.getAttribute("view")).thenReturn(view);
@@ -135,7 +132,7 @@ class DispatcherServletTest {
     @DisplayName("뷰 렌더링 실패의 원인을 보존한다")
     void preserve_rendering_failure_cause() throws Exception {
         final var servlet = createServletWithAnnotationMapping();
-        final var request = request("/login/view", "GET");
+        final var request = request("/view-test", "GET");
         final var response = mock(HttpServletResponse.class);
         final var view = mock(View.class);
         final var failure = new IllegalStateException("render failed");
@@ -145,6 +142,17 @@ class DispatcherServletTest {
         assertThatThrownBy(() -> servlet.service(request, response))
                 .isInstanceOf(ServletException.class)
                 .hasCause(failure);
+    }
+
+    @Test
+    @DisplayName("설정한 패키지의 컨트롤러 초기화 실패는 원인을 보존해 전달한다")
+    void preserve_initialization_failure_cause() {
+        final var servlet = new DispatcherServlet("invalidcontrollers.missing");
+
+        assertThatThrownBy(servlet::init)
+                .isInstanceOf(ServletException.class)
+                .hasCauseInstanceOf(IllegalStateException.class)
+                .hasRootCauseInstanceOf(NoSuchMethodException.class);
     }
 
     private DispatcherServlet createServletWithAnnotationMapping() {

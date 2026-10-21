@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class TestController {
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/view-test", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView((View) request.getAttribute("view"))
                 .addObject("id", "gugu");

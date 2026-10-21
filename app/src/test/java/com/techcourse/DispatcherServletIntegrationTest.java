@@ -10,9 +10,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,12 +31,13 @@ import java.util.UUID;
 
 class DispatcherServletIntegrationTest {
 
-    private DispatcherServlet servlet;
+    private Servlet servlet;
 
     @BeforeEach
     void setUp() throws Exception {
-        servlet = new DispatcherServlet();
-        servlet.init();
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
+        dispatcherServlet.init();
+        servlet = dispatcherServlet;
     }
 
     @Test
