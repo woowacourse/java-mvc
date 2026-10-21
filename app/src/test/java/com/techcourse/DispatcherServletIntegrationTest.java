@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -16,7 +15,6 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.Servlet;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 class DispatcherServletIntegrationTest {
@@ -188,14 +185,53 @@ class DispatcherServletIntegrationTest {
     }
 
     @Test
-    @DisplayName("조회할 회원이 없으면 회원 조회 실패의 원인을 전달한다")
-    void preserve_missing_user_failure() {
-        final var request = request("/api/user", "GET");
-        when(request.getParameter("account")).thenReturn(UUID.randomUUID().toString());
+    @DisplayName("회원 조회 계정이 누락되거나 비어 있으면 400과 JSON 오류 메시지를 응답한다")
+    void reject_missing_or_blank_user_account() throws Exception {
+        for (String account : new String[]{null, "", "   "}) {
+            final var request = request("/api/user", "GET");
+            final var response = mock(HttpServletResponse.class);
+            final var output = new StringWriter();
+            when(request.getParameter("account")).thenReturn(account);
+            when(response.getWriter()).thenReturn(new PrintWriter(output));
 
-        assertThatThrownBy(() -> servlet.service(request, mock(HttpServletResponse.class)))
-                .isInstanceOf(ServletException.class)
-                .hasRootCauseInstanceOf(NoSuchElementException.class);
+            servlet.service(request, response);
+
+            verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            assertThat(output.toString()).isEqualTo("{\"message\":\"account is required\"}");
+        }
+    }
+
+    @Test
+    @DisplayName("조회할 회원이 없으면 404와 JSON 오류 메시지를 응답한다")
+    void respond_not_found_for_missing_user() throws Exception {
+        final var request = request("/api/user", "GET");
+        final var response = mock(HttpServletResponse.class);
+        final var output = new StringWriter();
+        when(request.getParameter("account")).thenReturn(UUID.randomUUID().toString());
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(output.toString()).isEqualTo("{\"message\":\"user not found\"}");
+    }
+
+    @Test
+    @DisplayName("공백을 포함하는 유효한 계정 값은 변경하지 않고 조회한다")
+    void preserve_valid_account_value() throws Exception {
+        final var account = " " + UUID.randomUUID() + " ";
+        InMemoryUserRepository.save(new User(3, account, "password", "account@example.com"));
+        final var request = request("/api/user", "GET");
+        final var response = mock(HttpServletResponse.class);
+        final var output = new StringWriter();
+        when(request.getParameter("account")).thenReturn(account);
+        when(response.getWriter()).thenReturn(new PrintWriter(output));
+
+        servlet.service(request, response);
+
+        assertThat(output.toString()).isEqualTo("{\"account\":\"" + account + "\"}");
     }
 
     @Test
