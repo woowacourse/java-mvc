@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
@@ -35,11 +34,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
             annotationHandlerMapping.initialize();
-            final var manualHandlerMapping = new ManualHandlerMapping();
-            manualHandlerMapping.initialize();
-
-            handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
-            handlerAdapters = List.of(new HandlerExecutionHandlerAdapter(), new SimpleControllerHandlerAdapter());
+            handlerMappings = List.of(annotationHandlerMapping);
+            handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
         } catch (Exception e) {
             throw new ServletException("Failed to initialize handler mappings", e);
         }

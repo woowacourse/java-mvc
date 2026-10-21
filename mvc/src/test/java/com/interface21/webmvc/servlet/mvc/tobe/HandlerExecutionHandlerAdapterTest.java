@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +21,7 @@ class HandlerExecutionHandlerAdapterTest {
         final var handler = createHandler(new TestController(new ModelAndView(mock(View.class))), "handle");
 
         assertThat(adapter.supports(handler)).isTrue();
-        assertThat(adapter.supports(new ForwardController("/index.jsp"))).isFalse();
+        assertThat(adapter.supports(new Object())).isFalse();
         assertThat(adapter.supports(null)).isFalse();
     }
 
