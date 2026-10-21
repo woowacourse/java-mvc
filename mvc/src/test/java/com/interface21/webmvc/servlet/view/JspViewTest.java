@@ -1,8 +1,10 @@
 package com.interface21.webmvc.servlet.view;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.RequestDispatcher;
@@ -43,14 +45,18 @@ class JspViewTest {
     }
 
     @Test
-    @DisplayName("redirect 접두사를 제거한 경로로 리다이렉트하고 forward하지 않는다")
+    @DisplayName("redirect 접두사를 제거한 경로로 리다이렉트하고 모델 노출과 forward를 하지 않는다")
     void redirect() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        new JspView("redirect:/index.jsp").render(Map.of(), request, response);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher(anyString())).thenReturn(dispatcher);
+
+        new JspView("redirect:/index.jsp").render(Map.of("name", "gugu", "age", 20), request, response);
 
         verify(response).sendRedirect("/index.jsp");
-        verifyNoInteractions(request);
+        verify(request, never()).setAttribute(anyString(), any());
+        verify(dispatcher, never()).forward(any(), any());
     }
 }
