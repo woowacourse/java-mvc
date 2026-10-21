@@ -103,6 +103,21 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void registersInheritedRequestMappingMethods() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("fixtures.mapping.inherited");
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/inherited");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var execution = (HandlerExecution) mapping.getHandler(request);
+
+        assertThat(execution).isNotNull();
+        assertThat(execution.handle(request, mock(HttpServletResponse.class)).getObject("handler"))
+                .isEqualTo("inherited");
+    }
+
+    @Test
     void rejectsOverlappingMappings() {
         final var conflictingMapping = new AnnotationHandlerMapping("fixtures.mapping.conflict");
 
