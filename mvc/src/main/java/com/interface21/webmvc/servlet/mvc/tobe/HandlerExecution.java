@@ -24,4 +24,9 @@ public class HandlerExecution {
         log.info("Call method {}#{}", controller.getClass().getSimpleName(), method.getName());
         return (ModelAndView) method.invoke(controller, request, response);
     }
+
+    @Override
+    public String toString() {
+        return method.toGenericString();
+    }
 }
