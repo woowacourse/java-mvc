@@ -9,10 +9,12 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final ObjectMapper DEFAULT_OBJECT_MAPPER = new ObjectMapper();
+
     private final ObjectMapper objectMapper;
 
     public JsonView() {
-        this(new ObjectMapper());
+        this(DEFAULT_OBJECT_MAPPER);
     }
 
     JsonView(final ObjectMapper objectMapper) {
