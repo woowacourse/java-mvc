@@ -28,6 +28,7 @@ class AnnotationHandlerMappingTest {
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getContextPath()).thenReturn("");
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -43,6 +44,7 @@ class AnnotationHandlerMappingTest {
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getContextPath()).thenReturn("");
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -59,6 +61,7 @@ class AnnotationHandlerMappingTest {
             final var response = mock(HttpServletResponse.class);
 
             when(request.getRequestURI()).thenReturn("/all-method-test");
+            when(request.getContextPath()).thenReturn("");
             when(request.getMethod()).thenReturn(method.name());
 
             // 검증: 해당 요청을 처리할 핸들러가 등록되어 있는가?
@@ -85,6 +88,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/same-url-test");
+        when(request.getContextPath()).thenReturn("");
         when(request.getMethod()).thenReturn("GET");
 
         // 실행: 요청에 맞는 핸들러를 찾아 호출한다.
@@ -105,6 +109,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/same-url-test");
+        when(request.getContextPath()).thenReturn("");
         when(request.getMethod()).thenReturn("POST");
 
         // 실행: 요청에 맞는 핸들러를 찾아 호출한다.

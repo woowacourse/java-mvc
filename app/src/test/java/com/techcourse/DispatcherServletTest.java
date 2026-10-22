@@ -29,6 +29,7 @@ public class DispatcherServletTest {
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+        when(request.getContextPath()).thenReturn("");
     }
 
     @Test
@@ -47,8 +48,40 @@ public class DispatcherServletTest {
     }
 
     @Test
+    void handlesLegacyControllerWithContextPath() throws Exception {
+        when(request.getRequestURI()).thenReturn("/mvc/");
+        when(request.getContextPath()).thenReturn("/mvc");
+        when(request.getMethod()).thenReturn("GET");
+
+        RequestDispatcher dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/index.jsp"))
+                .thenReturn(dispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
     void handlesAnnotationGet() throws Exception {
         when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn("GET");
+
+        RequestDispatcher dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/register.jsp"))
+                .thenReturn(dispatcher);
+
+        dispatcherServlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(response, never()).sendRedirect(anyString());
+    }
+
+    @Test
+    void handlesAnnotationGetWithContextPath() throws Exception {
+        when(request.getRequestURI()).thenReturn("/mvc/register");
+        when(request.getContextPath()).thenReturn("/mvc");
         when(request.getMethod()).thenReturn("GET");
 
         RequestDispatcher dispatcher = mock(RequestDispatcher.class);
