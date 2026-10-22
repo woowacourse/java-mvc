@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.techcourse.controller.UserSession;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -53,6 +55,34 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 어노테이션_컨트롤러로_회원가입_화면을_조회한다() throws Exception {
+        final var request = createRequest("GET", "/register");
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verifyNoInteractions(response);
+    }
+
+    @Test
+    void 어노테이션_컨트롤러로_회원을_저장한_뒤_redirect한다() throws Exception {
+        final var request = createRequest("POST", "/register");
+        final var response = mock(HttpServletResponse.class);
+        when(request.getParameter("account")).thenReturn("step2-user");
+        when(request.getParameter("password")).thenReturn("password");
+        when(request.getParameter("email")).thenReturn("step2@example.com");
+
+        servlet.service(request, response);
+
+        final var user = InMemoryUserRepository.findByAccount("step2-user").orElseThrow();
+        assertThat(user.checkPassword("password")).isTrue();
+        verify(response).sendRedirect("/index.jsp");
+    }
+
+    @Test
     void 기존_로그인_화면도_함께_동작한다() throws Exception {
         final var request = createRequest("GET", "/login/view");
         final var response = mock(HttpServletResponse.class);
@@ -76,12 +106,35 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 회원가입_URL에_매핑되지_않은_HTTP_메서드로_요청하면_404를_반환한다() throws Exception {
+        final var request = createRequest("DELETE", "/register");
+        final var response = mock(HttpServletResponse.class);
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
     void 컨텍스트_경로가_있어도_기존_컨트롤러를_찾는다() throws Exception {
         final var request = createRequest("GET", "/mvc/");
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
         when(request.getContextPath()).thenReturn("/mvc");
         when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void 컨텍스트_경로가_있어도_어노테이션_컨트롤러를_찾는다() throws Exception {
+        final var request = createRequest("GET", "/mvc/register");
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getContextPath()).thenReturn("/mvc");
+        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
 
         servlet.service(request, response);
 
