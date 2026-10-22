@@ -2,11 +2,13 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -23,26 +26,35 @@ public class AnnotationHandlerMapping {
     private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final String... basePackageNames) {
-        this.basePackageNames = basePackageNames;
+    public AnnotationHandlerMapping(final String basePackageName, final String... additionalBasePackageNames) {
+        this.basePackageNames = Stream.concat(
+                Stream.of(basePackageName),
+                Arrays.stream(additionalBasePackageNames)
+        ).toArray(String[]::new);
         this.controllerScanner = new ControllerScanner();
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (String basePackageName : basePackageNames) {
-            final Map<Class<?>, Object> controllerInstances = controllerScanner.createControllerInstances(basePackageName);
-            addAnnotatedMethodsInClassesAsHandlerExecutions(controllerInstances);
+            registerHandlerExecutions(basePackageName);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey key = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.valueOf(request.getMethod())
         );
         return handlerExecutions.get(key);
+    }
+
+    private void registerHandlerExecutions(final String basePackageName) {
+        final Map<Class<?>, Object> controllerInstances = controllerScanner.createControllerInstances(basePackageName);
+        addAnnotatedMethodsInClassesAsHandlerExecutions(controllerInstances);
     }
 
     private void addAnnotatedMethodsInClassesAsHandlerExecutions(final Map<Class<?>, Object> controllerInstances) {

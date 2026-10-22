@@ -36,8 +36,8 @@
 
 ## 2단계 - 점진적인 리팩터링
 - Legacy MVC와 @MVC 통합하기
-- [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존한 상태로 동작 가능하다.
+- [x] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존한 상태로 동작 가능하다.
 - [x] 컨트롤러의 인스턴스를 생성하는 ControllerScanner 클래스를 추가했다.
 - [x] 컨트롤러의 메서드 정보로 HandlerExecution을 생성한다.
-- [ ] HandlerMapping 인터페이스로 RequestMapping, AnnotationHandlerMapping 클래스의 공통 부분을 추상화했다.
-- [ ] HandlerAdapter 인터페이스: 요청 URL에 따라 AnnotationHandlerMapping 또는 ManualHandlerMapping 클래스에서 찾은 컨트롤러를 실행한다.
+- [x] HandlerMapping 인터페이스로 RequestMapping, AnnotationHandlerMapping 클래스의 공통 부분을 추상화했다.
+- [x] HandlerAdapter 인터페이스: 요청 URL에 따라 AnnotationHandlerMapping 또는 ManualHandlerMapping 클래스에서 찾은 컨트롤러를 실행한다.
