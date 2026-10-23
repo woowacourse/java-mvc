@@ -25,6 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final var controllers = controllerScanner.scan();
+        final Map<HandlerKey, HandlerExecution> newHandlerExecutions = new HashMap<>();
         for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
             final var controllerType = entry.getKey();
             final var controller = entry.getValue();
@@ -44,13 +45,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
                 for (RequestMethod supportedMethod : supportedMethods) {
                     final var handlerKey = new HandlerKey(requestMapping.value(), supportedMethod);
-                    handlerExecutions.put(handlerKey, handlerExecution);
+                    final var previous = newHandlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+                    if (previous != null && previous != handlerExecution) {
+                        throw new IllegalStateException("Duplicate handler mapping for " + handlerKey
+                                + ": " + previous + " and " + handlerExecution);
+                    }
                     log.info("Request {} {} -> Mapped to {}#{} on instance={}",
                             supportedMethod, requestMapping.value(),
                             controllerType.getSimpleName(), method.getName(), handlerExecution);
                 }
             }
         }
+        handlerExecutions.clear();
+        handlerExecutions.putAll(newHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 

@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
@@ -8,30 +8,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 class DispatcherServletTest {
 
     @Test
-    @DisplayName("어노테이션 매핑을 먼저 선택하고 반환된 뷰에 모델을 전달한다")
-    void prefer_annotation_mapping_and_render_model() throws Exception {
-        final var servlet = createServletWithBothMappings();
-        final var request = request("/login/view", "GET");
+    @DisplayName("서블릿 초기화 후에도 주입한 전략을 사용해 뷰와 모델을 전달한다")
+    void use_injected_strategies_after_initialization() throws Exception {
+        final var servlet = createServletWithAnnotationMapping();
+        servlet.init(mock(ServletConfig.class));
+        final var request = request("/view-test", "GET");
         final var response = mock(HttpServletResponse.class);
         final var view = mock(View.class);
         when(request.getAttribute("view")).thenReturn(view);
@@ -39,35 +36,29 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(view).render(Map.of("id", "gugu"), request, response);
-        verify(request, never()).getSession();
     }
 
     @Test
-    @DisplayName("어노테이션 매핑이 없으면 수동 매핑으로 요청을 처리한다")
-    void fall_back_to_manual_mapping() throws Exception {
-        final var servlet = createServletWithBothMappings();
-        final var request = request("/register/view", "GET");
+    @DisplayName("등록된 매핑에서 처음으로 일치하는 핸들러를 선택한다")
+    void choose_first_matching_mapping() throws Exception {
+        final var unmatchedMapping = mock(HandlerMapping.class);
+        final var mapping = mock(HandlerMapping.class);
+        final var laterMapping = mock(HandlerMapping.class);
+        final var handler = new Object();
+        final var adapter = mock(HandlerAdapter.class);
+        final var servlet = new DispatcherServlet(List.of(unmatchedMapping, mapping, laterMapping), List.of(adapter));
+        final var request = request("/test", "GET");
         final var response = mock(HttpServletResponse.class);
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(dispatcher);
+        final var view = mock(View.class);
+        when(mapping.getHandler(request)).thenReturn(handler);
+        when(adapter.supports(handler)).thenReturn(true);
+        when(adapter.handle(request, response, handler)).thenReturn(new ModelAndView(view));
 
         servlet.service(request, response);
 
-        verify(dispatcher).forward(request, response);
-    }
-
-    @Test
-    @DisplayName("정의하지 않은 HTTP method도 기존 수동 매핑 조회를 막지 않는다")
-    void fall_back_for_unknown_http_method() throws Exception {
-        final var servlet = createServletWithBothMappings();
-        final var request = request("/", "CONNECT");
-        final var response = mock(HttpServletResponse.class);
-        final var dispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(dispatcher);
-
-        servlet.service(request, response);
-
-        verify(dispatcher).forward(request, response);
+        verify(unmatchedMapping).getHandler(request);
+        verify(view).render(Map.of(), request, response);
+        verifyNoInteractions(laterMapping);
     }
 
     @Test
@@ -142,8 +133,8 @@ class DispatcherServletTest {
     @Test
     @DisplayName("뷰 렌더링 실패의 원인을 보존한다")
     void preserve_rendering_failure_cause() throws Exception {
-        final var servlet = createServletWithBothMappings();
-        final var request = request("/login/view", "GET");
+        final var servlet = createServletWithAnnotationMapping();
+        final var request = request("/view-test", "GET");
         final var response = mock(HttpServletResponse.class);
         final var view = mock(View.class);
         final var failure = new IllegalStateException("render failed");
@@ -155,13 +146,32 @@ class DispatcherServletTest {
                 .hasCause(failure);
     }
 
-    private DispatcherServlet createServletWithBothMappings() {
+    @Test
+    @DisplayName("외부 전략 목록이 변경되어도 생성 시 전달받은 전략으로 요청을 처리한다")
+    void preserve_strategies_after_external_list_changes() throws Exception {
+        final var handler = new Object();
+        final HandlerMapping mapping = request -> handler;
+        final var adapter = mock(HandlerAdapter.class);
+        final List<HandlerMapping> mappings = new ArrayList<>(List.of(mapping));
+        final List<HandlerAdapter> adapters = new ArrayList<>(List.of(adapter));
+        final var servlet = new DispatcherServlet(mappings, adapters);
+        final var request = request("/test", "GET");
+        final var response = mock(HttpServletResponse.class);
+        final var view = mock(View.class);
+        when(adapter.supports(handler)).thenReturn(true);
+        when(adapter.handle(request, response, handler)).thenReturn(new ModelAndView(view));
+
+        mappings.clear();
+        adapters.clear();
+        servlet.service(request, response);
+
+        verify(view).render(Map.of(), request, response);
+    }
+
+    private DispatcherServlet createServletWithAnnotationMapping() {
         final var annotationMapping = new AnnotationHandlerMapping("dispatcher.samples");
         annotationMapping.initialize();
-        final var manualMapping = new ManualHandlerMapping();
-        manualMapping.initialize();
-        return new DispatcherServlet(List.of(annotationMapping, manualMapping),
-                List.of(new HandlerExecutionHandlerAdapter(), new SimpleControllerHandlerAdapter()));
+        return new DispatcherServlet(List.of(annotationMapping), List.of(new HandlerExecutionHandlerAdapter()));
     }
 
     private HttpServletRequest request(final String uri, final String method) {
