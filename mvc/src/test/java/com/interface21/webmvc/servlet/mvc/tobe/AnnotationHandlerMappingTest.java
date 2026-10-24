@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
@@ -100,6 +101,36 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(method);
 
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @Test
+    void registersInheritedRequestMappingMethods() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("fixtures.mapping.inherited");
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/inherited");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var execution = (HandlerExecution) mapping.getHandler(request);
+
+        assertThat(execution).isNotNull();
+        assertThat(execution.handle(request, mock(HttpServletResponse.class)).getObject("handler"))
+                .isEqualTo("inherited");
+    }
+
+    @Test
+    void registersOverriddenMappingOnlyOnce() throws Exception {
+        final var mapping = new AnnotationHandlerMapping("fixtures.mapping.overridden");
+        mapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/inherited");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var execution = mapping.getHandler(request);
+
+        assertThat(execution).isNotNull();
+        assertThat(execution.handle(request, mock(HttpServletResponse.class)).getObject("handler"))
+                .isEqualTo("overridden");
     }
 
     @Test
