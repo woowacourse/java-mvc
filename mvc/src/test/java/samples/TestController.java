@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JsonView;
 import com.interface21.webmvc.servlet.view.JspView;
 
 @Controller
@@ -37,5 +38,20 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/forward-test", method = RequestMethod.GET)
+    public ModelAndView forward(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
+    }
+
+    @RequestMapping(value = "/redirect-test", method = RequestMethod.POST)
+    public ModelAndView redirect(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
+    }
+
+    @RequestMapping(value = "/json-test", method = RequestMethod.GET)
+    public ModelAndView json(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JsonView()).addObject("id", "gugu");
     }
 }
