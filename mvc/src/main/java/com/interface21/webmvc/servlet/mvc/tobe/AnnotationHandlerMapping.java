@@ -1,20 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,26 +24,15 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Class<?> controllerClass : scanControllerClasses()) {
-            Object controller = createController(controllerClass);
-            for (Method handlerMethod : findHandlerMethods(controllerClass)) {
-                registerHandlerMethod(controller, handlerMethod);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            for (Method handlerMethod : findHandlerMethods(entry.getKey())) {
+                registerHandlerMethod(entry.getValue(), handlerMethod);
             }
-        }
-    }
-
-    private Set<Class<?>> scanControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private Object createController(Class<?> controllerClass) {
-        try {
-            return controllerClass.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("리플렉션 작업 중 예외 발생: " + controllerClass.getName(), e);
         }
     }
 
@@ -73,6 +60,7 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestUrl = request.getRequestURI();
         String requestMethod = request.getMethod();
