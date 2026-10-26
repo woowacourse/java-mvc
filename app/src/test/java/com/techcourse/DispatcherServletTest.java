@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -15,6 +16,8 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -177,6 +180,29 @@ class DispatcherServletTest {
         assertThat(savedUser.getAccount()).isEqualTo(account);
         assertThat(savedUser.checkPassword("secret")).isTrue();
         verify(response).sendRedirect("/index.jsp");
+        verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void 사용자_조회_요청을_JSON으로_응답한다() throws Exception {
+        // given
+        DispatcherServlet servlet = new DispatcherServlet();
+        servlet.init();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter responseBody = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(responseBody));
+
+        // when
+        servlet.service(request, response);
+
+        // then
+        assertThat(responseBody.toString()).isEqualTo("{\"account\":\"gugu\"}");
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         verify(request, never()).getRequestDispatcher(anyString());
     }
 }
