@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
@@ -25,10 +24,7 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this(List.of(
-                new AnnotationHandlerMapping("com.techcourse.controller"),
-                new ManualHandlerMapping()
-        ));
+        this(List.of(new AnnotationHandlerMapping("com.techcourse.controller")));
     }
 
     DispatcherServlet(List<HandlerMapping> handlerMappings) {
@@ -38,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-        handlerAdapters = List.of(new HandlerExecutionAdapter(), new ControllerHandlerAdapter());
+        handlerAdapters = List.of(new HandlerExecutionAdapter());
     }
 
     @Override
