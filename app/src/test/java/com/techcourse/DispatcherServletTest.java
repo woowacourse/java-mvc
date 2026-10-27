@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -93,6 +94,33 @@ class DispatcherServletTest {
         servlet.service(request, response);
 
         verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void 같은_URL과_메서드를_두_매핑이_모두_처리하면_어노테이션_매핑이_선택된다() throws Exception {
+        final var request = createRequest("POST", "/login/view");
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestDispatcher("/annotation-login.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(request, never()).getRequestDispatcher("/login.jsp");
+    }
+
+    @Test
+    void 어노테이션_매핑에_해당_메서드가_없으면_수동_매핑으로_넘어간다() throws Exception {
+        final var request = createRequest("GET", "/login/view");
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+        verify(request, never()).getRequestDispatcher("/annotation-login.jsp");
     }
 
     @Test
