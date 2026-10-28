@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ class HandlerExecutionHandlerAdapterTest {
         final var handlerExecution = findHandlerExecution("/get-test", "GET");
 
         assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
-        assertThat(handlerAdapter.supports(new ForwardController("/index.jsp"))).isFalse();
+        assertThat(handlerAdapter.supports(new Object())).isFalse();
     }
 
     @Test
