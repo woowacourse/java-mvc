@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,11 +21,11 @@ class HandlerExecutionAdapterTest {
 
         // when
         boolean supportsExecution = adapter.supports(executionType);
-        boolean supportsController = adapter.supports(ForwardController.class);
+        boolean supportsOtherType = adapter.supports(String.class);
 
         // then
         assertThat(supportsExecution).isTrue();
-        assertThat(supportsController).isFalse();
+        assertThat(supportsOtherType).isFalse();
     }
 
     @Test
