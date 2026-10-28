@@ -10,6 +10,8 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
@@ -19,10 +21,21 @@ public class UserController {
             HttpServletResponse response
     ) {
         String account = request.getParameter("account");
-        User user = InMemoryUserRepository.findByAccount(account).orElseThrow();
+        if (account == null) {
+            return errorResponse(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        Optional<User> user = InMemoryUserRepository.findByAccount(account);
+        if (user.isEmpty()) {
+            return errorResponse(HttpServletResponse.SC_NOT_FOUND);
+        }
 
         ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", user.orElseThrow());
         return modelAndView;
+    }
+
+    private ModelAndView errorResponse(int status) {
+        return new ModelAndView((model, request, response) -> response.sendError(status));
     }
 }

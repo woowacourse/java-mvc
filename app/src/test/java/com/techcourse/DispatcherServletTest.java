@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -320,6 +321,43 @@ class DispatcherServletTest {
         assertThat(responseBody.toString()).isEqualTo("{\"account\":\"gugu\"}");
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         verify(request, never()).getRequestDispatcher(anyString());
+    }
+
+    @Test
+    void 사용자_조회시_account가_없으면_400으로_응답한다() throws Exception {
+        // given
+        DispatcherServlet servlet = initializedServlet();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        dispatch(servlet, request, response);
+
+        // then
+        verify(response).sendError(HttpServletResponse.SC_BAD_REQUEST);
+        verifyNoMoreInteractions(response);
+    }
+
+    @Test
+    void 조회할_사용자가_없으면_404로_응답한다() throws Exception {
+        // given
+        DispatcherServlet servlet = initializedServlet();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("missing-user-api-stage3");
+
+        // when
+        dispatch(servlet, request, response);
+
+        // then
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verifyNoMoreInteractions(response);
     }
 
     private DispatcherServlet initializedServlet() {
