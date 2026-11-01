@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class MappingPriorityTestController {
+public class HomeController {
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.POST)
-    public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/annotation-login.jsp"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

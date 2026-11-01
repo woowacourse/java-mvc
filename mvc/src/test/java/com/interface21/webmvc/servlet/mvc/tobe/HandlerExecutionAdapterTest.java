@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,7 @@ class HandlerExecutionAdapterTest {
     @Test
     void HandlerExecution_타입의_핸들러만_지원한다() {
         assertThat(adapter.supports(mock(HandlerExecution.class))).isTrue();
-        assertThat(adapter.supports(new ForwardController("/index.jsp"))).isFalse();
+        assertThat(adapter.supports(new Object())).isFalse();
         assertThat(adapter.supports(null)).isFalse();
     }
 
