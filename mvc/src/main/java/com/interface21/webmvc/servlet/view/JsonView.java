@@ -6,6 +6,7 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -14,7 +15,7 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
-                       final HttpServletResponse response) throws Exception {
+                       final HttpServletResponse response) throws IOException {
         final Object value = model.size() == 1 ? model.values().iterator().next() : model;
         final String json = objectMapper.writeValueAsString(value);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

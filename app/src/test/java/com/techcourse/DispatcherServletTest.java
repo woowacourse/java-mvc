@@ -100,6 +100,16 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 로그인_화면에_POST로_요청하면_수동_매핑으로_넘어가지_않고_404를_반환한다() throws Exception {
+        final var request = createRequest("POST", "/login/view");
+        final var response = mock(HttpServletResponse.class);
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
     void 등록되지_않은_요청이면_404를_반환한다() throws Exception {
         final var request = createRequest("GET", "/unknown");
         final var response = mock(HttpServletResponse.class);
