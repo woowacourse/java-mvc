@@ -1,13 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.asis.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +29,8 @@ class DispatcherServletIntegrationTest {
     @BeforeEach
     void setUp() {
         servlet = new DispatcherServlet(
-                List.of(new AnnotationHandlerMapping("fixtures.dispatcher"), new ManualHandlerMapping()),
-                List.of(new SimpleControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter()));
+                List.of(new AnnotationHandlerMapping("fixtures.dispatcher")),
+                List.of(new HandlerExecutionHandlerAdapter()));
         servlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -64,27 +62,35 @@ class DispatcherServletIntegrationTest {
     }
 
     @Test
-    void fallsBackToLegacyMappingWhenAnnotationMappingHasNoHandler() throws Exception {
-        when(request.getRequestURI()).thenReturn("/logout");
-        final var session = mock(HttpSession.class);
-        when(request.getSession()).thenReturn(session);
-
-        servlet.service(request, response);
-
-        verify(session).removeAttribute("user");
-        verify(response).sendRedirect("/");
-    }
-
-    @Test
     void usesFirstMatchingHandlerMapping() throws Exception {
         final var dispatcher = mock(RequestDispatcher.class);
+        final HandlerMapping secondMapping = mock(HandlerMapping.class);
+        servlet = new DispatcherServlet(
+                List.of(new AnnotationHandlerMapping("fixtures.dispatcher"), secondMapping),
+                List.of(new HandlerExecutionHandlerAdapter()));
+        servlet.init();
         when(request.getRequestURI()).thenReturn("/");
         when(request.getRequestDispatcher("/annotation-home.jsp")).thenReturn(dispatcher);
 
         servlet.service(request, response);
 
         verify(dispatcher).forward(request, response);
-        verify(request, never()).getRequestDispatcher("/index.jsp");
+        verify(secondMapping, never()).getHandler(request);
+    }
+
+    @Test
+    void fallsBackToNextHandlerMappingWhenFirstHasNoHandler() throws Exception {
+        final var dispatcher = mock(RequestDispatcher.class);
+        servlet = new DispatcherServlet(
+                List.of(mock(HandlerMapping.class), new AnnotationHandlerMapping("fixtures.dispatcher")),
+                List.of(new HandlerExecutionHandlerAdapter()));
+        servlet.init();
+        when(request.getRequestURI()).thenReturn("/annotation");
+        when(request.getRequestDispatcher("/annotation.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
     }
 
     @Test

@@ -1,5 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import com.techcourse.controller.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.RequestDispatcher;
@@ -8,6 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,12 +29,14 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        servlet = new DispatcherServlet();
+        servlet = new DispatcherServlet(
+                List.of(new AnnotationHandlerMapping("com.techcourse.controller")),
+                List.of(new HandlerExecutionHandlerAdapter()));
         servlet.init();
     }
 
     @Test
-    void forwardsToViewReturnedByLegacyController() throws Exception {
+    void forwardsHomeToIndexPage() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
@@ -42,7 +51,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void redirectsToViewReturnedByLegacyController() throws Exception {
+    void logsOutAndRedirectsToHome() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/logout");
@@ -73,7 +82,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void registersWithAnnotationsAndLogsInWithLegacyController() throws Exception {
+    void registersAndThenLogsIn() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var registrationResponse = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/register");
@@ -100,7 +109,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void keepsExistingRegistrationViewUrl() throws Exception {
+    void keepsRegistrationViewUrl() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var dispatcher = mock(RequestDispatcher.class);
@@ -125,5 +134,54 @@ class DispatcherServletTest {
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
         assertThat(InMemoryUserRepository.findByAccount("unsupported-registration")).isEmpty();
+    }
+
+    @Test
+    void redirectsToLoginPageViewWhenNotLoggedIn() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var dispatcher = mock(RequestDispatcher.class);
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getRequestDispatcher("/login.jsp")).thenReturn(dispatcher);
+
+        servlet.service(request, response);
+
+        verify(dispatcher).forward(request, response);
+    }
+
+    @Test
+    void redirectsToUnauthorizedPageWhenPasswordIsWrong() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession()).thenReturn(mock(HttpSession.class));
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("password")).thenReturn("wrong");
+
+        servlet.service(request, response);
+
+        verify(response).sendRedirect("/401.jsp");
+    }
+
+    @Test
+    void respondsWithUserAsJson() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var body = new StringWriter();
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("gugu");
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+
+        servlet.service(request, response);
+
+        verify(response).setContentType("application/json;charset=UTF-8");
+        assertThat(body.toString())
+                .contains("\"account\":\"gugu\"")
+                .contains("\"email\":\"hkkang@woowahan.com\"")
+                .doesNotContain("password");
     }
 }
