@@ -33,7 +33,7 @@ dependencies {
 }
 
 test {
-    maxParallelForks = 3
+    maxParallelForks = 1
     useJUnitPlatform()
 }
 
