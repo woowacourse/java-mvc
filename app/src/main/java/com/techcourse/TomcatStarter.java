@@ -5,6 +5,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
 import java.io.File;
@@ -25,6 +26,12 @@ public class TomcatStarter {
 
         final var docBase = new File(webappDirLocation).getAbsolutePath();
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
+
+        final ErrorPage errorPage404 = new ErrorPage();
+        errorPage404.setErrorCode(404);
+        errorPage404.setLocation("/404.jsp");
+        context.addErrorPage(errorPage404);
+
         skipJarScan(context);
         skipClearReferences(context);
     }

@@ -69,4 +69,17 @@ class DispatcherServletTest {
         verify(response).sendRedirect("/annotation-test");
         verify(request, never()).getRequestDispatcher(anyString());
     }
+
+    @Test
+    @DisplayName("컨트롤러로 등록된 적 없는 요청이 들어올 시 404 오류 응답을 보낸다")
+    void return404WhenPathNotRegisteredWithController() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/doesnt-exist");
+        when(request.getMethod()).thenReturn("GET");
+
+        dispatcherServlet.service(request, response);
+
+        verify(response).sendError(404);
+    }
 }

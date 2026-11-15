@@ -12,8 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -41,29 +43,32 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+        final Optional<Object> handlerResult = findHandler(request);
+        if (handlerResult.isEmpty()) {
+            response.sendError(404);
+            return;
+        }
         try {
-            final var handler = findHandler(request);
+            final var handler = handlerResult.get();
             final var modelAndView = handlerAdapter.handle(request, response, handler);
             final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object findHandler(final HttpServletRequest request) {
+    private Optional<Object> findHandler(final HttpServletRequest request) {
         for (final HandlerMapping handlerMapping : handlerMappings) {
             final Object handler = handlerMapping.getHandler(request);
             if (handler == null) {
                 continue;
             }
-            return handler;
+            return Optional.of(handler);
         }
-        throw new IllegalArgumentException(
-                "요청을 처리할 수 있는 컨트롤러가 존재하지 않습니다. 요청 URI : " + request.getRequestURI()
-        );
+        return Optional.empty();
     }
 }
