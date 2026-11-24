@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("samples");
         dispatcherServlet.init();
     }
 
