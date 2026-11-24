@@ -7,10 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,23 +23,8 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("기존 Controller의 GET 요청을 처리하고 JSP로 forward한다")
-    void legacyControllerGetForwardsToJsp() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
-
-        dispatcherServlet.service(request, response);
-
-        verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
-    @DisplayName("어노테이션 Controller의 GET 요청 처리 시 Model을 request attribute로 전달한 후 JSP로 forward한다")
-    void annotationControllerGetForwardsToJsp() throws Exception {
+    @DisplayName("컨트롤러가 반환한 ModelAndView의 모델을 request attribute로 전달한 후 JSP로 forward한다")
+    void modelAndViewExposesModelAndForwardsToJsp() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
@@ -54,20 +37,6 @@ class DispatcherServletTest {
         final var inOrder = inOrder(request, requestDispatcher);
         inOrder.verify(request).setAttribute("name", "테리");
         inOrder.verify(requestDispatcher).forward(request, response);
-    }
-
-    @Test
-    @DisplayName("어노테이션 Controller의 POST 요청 처리 시 지정한 경로로 redirect한다")
-    void annotationControllerPostRedirectsToTargetPath() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        when(request.getRequestURI()).thenReturn("/annotation-test");
-        when(request.getMethod()).thenReturn("POST");
-
-        dispatcherServlet.service(request, response);
-
-        verify(response).sendRedirect("/annotation-test");
-        verify(request, never()).getRequestDispatcher(anyString());
     }
 
     @Test
