@@ -41,3 +41,13 @@
 - [x] 컨트롤러의 메서드 정보로 HandlerExecution을 생성한다.
 - [x] HandlerMapping 인터페이스로 RequestMapping, AnnotationHandlerMapping 클래스의 공통 부분을 추상화했다.
 - [x] HandlerAdapter 인터페이스: 요청 URL에 따라 AnnotationHandlerMapping 또는 ManualHandlerMapping 클래스에서 찾은 컨트롤러를 실행한다.
+
+## 3단계 - JSON View 구현하기
+- [x] JsonView 클래스 구현하기: HTML 이외에 JSON으로 응답할 수 있도록 구현
+    - [x] JSON을 자바 객체로 변환할 때 Jackson 라이브러리를 사용
+    - [x] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE으로 반환
+    - [x] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
+- [x] Legacy MVC 제거하기
+  - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+  - [x] asis 패키지에 있는 레거시 코드 삭제
+  - [x] DispatcherServlet의 위치를 mvc 패키지로 이동

@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import org.reflections.Reflections;
 import com.interface21.context.stereotype.Controller;
